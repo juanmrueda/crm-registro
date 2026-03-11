@@ -546,15 +546,22 @@
         // ========================================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrghUZeteiLwkHFxl_d8oJegIdeV8Uqd4uPErbDIr6qlZywrEeL4aTMYBD5xcPf-mRxw/exec';
         const AUTO_REFRESH_MS = 30000;
-        const ADMIN_PASSWORD = 'CRM2026uao';
+        const ADMIN_HASH = '65cfa935991f95603b116cc69ca79ed99556dcec54616620387c81c9e9f680d3';
         const AUTH_KEY = 'crm_admin_auth';
 
         // ========================================
         // LOGIN
         // ========================================
-        function attemptLogin() {
+        async function hashPassword(pwd) {
+            const data = new TextEncoder().encode(pwd);
+            const buffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function attemptLogin() {
             const input = document.getElementById('loginPassword').value;
-            if (input === ADMIN_PASSWORD) {
+            const hashed = await hashPassword(input);
+            if (hashed === ADMIN_HASH) {
                 sessionStorage.setItem(AUTH_KEY, 'true');
                 document.getElementById('loginGate').style.display = 'none';
                 loadData();
