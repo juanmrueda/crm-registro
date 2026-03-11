@@ -577,7 +577,7 @@
                         </svg>
                     </div>
                     <h2 class="text-white text-xl font-bold mb-2">Registro Exitoso!</h2>
-                    <p class="text-white/60 text-sm mb-6">Bienvenido/a al curso de Mercadeo Relacional y CRM. Nos vemos en clase!</p>
+                    <p class="text-white/60 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Mercadeo Relacional y CRM. Nos vemos en clase!</p>
                     <div class="glass p-4 rounded-2xl text-left">
                         <p class="text-white/40 text-xs uppercase tracking-wider mb-2 font-medium">Tu resumen</p>
                         <p class="text-white text-sm font-medium" id="summaryName"></p>
@@ -606,7 +606,7 @@
 
         <!-- Footer -->
         <p class="text-center text-white/30 text-xs mt-6">
-            UAO &middot; Especializacion en Gerencia de Negocios Digitales &middot; 2025
+            UAO &middot; Especializacion en Gerencia de Negocios Digitales &middot; 2026
         </p>
     </div>
 
@@ -926,6 +926,10 @@
             const successEl = document.querySelector('.step-container[data-step="success"]');
             successEl.style.display = 'block';
             successEl.classList.add('active');
+
+            // Welcome message based on gender
+            const bienvenida = data.genero === 'Femenino' ? 'Bienvenida' : 'Bienvenido';
+            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Mercadeo Relacional y CRM. Nos vemos en clase!`;
 
             // Fill summary
             document.getElementById('summaryName').textContent = data.nombre;
