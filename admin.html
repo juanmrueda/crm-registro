@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Admin | Mercadeo Relacional - UAO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        dark: { 900: '#0a0e1a', 800: '#0f172a', 700: '#1e293b', 600: '#334155' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            height: 100vh;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 40;
+            transition: transform 0.3s ease;
+        }
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 35;
+        }
+        .sidebar-overlay.active { display: block; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px; margin: 2px 8px;
+            border-radius: 10px; cursor: pointer;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px; font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15));
+            color: #a5b4fc;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        @media (max-width: 1023px) { .main-content { margin-left: 0; } }
+
+        /* Cards */
+        .card {
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .card:hover { border-color: rgba(255,255,255,0.1); }
+
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.9));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+        }
+        .kpi-card.purple::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+        .kpi-card.blue::before { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .kpi-card.green::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .kpi-card.amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+        /* Animated counter */
+        .counter { font-size: 32px; font-weight: 800; line-height: 1; }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table thead th {
+            background: rgba(255,255,255,0.03);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            cursor: pointer;
+            user-select: none;
+        }
+        .data-table thead th:hover { color: rgba(255,255,255,0.7); }
+        .data-table tbody tr {
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+        .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+        .data-table tbody td {
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Avatar */
+        .avatar {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* Search */
+        .search-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 10px 14px 10px 40px;
+            color: white;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(99,102,241,0.4);
+            background: rgba(255,255,255,0.08);
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+
+        /* Filter chips */
+        .filter-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .filter-chip:hover { background: rgba(255,255,255,0.1); }
+        .filter-chip.active {
+            background: rgba(99,102,241,0.15);
+            border-color: rgba(99,102,241,0.3);
+            color: #a5b4fc;
+        }
+
+        /* Contact modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 28px;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Segment card */
+        .segment-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 16px;
+        }
+        .segment-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        .segment-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s ease;
+        }
+
+        /* Insight tag */
+        .insight-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 3px;
+            transition: all 0.2s;
+        }
+
+        /* Sections */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Loading */
+        .loading-pulse { animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
+        /* Refresh badge */
+        .refresh-badge {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar flex flex-col" id="sidebar">
+        <div class="p-5 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-white text-sm font-bold">CRM Panel</h2>
+                    <p class="text-white/40 text-xs">Mercadeo Relacional</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 py-4">
+            <div class="px-4 mb-2">
+                <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest">Principal</p>
+            </div>
+            <div class="nav-item active" data-section="overview" onclick="showSection('overview')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Overview
+            </div>
+            <div class="nav-item" data-section="contacts" onclick="showSection('contacts')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+                Contactos
+            </div>
+            <div class="nav-item" data-section="segments" onclick="showSection('segments')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                Segmentos
+            </div>
+            <div class="nav-item" data-section="insights" onclick="showSection('insights')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                Canvas Insights
+            </div>
+
+            <div class="px-4 mt-6 mb-2">
+                <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest">Acciones</p>
+            </div>
+            <div class="nav-item" onclick="exportCSV()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Exportar CSV
+            </div>
+            <div class="nav-item" onclick="refreshData()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Actualizar datos
+            </div>
+        </nav>
+
+        <div class="p-4 border-t border-white/5">
+            <p class="text-white/20 text-[10px] text-center">UAO - CRM v1.0</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top bar -->
+        <header class="sticky top-0 z-30 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-white/5">
+            <div class="flex items-center justify-between px-4 lg:px-8 py-4">
+                <div class="flex items-center gap-3">
+                    <button class="lg:hidden p-2 rounded-lg hover:bg-white/5" onclick="toggleSidebar()">
+                        <svg class="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <div>
+                        <h1 class="text-white text-lg font-bold" id="sectionTitle">Overview</h1>
+                        <p class="text-white/40 text-xs" id="sectionSubtitle">Resumen general del CRM</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 text-white/40 text-xs">
+                        <div class="refresh-badge"></div>
+                        <span id="lastUpdate">--</span>
+                    </div>
+                    <div class="hidden sm:flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5">
+                        <span class="text-white font-bold text-sm" id="totalBadge">0</span>
+                        <span class="text-white/40 text-xs">registros</span>
+                    </div>
+                    <button onclick="refreshData()" class="p-2 rounded-lg hover:bg-white/5 transition-colors" title="Actualizar">
+                        <svg class="w-4 h-4 text-white/40" id="refreshIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content area -->
+        <div class="p-4 lg:p-8">
+
+            <!-- ============================== -->
+            <!-- SECTION: OVERVIEW -->
+            <!-- ============================== -->
+            <div class="section active" id="section-overview">
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="kpi-card purple">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Total Registrados</p>
+                        <p class="counter text-white" id="kpiTotal">0</p>
+                        <p class="text-white/30 text-xs mt-1">estudiantes</p>
+                    </div>
+                    <div class="kpi-card blue">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Genero</p>
+                        <p class="counter text-white" id="kpiGenero">--</p>
+                        <p class="text-white/30 text-xs mt-1" id="kpiGeneroDetail">H: 0 | M: 0</p>
+                    </div>
+                    <div class="kpi-card green">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Edad Promedio</p>
+                        <p class="counter text-white" id="kpiEdad">0</p>
+                        <p class="text-white/30 text-xs mt-1">anos</p>
+                    </div>
+                    <div class="kpi-card amber">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Empresas</p>
+                        <p class="counter text-white" id="kpiEmpresas">0</p>
+                        <p class="text-white/30 text-xs mt-1">unicas</p>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">Distribucion por Genero</h3>
+                        <div class="flex justify-center" style="height: 220px;">
+                            <canvas id="chartGenero"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">Sector / Industria</h3>
+                        <div style="height: 220px;">
+                            <canvas id="chartSector"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">Tamano de Empresa</h3>
+                        <div style="height: 220px;">
+                            <canvas id="chartTamano"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">Canales de Captacion</h3>
+                        <div style="height: 220px;">
+                            <canvas id="chartCanales"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Row 3 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">Uso Actual de CRM</h3>
+                        <div class="flex justify-center" style="height: 220px;">
+                            <canvas id="chartCRM"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">Preferencia de Trabajo</h3>
+                        <div class="flex justify-center" style="height: 220px;">
+                            <canvas id="chartTrabajo"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- SECTION: CONTACTS -->
+            <!-- ============================== -->
+            <div class="section" id="section-contacts">
+                <!-- Search & Filters -->
+                <div class="mb-4">
+                    <div class="relative mb-3">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" class="search-input" placeholder="Buscar por nombre, empresa, email..." id="searchInput" oninput="filterContacts()">
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="filterChips">
+                        <!-- Dynamic filter chips inserted here -->
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="card overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('nombre')">Contacto</th>
+                                <th onclick="sortTable('empresa')" class="hidden sm:table-cell">Empresa</th>
+                                <th onclick="sortTable('sector')" class="hidden md:table-cell">Sector</th>
+                                <th onclick="sortTable('ciudad')" class="hidden lg:table-cell">Ciudad</th>
+                                <th onclick="sortTable('genero')" class="hidden lg:table-cell">Genero</th>
+                                <th onclick="sortTable('timestamp')">Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTable">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                    <div class="text-center py-8 text-white/30 text-sm" id="emptyContacts">
+                        No hay registros aun
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- SECTION: SEGMENTS -->
+            <!-- ============================== -->
+            <div class="section" id="section-segments">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="segmentsContainer">
+                    <!-- Dynamic segments -->
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- SECTION: INSIGHTS -->
+            <!-- ============================== -->
+            <div class="section" id="section-insights">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-1">Productos / Servicios</h3>
+                        <p class="text-white/30 text-xs mb-4">Que venden los estudiantes del grupo</p>
+                        <div id="insightProductos" class="space-y-2"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-1">Clientes Ideales</h3>
+                        <p class="text-white/30 text-xs mb-4">A quien le venden</p>
+                        <div id="insightClientes" class="space-y-2"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-1">Expectativas del Curso</h3>
+                        <p class="text-white/30 text-xs mb-4">Que esperan aprender</p>
+                        <div id="insightExpectativas" class="space-y-2"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-1">Mayores Retos</h3>
+                        <p class="text-white/30 text-xs mb-4">Problemas con clientes</p>
+                        <div id="insightRetos" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Detail Modal -->
+    <div class="modal-overlay" id="contactModal" onclick="if(event.target===this)closeModal()">
+        <div class="modal-content" id="modalBody">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIG
+        // ========================================
+        const APPS_SCRIPT_URL = 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI';
+        const AUTO_REFRESH_MS = 30000;
+
+        // ========================================
+        // STATE
+        // ========================================
+        let allData = [];
+        let filteredData = [];
+        let charts = {};
+        let sortField = 'timestamp';
+        let sortDir = 'desc';
+        let activeFilters = {};
+        let autoRefreshTimer = null;
+
+        // DEMO DATA (will be replaced by real data when Apps Script is configured)
+        const DEMO_DATA = [
+            { timestamp: '2025-03-10T08:15:00', nombre: 'Maria Lopez', email: 'maria@email.com', celular: '300 123 4567', ciudad: 'Cali', genero: 'Femenino', fechaNacimiento: '1992-05-14', empresa: 'TechCali SAS', cargo: 'Directora Comercial', sector: 'Tecnologia', tamano: '11-50', web: '@techcali', empresaPropia: 'no', queVende: 'Software de gestion empresarial y apps moviles personalizadas', clienteIdeal: 'Empresas medianas de Cali y el Valle que necesitan digitalizar procesos', canalesCaptacion: 'Redes sociales, Referidos, Eventos / Ferias', usaCRM: 'Excel/Sheets', cualCRM: '', expectativas: 'Aprender a implementar un CRM profesional que me ayude a hacer seguimiento real a los clientes', retosClientes: 'Seguimiento post-venta deficiente, pierdo clientes por falta de contacto oportuno', prefiereTrabajar: 'En equipo' },
+            { timestamp: '2025-03-10T09:22:00', nombre: 'Carlos Ramirez', email: 'carlos@empresa.co', celular: '311 456 7890', ciudad: 'Cali', genero: 'Masculino', fechaNacimiento: '1988-11-23', empresa: 'Distribuidora del Valle', cargo: 'Gerente General', sector: 'Comercio', tamano: '51-200', web: 'www.distvalle.com', empresaPropia: 'si', queVende: 'Distribucion de productos de consumo masivo en el suroccidente colombiano', clienteIdeal: 'Tiendas, minimercados y supermercados independientes del Valle del Cauca', canalesCaptacion: 'Llamadas / Ventas directas, Referidos', usaCRM: 'No', cualCRM: '', expectativas: 'Entender como organizar mi base de datos de clientes y automatizar el seguimiento', retosClientes: 'Tengo mas de 500 clientes y no logro darle atencion personalizada a cada uno', prefiereTrabajar: 'Solo' },
+            { timestamp: '2025-03-10T10:05:00', nombre: 'Ana Gonzalez', email: 'ana.g@startup.io', celular: '315 789 0123', ciudad: 'Bogota', genero: 'Femenino', fechaNacimiento: '1995-08-30', empresa: 'Bloom Marketing', cargo: 'Fundadora y CEO', sector: 'Marketing', tamano: '1-10', web: '@bloommarketing_co', empresaPropia: 'si', queVende: 'Servicios de marketing digital: redes sociales, pauta digital, branding', clienteIdeal: 'Emprendedores y pymes que quieren crecer en redes sociales', canalesCaptacion: 'Redes sociales, SEO / Contenido organico, Referidos', usaCRM: 'HubSpot', cualCRM: '', expectativas: 'Profundizar en automatizacion de CRM y estrategias de retencion', retosClientes: 'Los clientes llegan pero cuesta mucho retenerlos mas de 3 meses', prefiereTrabajar: 'Ambos' },
+            { timestamp: '2025-03-10T11:30:00', nombre: 'Diego Torres', email: 'dtorres@inmob.com', celular: '320 111 2233', ciudad: 'Cali', genero: 'Masculino', fechaNacimiento: '1985-02-17', empresa: 'Torres Inmobiliaria', cargo: 'Director Comercial', sector: 'Inmobiliario', tamano: '11-50', web: 'www.torresinmobiliaria.co', empresaPropia: 'si', queVende: 'Venta y arriendo de inmuebles residenciales y comerciales', clienteIdeal: 'Familias de estrato 4-6 y inversionistas que buscan propiedad en Cali', canalesCaptacion: 'Publicidad paga, Redes sociales, Referidos', usaCRM: 'Excel/Sheets', cualCRM: '', expectativas: 'Migrar de Excel a un CRM real y aprender a medir la efectividad comercial', retosClientes: 'El ciclo de venta es muy largo y pierdo el contacto con prospectos frios', prefiereTrabajar: 'En equipo' },
+            { timestamp: '2025-03-10T13:45:00', nombre: 'Valentina Munoz', email: 'vale.m@salud.com', celular: '318 555 6677', ciudad: 'Medellin', genero: 'Femenino', fechaNacimiento: '1990-12-05', empresa: 'VitalCenter', cargo: 'Coordinadora de Marketing', sector: 'Salud', tamano: '51-200', web: '@vitalcenter_col', empresaPropia: 'no', queVende: 'Servicios medicos especializados: estetica, odontologia y bienestar', clienteIdeal: 'Mujeres de 25-50 anos de estratos 4-6 interesadas en salud y bienestar', canalesCaptacion: 'Redes sociales, Email marketing, Publicidad paga', usaCRM: 'Otro', cualCRM: 'Pipedrive', expectativas: 'Aprender a segmentar mejor nuestra base de pacientes y personalizar comunicaciones', retosClientes: 'Muchos pacientes vienen una vez y no regresan, necesitamos mejorar la fidelizacion', prefiereTrabajar: 'En equipo' },
+            { timestamp: '2025-03-10T14:10:00', nombre: 'Andres Mejia', email: 'amejia@agro.co', celular: '301 999 8877', ciudad: 'Palmira', genero: 'Masculino', fechaNacimiento: '1983-07-20', empresa: 'AgroValle SA', cargo: 'Jefe de Ventas', sector: 'Agro', tamano: '200+', web: 'www.agrovalle.co', empresaPropia: 'no', queVende: 'Insumos agricolas, fertilizantes y semillas para cultivos de cana y frutales', clienteIdeal: 'Agricultores y ingenios azucareros del Valle del Cauca', canalesCaptacion: 'Llamadas / Ventas directas, Eventos / Ferias', usaCRM: 'No', cualCRM: '', expectativas: 'Entender el CRM desde cero y poder proponer la implementacion en mi empresa', retosClientes: 'Nuestro equipo de ventas no registra las interacciones con clientes, todo esta en la cabeza de cada vendedor', prefiereTrabajar: 'Ambos' },
+            { timestamp: '2025-03-11T07:30:00', nombre: 'Laura Castano', email: 'laura@educa.co', celular: '316 222 3344', ciudad: 'Cali', genero: 'Femenino', fechaNacimiento: '1993-03-11', empresa: 'EduTech Colombia', cargo: 'Product Manager', sector: 'Educacion', tamano: '11-50', web: '@edutechcol', empresaPropia: 'no', queVende: 'Plataforma de cursos online y programas de formacion corporativa', clienteIdeal: 'Empresas con mas de 50 empleados que buscan capacitacion digital', canalesCaptacion: 'Redes sociales, Email marketing, SEO / Contenido organico', usaCRM: 'HubSpot', cualCRM: '', expectativas: 'Conectar mejor la analitica de nuestro CRM con las decisiones de producto', retosClientes: 'Generar leads calificados y convertir empresas que piden demo pero no compran', prefiereTrabajar: 'En equipo' },
+            { timestamp: '2025-03-11T08:50:00', nombre: 'Santiago Herrera', email: 'sherrera@finanzas.co', celular: '322 444 5566', ciudad: 'Cali', genero: 'Masculino', fechaNacimiento: '1991-09-28', empresa: 'AsesoriaSH', cargo: 'Director', sector: 'Financiero', tamano: '1-10', web: '@asesoriash', empresaPropia: 'si', queVende: 'Asesoria financiera y tributaria para pymes y personas naturales', clienteIdeal: 'Duenos de pymes en Cali que necesitan organizar su contabilidad e impuestos', canalesCaptacion: 'Referidos, Redes sociales', usaCRM: 'No', cualCRM: '', expectativas: 'Crear un sistema para hacer seguimiento a mis clientes y prospectos de forma organizada', retosClientes: 'Mi negocio depende 100% de referidos y no tengo proceso de captacion activo', prefiereTrabajar: 'Solo' },
+            { timestamp: '2025-03-11T09:15:00', nombre: 'Camila Restrepo', email: 'camila@restaurante.co', celular: '313 777 8899', ciudad: 'Cali', genero: 'Femenino', fechaNacimiento: '1997-01-15', empresa: 'Sabor Urbano', cargo: 'Gerente de Mercadeo', sector: 'Alimentos', tamano: '11-50', web: '@saborurbano', empresaPropia: 'no', queVende: 'Cadena de 4 restaurantes de comida fusion en Cali', clienteIdeal: 'Jovenes y adultos de 22-40 anos que buscan experiencias gastronomicas unicas', canalesCaptacion: 'Redes sociales, Publicidad paga, Eventos / Ferias', usaCRM: 'No', cualCRM: '', expectativas: 'Implementar un programa de fidelidad y crear una base de datos de nuestros clientes frecuentes', retosClientes: 'No conocemos a nuestros clientes, no tenemos datos de quienes nos visitan', prefiereTrabajar: 'Ambos' },
+            { timestamp: '2025-03-11T10:40:00', nombre: 'Felipe Arias', email: 'felipe@transporte.co', celular: '305 333 2211', ciudad: 'Yumbo', genero: 'Masculino', fechaNacimiento: '1987-06-09', empresa: 'LogiExpress', cargo: 'Gerente Comercial', sector: 'Transporte', tamano: '51-200', web: 'www.logiexpress.co', empresaPropia: 'no', queVende: 'Servicios de transporte de carga terrestre y logistica de ultima milla', clienteIdeal: 'Empresas manufactureras y de comercio electronico que necesitan despacho en el suroccidente', canalesCaptacion: 'Llamadas / Ventas directas, Referidos, Email marketing', usaCRM: 'Excel/Sheets', cualCRM: '', expectativas: 'Profesionalizar nuestro proceso comercial y dejar de depender de Excel para todo', retosClientes: 'Los clientes nos comparan solo por precio y cuesta diferenciarse por servicio', prefiereTrabajar: 'En equipo' }
+        ];
+
+        // ========================================
+        // COLORS
+        // ========================================
+        const CHART_COLORS = [
+            'rgba(99, 102, 241, 0.8)',   // indigo
+            'rgba(139, 92, 246, 0.8)',   // purple
+            'rgba(6, 182, 212, 0.8)',    // cyan
+            'rgba(16, 185, 129, 0.8)',   // green
+            'rgba(245, 158, 11, 0.8)',   // amber
+            'rgba(239, 68, 68, 0.8)',    // red
+            'rgba(236, 72, 153, 0.8)',   // pink
+            'rgba(59, 130, 246, 0.8)',   // blue
+            'rgba(168, 85, 247, 0.8)',   // violet
+            'rgba(34, 211, 238, 0.8)',   // cyan-light
+            'rgba(52, 211, 153, 0.8)',   // emerald
+            'rgba(251, 191, 36, 0.8)',   // yellow
+            'rgba(248, 113, 113, 0.8)', // red-light
+            'rgba(192, 132, 252, 0.8)', // purple-light
+        ];
+
+        const AVATAR_COLORS = [
+            'bg-indigo-500', 'bg-purple-500', 'bg-cyan-500', 'bg-emerald-500',
+            'bg-amber-500', 'bg-rose-500', 'bg-pink-500', 'bg-blue-500'
+        ];
+
+        // ========================================
+        // INIT
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            startAutoRefresh();
+        });
+
+        // ========================================
+        // DATA LOADING
+        // ========================================
+        async function loadData() {
+            try {
+                if (APPS_SCRIPT_URL !== 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
+                    const response = await fetch(APPS_SCRIPT_URL);
+                    const json = await response.json();
+                    allData = json.data || json || [];
+                } else {
+                    // Use demo data
+                    allData = DEMO_DATA;
+                }
+            } catch (e) {
+                console.warn('Error loading data, using demo:', e);
+                allData = DEMO_DATA;
+            }
+
+            filteredData = [...allData];
+            updateAll();
+            document.getElementById('lastUpdate').textContent = 'Ahora';
+        }
+
+        function refreshData() {
+            const icon = document.getElementById('refreshIcon');
+            icon.style.animation = 'spin 1s linear infinite';
+            loadData().then(() => {
+                setTimeout(() => icon.style.animation = '', 1000);
+            });
+        }
+
+        function startAutoRefresh() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            autoRefreshTimer = setInterval(() => {
+                if (APPS_SCRIPT_URL !== 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
+                    loadData();
+                }
+            }, AUTO_REFRESH_MS);
+        }
+
+        // ========================================
+        // UPDATE ALL VIEWS
+        // ========================================
+        function updateAll() {
+            updateKPIs();
+            updateCharts();
+            updateContactsTable();
+            updateSegments();
+            updateInsights();
+            updateFilterChips();
+            document.getElementById('totalBadge').textContent = allData.length;
+        }
+
+        // ========================================
+        // KPIs
+        // ========================================
+        function updateKPIs() {
+            // Total
+            animateCounter('kpiTotal', filteredData.length);
+
+            // Gender
+            const genderCount = countBy(filteredData, 'genero');
+            const m = genderCount['Masculino'] || 0;
+            const f = genderCount['Femenino'] || 0;
+            const total = filteredData.length || 1;
+            document.getElementById('kpiGenero').textContent = `${Math.round(f/total*100)}%F`;
+            document.getElementById('kpiGeneroDetail').textContent = `H: ${m} | M: ${f}`;
+
+            // Age
+            const ages = filteredData
+                .filter(d => d.fechaNacimiento)
+                .map(d => calculateAge(d.fechaNacimiento));
+            const avgAge = ages.length ? Math.round(ages.reduce((a,b) => a+b, 0) / ages.length) : 0;
+            animateCounter('kpiEdad', avgAge);
+
+            // Unique companies
+            const uniqueEmpresas = new Set(filteredData.map(d => d.empresa?.toLowerCase().trim())).size;
+            animateCounter('kpiEmpresas', uniqueEmpresas);
+        }
+
+        function animateCounter(id, target) {
+            const el = document.getElementById(id);
+            const start = parseInt(el.textContent) || 0;
+            const diff = target - start;
+            const duration = 600;
+            const startTime = performance.now();
+
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(start + diff * eased);
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // ========================================
+        // CHARTS
+        // ========================================
+        const chartDefaults = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11, family: 'Inter' }, padding: 12, usePointStyle: true, pointStyle: 'circle' } },
+            }
+        };
+
+        function updateCharts() {
+            // Destroy existing charts
+            Object.values(charts).forEach(c => c.destroy());
+            charts = {};
+
+            // Gender Donut
+            const genderData = countBy(filteredData, 'genero');
+            charts.genero = new Chart(document.getElementById('chartGenero'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(genderData),
+                    datasets: [{ data: Object.values(genderData), backgroundColor: CHART_COLORS.slice(0, Object.keys(genderData).length), borderWidth: 0 }]
+                },
+                options: { ...chartDefaults, cutout: '65%', plugins: { ...chartDefaults.plugins, legend: { ...chartDefaults.plugins.legend, position: 'bottom' } } }
+            });
+
+            // Sector Bar
+            const sectorData = countBy(filteredData, 'sector');
+            const sortedSectors = sortObj(sectorData);
+            charts.sector = new Chart(document.getElementById('chartSector'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(sortedSectors),
+                    datasets: [{ data: Object.values(sortedSectors), backgroundColor: CHART_COLORS, borderWidth: 0, borderRadius: 6 }]
+                },
+                options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } }, grid: { display: false } } } }
+            });
+
+            // Tamano Bar
+            const tamanoData = countBy(filteredData, 'tamano');
+            const tamanoOrder = ['1-10', '11-50', '51-200', '200+'];
+            const orderedTamano = {};
+            tamanoOrder.forEach(k => { if (tamanoData[k]) orderedTamano[k] = tamanoData[k]; });
+            charts.tamano = new Chart(document.getElementById('chartTamano'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(orderedTamano).map(k => k + ' emp.'),
+                    datasets: [{ data: Object.values(orderedTamano), backgroundColor: [CHART_COLORS[0], CHART_COLORS[2], CHART_COLORS[4], CHART_COLORS[5]], borderWidth: 0, borderRadius: 6 }]
+                },
+                options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } }, grid: { display: false } }, y: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } } } }
+            });
+
+            // Canales horizontal bar
+            const canalesMap = {};
+            filteredData.forEach(d => {
+                if (d.canalesCaptacion) {
+                    d.canalesCaptacion.split(', ').forEach(c => {
+                        const key = c.trim();
+                        if (key) canalesMap[key] = (canalesMap[key] || 0) + 1;
+                    });
+                }
+            });
+            const sortedCanales = sortObj(canalesMap);
+            charts.canales = new Chart(document.getElementById('chartCanales'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(sortedCanales),
+                    datasets: [{ data: Object.values(sortedCanales), backgroundColor: CHART_COLORS, borderWidth: 0, borderRadius: 6 }]
+                },
+                options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } }, grid: { display: false } } } }
+            });
+
+            // CRM Pie
+            const crmData = countBy(filteredData, 'usaCRM');
+            charts.crm = new Chart(document.getElementById('chartCRM'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(crmData),
+                    datasets: [{ data: Object.values(crmData), backgroundColor: CHART_COLORS.slice(0, Object.keys(crmData).length), borderWidth: 0 }]
+                },
+                options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, legend: { ...chartDefaults.plugins.legend, position: 'bottom' } } }
+            });
+
+            // Work preference donut
+            const workData = countBy(filteredData, 'prefiereTrabajar');
+            charts.trabajo = new Chart(document.getElementById('chartTrabajo'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(workData),
+                    datasets: [{ data: Object.values(workData), backgroundColor: [CHART_COLORS[2], CHART_COLORS[0], CHART_COLORS[4]], borderWidth: 0 }]
+                },
+                options: { ...chartDefaults, cutout: '60%', plugins: { ...chartDefaults.plugins, legend: { ...chartDefaults.plugins.legend, position: 'bottom' } } }
+            });
+        }
+
+        // ========================================
+        // CONTACTS TABLE
+        // ========================================
+        function updateContactsTable() {
+            const tbody = document.getElementById('contactsTable');
+            const empty = document.getElementById('emptyContacts');
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+
+            // Sort
+            const sorted = [...filteredData].sort((a, b) => {
+                let va = (a[sortField] || '').toString().toLowerCase();
+                let vb = (b[sortField] || '').toString().toLowerCase();
+                if (sortField === 'timestamp') { va = new Date(a.timestamp); vb = new Date(b.timestamp); }
+                if (va < vb) return sortDir === 'asc' ? -1 : 1;
+                if (va > vb) return sortDir === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            tbody.innerHTML = sorted.map((d, i) => {
+                const initials = getInitials(d.nombre);
+                const colorClass = AVATAR_COLORS[i % AVATAR_COLORS.length];
+                const date = d.timestamp ? new Date(d.timestamp).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '--';
+
+                return `
+                <tr onclick="openContact(${allData.indexOf(d)})">
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="avatar ${colorClass}">${initials}</div>
+                            <div>
+                                <p class="text-white text-sm font-medium">${d.nombre}</p>
+                                <p class="text-white/40 text-xs">${d.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="hidden sm:table-cell">${d.empresa || '--'}</td>
+                    <td class="hidden md:table-cell">
+                        <span class="inline-block px-2 py-0.5 rounded-md text-xs bg-white/5">${d.sector || '--'}</span>
+                    </td>
+                    <td class="hidden lg:table-cell">${d.ciudad || '--'}</td>
+                    <td class="hidden lg:table-cell">${d.genero || '--'}</td>
+                    <td class="text-white/40 text-xs">${date}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function sortTable(field) {
+            if (sortField === field) {
+                sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortField = field;
+                sortDir = 'asc';
+            }
+            updateContactsTable();
+        }
+
+        function filterContacts() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            applyFilters(query);
+        }
+
+        function applyFilters(searchQuery) {
+            searchQuery = searchQuery || document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+            filteredData = allData.filter(d => {
+                // Search
+                if (searchQuery) {
+                    const haystack = [d.nombre, d.email, d.empresa, d.ciudad, d.sector, d.cargo].join(' ').toLowerCase();
+                    if (!haystack.includes(searchQuery)) return false;
+                }
+                // Filters
+                for (const [key, val] of Object.entries(activeFilters)) {
+                    if (val && d[key] !== val) return false;
+                }
+                return true;
+            });
+            updateAll();
+        }
+
+        function updateFilterChips() {
+            const container = document.getElementById('filterChips');
+            const genres = [...new Set(allData.map(d => d.genero).filter(Boolean))];
+            const sectors = [...new Set(allData.map(d => d.sector).filter(Boolean))];
+            const sizes = [...new Set(allData.map(d => d.tamano).filter(Boolean))];
+            const crms = [...new Set(allData.map(d => d.usaCRM).filter(Boolean))];
+
+            let html = '';
+
+            // Clear filters
+            if (Object.keys(activeFilters).length > 0) {
+                html += `<div class="filter-chip active" onclick="clearFilters()" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:#fca5a5;">✕ Limpiar filtros</div>`;
+            }
+
+            genres.forEach(g => {
+                const isActive = activeFilters.genero === g;
+                html += `<div class="filter-chip ${isActive?'active':''}" onclick="toggleFilter('genero','${g}')">${g}</div>`;
+            });
+            sectors.forEach(s => {
+                const isActive = activeFilters.sector === s;
+                html += `<div class="filter-chip ${isActive?'active':''}" onclick="toggleFilter('sector','${s}')">${s}</div>`;
+            });
+            sizes.forEach(s => {
+                const isActive = activeFilters.tamano === s;
+                html += `<div class="filter-chip ${isActive?'active':''}" onclick="toggleFilter('tamano','${s}')">${s} emp.</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleFilter(key, val) {
+            if (activeFilters[key] === val) {
+                delete activeFilters[key];
+            } else {
+                activeFilters[key] = val;
+            }
+            applyFilters();
+        }
+
+        function clearFilters() {
+            activeFilters = {};
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+
+        // ========================================
+        // CONTACT DETAIL MODAL
+        // ========================================
+        function openContact(index) {
+            const d = allData[index];
+            if (!d) return;
+
+            const age = d.fechaNacimiento ? calculateAge(d.fechaNacimiento) + ' anos' : '--';
+            const initials = getInitials(d.nombre);
+            const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
+            const date = d.timestamp ? new Date(d.timestamp).toLocaleString('es-CO') : '--';
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="avatar ${color}" style="width:52px;height:52px;font-size:18px;border-radius:14px;">${initials}</div>
+                        <div>
+                            <h2 class="text-white text-lg font-bold">${d.nombre}</h2>
+                            <p class="text-white/50 text-sm">${d.cargo} en ${d.empresa}</p>
+                        </div>
+                    </div>
+                    <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-white/5">
+                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <!-- Info grid -->
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-white/3 rounded-xl p-3">
+                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Email</p>
+                        <p class="text-white/80 text-sm mt-1">${d.email}</p>
+                    </div>
+                    <div class="bg-white/3 rounded-xl p-3">
+                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Celular</p>
+                        <p class="text-white/80 text-sm mt-1">${d.celular}</p>
+                    </div>
+                    <div class="bg-white/3 rounded-xl p-3">
+                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Ciudad</p>
+                        <p class="text-white/80 text-sm mt-1">${d.ciudad}</p>
+                    </div>
+                    <div class="bg-white/3 rounded-xl p-3">
+                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Edad</p>
+                        <p class="text-white/80 text-sm mt-1">${age}</p>
+                    </div>
+                    <div class="bg-white/3 rounded-xl p-3">
+                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Sector</p>
+                        <p class="text-white/80 text-sm mt-1">${d.sector}</p>
+                    </div>
+                    <div class="bg-white/3 rounded-xl p-3">
+                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Tamano</p>
+                        <p class="text-white/80 text-sm mt-1">${d.tamano} empleados</p>
+                    </div>
+                </div>
+
+                <!-- Canvas de Negocio -->
+                <div class="mb-6">
+                    <h3 class="text-white/60 text-xs font-semibold uppercase tracking-wider mb-3">Canvas de Negocio</h3>
+                    <div class="space-y-3">
+                        <div class="bg-white/3 rounded-xl p-3">
+                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Que Vende</p>
+                            <p class="text-white/70 text-sm mt-1">${d.queVende}</p>
+                        </div>
+                        <div class="bg-white/3 rounded-xl p-3">
+                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Cliente Ideal</p>
+                            <p class="text-white/70 text-sm mt-1">${d.clienteIdeal}</p>
+                        </div>
+                        <div class="bg-white/3 rounded-xl p-3">
+                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Canales de Captacion</p>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${(d.canalesCaptacion || '').split(', ').map(c => `<span class="inline-block px-2 py-0.5 rounded-md text-xs bg-indigo-500/15 text-indigo-300">${c}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="bg-white/3 rounded-xl p-3">
+                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">CRM Actual</p>
+                            <p class="text-white/70 text-sm mt-1">${d.usaCRM}${d.cualCRM ? ' - ' + d.cualCRM : ''}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expectativas -->
+                <div class="mb-6">
+                    <h3 class="text-white/60 text-xs font-semibold uppercase tracking-wider mb-3">Expectativas</h3>
+                    <div class="space-y-3">
+                        <div class="bg-white/3 rounded-xl p-3">
+                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Que Espera Aprender</p>
+                            <p class="text-white/70 text-sm mt-1">${d.expectativas}</p>
+                        </div>
+                        <div class="bg-white/3 rounded-xl p-3">
+                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Mayor Reto</p>
+                            <p class="text-white/70 text-sm mt-1">${d.retosClientes}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="flex items-center gap-2 text-white/30 text-xs">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Registrado: ${date}
+                </div>
+            `;
+
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').classList.remove('active');
+        }
+
+        // Close modal on ESC
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        // ========================================
+        // SEGMENTS
+        // ========================================
+        function updateSegments() {
+            const container = document.getElementById('segmentsContainer');
+            const total = filteredData.length || 1;
+
+            const segmentConfigs = [
+                { title: 'Por Genero', field: 'genero', color: 'from-indigo-500 to-purple-500' },
+                { title: 'Por Rango de Edad', field: '_ageRange', color: 'from-cyan-500 to-blue-500' },
+                { title: 'Por Sector', field: 'sector', color: 'from-emerald-500 to-teal-500' },
+                { title: 'Por Tamano de Empresa', field: 'tamano', color: 'from-amber-500 to-orange-500' },
+                { title: 'Usa CRM?', field: 'usaCRM', color: 'from-rose-500 to-pink-500' },
+                { title: 'Preferencia de Trabajo', field: 'prefiereTrabajar', color: 'from-violet-500 to-purple-500' },
+            ];
+
+            container.innerHTML = segmentConfigs.map(config => {
+                let data;
+                if (config.field === '_ageRange') {
+                    data = {};
+                    filteredData.forEach(d => {
+                        const age = d.fechaNacimiento ? calculateAge(d.fechaNacimiento) : null;
+                        let range = 'Sin datos';
+                        if (age !== null) {
+                            if (age <= 25) range = '20-25';
+                            else if (age <= 30) range = '26-30';
+                            else if (age <= 35) range = '31-35';
+                            else range = '36+';
+                        }
+                        data[range] = (data[range] || 0) + 1;
+                    });
+                } else {
+                    data = countBy(filteredData, config.field);
+                }
+
+                const sorted = sortObj(data);
+                const items = Object.entries(sorted).map(([label, count]) => {
+                    const pct = Math.round(count / total * 100);
+                    const names = filteredData
+                        .filter(d => {
+                            if (config.field === '_ageRange') {
+                                const age = d.fechaNacimiento ? calculateAge(d.fechaNacimiento) : null;
+                                let range = 'Sin datos';
+                                if (age !== null) {
+                                    if (age <= 25) range = '20-25';
+                                    else if (age <= 30) range = '26-30';
+                                    else if (age <= 35) range = '31-35';
+                                    else range = '36+';
+                                }
+                                return range === label;
+                            }
+                            return d[config.field] === label;
+                        })
+                        .map(d => d.nombre.split(' ')[0])
+                        .join(', ');
+
+                    return `
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <span class="text-white/70 text-sm truncate">${label}</span>
+                                <span class="text-white/30 text-xs">(${names})</span>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <span class="text-white/50 text-xs">${count}</span>
+                                <span class="text-white/30 text-xs">${pct}%</span>
+                            </div>
+                        </div>
+                        <div class="segment-bar mb-3">
+                            <div class="segment-bar-fill bg-gradient-to-r ${config.color}" style="width:${pct}%"></div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="segment-card">
+                        <h3 class="text-white/80 text-sm font-semibold mb-4">${config.title}</h3>
+                        ${items}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========================================
+        // INSIGHTS
+        // ========================================
+        function updateInsights() {
+            renderInsightList('insightProductos', filteredData.map(d => d.queVende).filter(Boolean));
+            renderInsightList('insightClientes', filteredData.map(d => d.clienteIdeal).filter(Boolean));
+            renderInsightList('insightExpectativas', filteredData.map(d => d.expectativas).filter(Boolean));
+            renderInsightList('insightRetos', filteredData.map(d => d.retosClientes).filter(Boolean));
+        }
+
+        function renderInsightList(containerId, texts) {
+            const container = document.getElementById(containerId);
+
+            // Extract keywords (simple frequency analysis)
+            const wordFreq = {};
+            const stopWords = new Set(['de', 'la', 'el', 'en', 'y', 'a', 'los', 'las', 'que', 'del', 'para', 'con', 'un', 'una', 'mi', 'me', 'no', 'por', 'es', 'se', 'al', 'lo', 'mas', 'o', 'su', 'sus', 'son', 'como', 'sin']);
+
+            texts.forEach(text => {
+                const words = text.toLowerCase().replace(/[^\w\sáéíóúñü]/g, '').split(/\s+/);
+                // Also extract bigrams
+                for (let i = 0; i < words.length; i++) {
+                    const w = words[i];
+                    if (w.length > 3 && !stopWords.has(w)) {
+                        wordFreq[w] = (wordFreq[w] || 0) + 1;
+                    }
+                    if (i < words.length - 1) {
+                        const bigram = w + ' ' + words[i+1];
+                        if (!stopWords.has(w) && !stopWords.has(words[i+1]) && w.length > 2 && words[i+1].length > 2) {
+                            wordFreq[bigram] = (wordFreq[bigram] || 0) + 1;
+                        }
+                    }
+                }
+            });
+
+            // Sort by frequency and take top 15
+            const sorted = Object.entries(wordFreq)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 15);
+
+            if (sorted.length === 0) {
+                container.innerHTML = '<p class="text-white/20 text-sm">Sin datos aun</p>';
+                return;
+            }
+
+            const maxFreq = sorted[0][1];
+            container.innerHTML = '<div class="flex flex-wrap gap-1">' + sorted.map(([word, freq]) => {
+                const intensity = Math.max(0.15, freq / maxFreq);
+                const size = Math.max(11, Math.min(16, 11 + (freq / maxFreq) * 5));
+                const colorIdx = Math.floor(Math.random() * CHART_COLORS.length);
+                return `<span class="insight-tag" style="background:${CHART_COLORS[colorIdx].replace('0.8', (intensity * 0.25).toFixed(2))};color:${CHART_COLORS[colorIdx].replace('0.8', '1')};font-size:${size}px">${word} <span style="opacity:0.5">${freq}</span></span>`;
+            }).join('') + '</div>';
+
+            // Also show the original responses
+            container.innerHTML += '<div class="mt-4 space-y-2">' + texts.map((text, i) => {
+                const d = filteredData[i];
+                return `<div class="bg-white/3 rounded-lg p-3">
+                    <p class="text-white/40 text-[10px] font-semibold mb-1">${d?.nombre || ''}</p>
+                    <p class="text-white/60 text-xs leading-relaxed">${text}</p>
+                </div>`;
+            }).join('') + '</div>';
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function showSection(name) {
+            // Update nav
+            document.querySelectorAll('.nav-item[data-section]').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.nav-item[data-section="${name}"]`)?.classList.add('active');
+
+            // Update sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`section-${name}`)?.classList.add('active');
+
+            // Update title
+            const titles = {
+                overview: ['Overview', 'Resumen general del CRM'],
+                contacts: ['Contactos', 'Todos los estudiantes registrados'],
+                segments: ['Segmentos', 'Segmentacion automatica del grupo'],
+                insights: ['Canvas Insights', 'Inteligencia colectiva del grupo']
+            };
+            document.getElementById('sectionTitle').textContent = titles[name]?.[0] || name;
+            document.getElementById('sectionSubtitle').textContent = titles[name]?.[1] || '';
+
+            // Close sidebar on mobile
+            closeSidebar();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        // ========================================
+        // EXPORT CSV
+        // ========================================
+        function exportCSV() {
+            if (allData.length === 0) return alert('No hay datos para exportar');
+
+            const headers = ['Nombre','Email','Celular','Ciudad','Genero','Fecha Nacimiento','Empresa','Cargo','Sector','Tamano','Web','Empresa Propia','Que Vende','Cliente Ideal','Canales','Usa CRM','Cual CRM','Expectativas','Retos','Prefiere Trabajar','Timestamp'];
+            const fields = ['nombre','email','celular','ciudad','genero','fechaNacimiento','empresa','cargo','sector','tamano','web','empresaPropia','queVende','clienteIdeal','canalesCaptacion','usaCRM','cualCRM','expectativas','retosClientes','prefiereTrabajar','timestamp'];
+
+            let csv = headers.join(',') + '\n';
+            allData.forEach(d => {
+                csv += fields.map(f => {
+                    const val = (d[f] || '').toString().replace(/"/g, '""');
+                    return `"${val}"`;
+                }).join(',') + '\n';
+            });
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `CRM_Registros_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ========================================
+        // UTILITIES
+        // ========================================
+        function countBy(arr, field) {
+            const map = {};
+            arr.forEach(d => {
+                const val = d[field] || 'Sin datos';
+                map[val] = (map[val] || 0) + 1;
+            });
+            return map;
+        }
+
+        function sortObj(obj) {
+            return Object.fromEntries(Object.entries(obj).sort((a, b) => b[1] - a[1]));
+        }
+
+        function calculateAge(dateStr) {
+            const birth = new Date(dateStr);
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+            return age;
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+        }
+
+        // @keyframes spin for refresh icon
+        const style = document.createElement('style');
+        style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
