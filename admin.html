@@ -389,6 +389,10 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 Actualizar datos
             </div>
+            <div class="nav-item" onclick="openEmailModal()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Enviar PDF por Email
+            </div>
         </nav>
 
         <div class="p-4 border-t border-white/5">
@@ -595,6 +599,96 @@
         </div>
     </div>
 
+    <!-- Email PDF Modal -->
+    <div class="modal-overlay" id="emailModal" onclick="if(event.target===this)closeEmailModal()">
+        <div class="modal-content" style="max-width:620px;">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-white text-lg font-bold">Enviar PDF por Email</h2>
+                        <p class="text-white/40 text-xs" id="emailRecipientCount">0 destinatarios</p>
+                    </div>
+                </div>
+                <button onclick="closeEmailModal()" class="p-2 rounded-lg hover:bg-white/5">
+                    <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Recipients preview -->
+            <div class="bg-white/3 rounded-xl p-3 mb-4" style="max-height:80px;overflow-y:auto;">
+                <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold mb-1">Destinatarios</p>
+                <div class="flex flex-wrap gap-1" id="emailRecipientsList"></div>
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-4">
+                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Asunto</label>
+                <input type="text" id="emailSubject" placeholder="Resumen Clase - Mercadeo Relacional y CRM"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+            </div>
+
+            <!-- Message -->
+            <div class="mb-4">
+                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Mensaje</label>
+                <textarea id="emailMessage" rows="3" placeholder="Adjunto encontraras el resumen de la clase de hoy..."
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all resize-none"></textarea>
+            </div>
+
+            <!-- PDF Upload -->
+            <div class="mb-5">
+                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Archivo PDF</label>
+                <div id="emailDropZone" onclick="document.getElementById('emailFileInput').click()"
+                    class="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-indigo-500/30 hover:bg-white/3 transition-all">
+                    <input type="file" id="emailFileInput" accept=".pdf" class="hidden" onchange="handlePdfSelect(event)">
+                    <div id="emailDropContent">
+                        <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                        <p class="text-white/40 text-sm">Arrastra un PDF aqui o haz click para seleccionar</p>
+                        <p class="text-white/20 text-xs mt-1">Maximo 7MB</p>
+                    </div>
+                    <div id="emailFileInfo" class="hidden">
+                        <div class="flex items-center justify-center gap-3">
+                            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            <div class="text-left">
+                                <p class="text-white text-sm font-medium" id="emailFileName">--</p>
+                                <p class="text-white/40 text-xs" id="emailFileSize">--</p>
+                            </div>
+                            <button onclick="event.stopPropagation();clearPdfSelection()" class="p-1.5 rounded-lg hover:bg-white/10 ml-2">
+                                <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error message -->
+            <div id="emailError" class="hidden mb-4 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm"></div>
+
+            <!-- Progress -->
+            <div id="emailProgress" class="hidden mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/60 text-xs" id="emailProgressText">Enviando...</span>
+                    <span class="text-white/40 text-xs" id="emailProgressCount">0/0</span>
+                </div>
+                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" id="emailProgressBar" style="width:0%"></div>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div id="emailResult" class="hidden mb-4 px-4 py-3 rounded-xl text-sm"></div>
+
+            <!-- Send button -->
+            <button id="emailSendBtn" onclick="sendPdfEmail()"
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                <span id="emailSendBtnText">Enviar a 0 estudiantes</span>
+            </button>
+        </div>
+    </div>
+
     <script>
         // ========================================
         // CONFIG
@@ -603,6 +697,10 @@
         const AUTO_REFRESH_MS = 30000;
         const ADMIN_HASH = '65cfa935991f95603b116cc69ca79ed99556dcec54616620387c81c9e9f680d3';
         const AUTH_KEY = 'crm_admin_auth';
+
+        // Email / Lambda config (configurar despues de crear Lambda + API Gateway)
+        const LAMBDA_EMAIL_URL = 'PEGAR_URL_API_GATEWAY_AQUI';
+        const LAMBDA_API_KEY = 'PEGAR_API_KEY_AQUI';
 
         // ========================================
         // LOGIN
@@ -1456,6 +1554,231 @@
         const style = document.createElement('style');
         style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
         document.head.appendChild(style);
+
+        // ========================================
+        // EMAIL PDF
+        // ========================================
+        let selectedPdfFile = null;
+        let selectedPdfBase64 = null;
+
+        function openEmailModal() {
+            const emails = allData.filter(d => d.email).map(d => d.email);
+            const uniqueEmails = [...new Set(emails)];
+            const count = uniqueEmails.length;
+
+            if (count === 0) {
+                alert('No hay estudiantes registrados para enviar email.');
+                return;
+            }
+
+            // Reset state
+            selectedPdfFile = null;
+            selectedPdfBase64 = null;
+            document.getElementById('emailFileInput').value = '';
+            document.getElementById('emailDropContent').classList.remove('hidden');
+            document.getElementById('emailFileInfo').classList.add('hidden');
+            document.getElementById('emailError').classList.add('hidden');
+            document.getElementById('emailProgress').classList.add('hidden');
+            document.getElementById('emailResult').classList.add('hidden');
+            document.getElementById('emailSendBtn').disabled = false;
+            document.getElementById('emailSendBtn').style.opacity = '1';
+
+            // Set recipients
+            document.getElementById('emailRecipientCount').textContent = `${count} destinatario${count !== 1 ? 's' : ''}`;
+            document.getElementById('emailRecipientsList').innerHTML = uniqueEmails.map(e =>
+                `<span class="inline-block px-2 py-0.5 rounded-md text-[11px] bg-indigo-500/10 text-indigo-300">${e}</span>`
+            ).join('');
+
+            // Default subject
+            const today = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('emailSubject').value = `Resumen de Clase ${today} - Mercadeo Relacional y CRM`;
+            document.getElementById('emailMessage').value = '';
+            document.getElementById('emailSendBtnText').textContent = `Enviar a ${count} estudiantes`;
+
+            // Show modal
+            document.getElementById('emailModal').classList.add('active');
+            closeSidebar();
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').classList.remove('active');
+        }
+
+        function handlePdfSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type !== 'application/pdf') {
+                showEmailError('Solo se permiten archivos PDF.');
+                return;
+            }
+
+            const maxSize = 7 * 1024 * 1024; // 7MB
+            if (file.size > maxSize) {
+                showEmailError(`El archivo pesa ${(file.size / 1024 / 1024).toFixed(1)}MB. El maximo es 7MB. Intenta comprimirlo.`);
+                return;
+            }
+
+            selectedPdfFile = file;
+            document.getElementById('emailFileName').textContent = file.name;
+            document.getElementById('emailFileSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+            document.getElementById('emailDropContent').classList.add('hidden');
+            document.getElementById('emailFileInfo').classList.remove('hidden');
+            document.getElementById('emailError').classList.add('hidden');
+
+            // Read as base64
+            const reader = new FileReader();
+            reader.onload = () => {
+                selectedPdfBase64 = reader.result.split(',')[1]; // remove data:...;base64, prefix
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearPdfSelection() {
+            selectedPdfFile = null;
+            selectedPdfBase64 = null;
+            document.getElementById('emailFileInput').value = '';
+            document.getElementById('emailDropContent').classList.remove('hidden');
+            document.getElementById('emailFileInfo').classList.add('hidden');
+        }
+
+        // Drag & drop
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('emailDropZone');
+            if (!dropZone) return;
+            ['dragenter', 'dragover'].forEach(evt => {
+                dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.style.borderColor = 'rgba(99,102,241,0.4)'; });
+            });
+            ['dragleave', 'drop'].forEach(evt => {
+                dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.style.borderColor = ''; });
+            });
+            dropZone.addEventListener('drop', e => {
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    const input = document.getElementById('emailFileInput');
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    input.files = dt.files;
+                    handlePdfSelect({ target: input });
+                }
+            });
+        });
+
+        function showEmailError(msg) {
+            const el = document.getElementById('emailError');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        async function sendPdfEmail() {
+            // Validate
+            const subject = document.getElementById('emailSubject').value.trim();
+            const message = document.getElementById('emailMessage').value.trim();
+
+            if (!subject) return showEmailError('El asunto es obligatorio.');
+            if (!selectedPdfBase64) return showEmailError('Selecciona un archivo PDF.');
+
+            if (LAMBDA_EMAIL_URL === 'PEGAR_URL_API_GATEWAY_AQUI') {
+                return showEmailError('Falta configurar la URL de Lambda. Revisa LAMBDA_EMAIL_URL en el codigo.');
+            }
+
+            const recipients = allData
+                .filter(d => d.email)
+                .reduce((acc, d) => {
+                    if (!acc.find(r => r.email === d.email)) {
+                        acc.push({ email: d.email, nombre: d.nombre || 'Estudiante' });
+                    }
+                    return acc;
+                }, []);
+
+            if (recipients.length === 0) return showEmailError('No hay emails para enviar.');
+
+            // Hide error, show progress
+            document.getElementById('emailError').classList.add('hidden');
+            document.getElementById('emailProgress').classList.remove('hidden');
+            document.getElementById('emailResult').classList.add('hidden');
+            document.getElementById('emailSendBtn').disabled = true;
+            document.getElementById('emailSendBtn').style.opacity = '0.5';
+            document.getElementById('emailProgressText').textContent = 'Enviando correos...';
+            document.getElementById('emailProgressCount').textContent = `0/${recipients.length}`;
+            document.getElementById('emailProgressBar').style.width = '10%';
+
+            const htmlBody = buildEmailTemplate(message);
+
+            try {
+                const response = await fetch(LAMBDA_EMAIL_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': LAMBDA_API_KEY
+                    },
+                    body: JSON.stringify({
+                        recipients,
+                        pdfBase64: selectedPdfBase64,
+                        pdfName: selectedPdfFile.name,
+                        subject,
+                        htmlBody,
+                        senderName: 'Mercadeo Relacional y CRM - UAO'
+                    })
+                });
+
+                document.getElementById('emailProgressBar').style.width = '90%';
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.error || `Error HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                document.getElementById('emailProgressBar').style.width = '100%';
+                document.getElementById('emailProgressText').textContent = 'Completado';
+                document.getElementById('emailProgressCount').textContent = `${result.sent}/${result.total}`;
+
+                // Show result
+                const resultEl = document.getElementById('emailResult');
+                resultEl.classList.remove('hidden');
+
+                if (result.failed === 0) {
+                    resultEl.style.background = 'rgba(16,185,129,0.1)';
+                    resultEl.style.borderColor = 'rgba(16,185,129,0.2)';
+                    resultEl.style.color = '#6ee7b7';
+                    resultEl.innerHTML = `Enviado exitosamente a ${result.sent} estudiante${result.sent !== 1 ? 's' : ''}.`;
+                } else {
+                    resultEl.style.background = 'rgba(245,158,11,0.1)';
+                    resultEl.style.borderColor = 'rgba(245,158,11,0.2)';
+                    resultEl.style.color = '#fcd34d';
+                    resultEl.innerHTML = `Enviados: ${result.sent} | Fallidos: ${result.failed}<br>` +
+                        result.errors.map(e => `<span class="text-xs text-red-300">${e.email}: ${e.error}</span>`).join('<br>');
+                }
+
+            } catch (err) {
+                document.getElementById('emailProgress').classList.add('hidden');
+                showEmailError(`Error al enviar: ${err.message}`);
+            }
+
+            document.getElementById('emailSendBtn').disabled = false;
+            document.getElementById('emailSendBtn').style.opacity = '1';
+        }
+
+        function buildEmailTemplate(customMessage) {
+            return `
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
+                <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px 24px;border-radius:8px 8px 0 0;">
+                    <h1 style="color:white;margin:0;font-size:22px;font-weight:700;">Mercadeo Relacional y CRM</h1>
+                    <p style="color:rgba(255,255,255,0.8);margin:8px 0 0;font-size:14px;">Universidad Autonoma de Occidente</p>
+                </div>
+                <div style="padding:32px 24px;background:#ffffff;">
+                    <p style="color:#1f2937;font-size:16px;line-height:1.6;margin:0 0 16px;">Hola <strong>{{nombre}}</strong>,</p>
+                    ${customMessage ? `<p style="color:#4b5563;font-size:15px;line-height:1.6;margin:0 0 16px;">${customMessage.replace(/\n/g, '<br>')}</p>` : ''}
+                    <p style="color:#4b5563;font-size:15px;line-height:1.6;margin:0 0 16px;">Encontraras el resumen adjunto a este correo.</p>
+                    <p style="color:#4b5563;font-size:15px;line-height:1.6;margin:0;">Saludos!</p>
+                </div>
+                <div style="padding:20px 24px;background:#f9fafb;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;">
+                    <p style="color:#9ca3af;font-size:12px;margin:0;">Este correo fue enviado desde el CRM del curso Mercadeo Relacional y CRM - UAO.</p>
+                </div>
+            </div>`;
+        }
     </script>
 </body>
 </html>
