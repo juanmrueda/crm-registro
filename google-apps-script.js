@@ -824,11 +824,14 @@ function recalcularTodosPuntos() {
     return [email, e.nombre, total, e.puntosAsistencia, e.puntosPuntualidad, e.puntosEmail, e.clasesAsistidas, pct, e.puntosManuales];
   });
 
-  // Limpiar hoja Puntos completamente y escribir todo de una vez
-  if (puntosSheet.getLastRow() > 1) {
-    puntosSheet.getRange(2, 1, puntosSheet.getLastRow() - 1, 9).clearContent();
+  // Eliminar todas las filas de datos (no solo limpiar contenido)
+  const lastRow = puntosSheet.getLastRow();
+  if (lastRow > 1) {
+    puntosSheet.deleteRows(2, lastRow - 1);
   }
+  // Escribir todo de una vez
   if (rows.length > 0) {
+    puntosSheet.insertRowsAfter(1, rows.length);
     puntosSheet.getRange(2, 1, rows.length, 9).setValues(rows);
   }
 }
