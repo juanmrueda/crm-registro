@@ -753,23 +753,82 @@ function recalcularPuntosEstudiante(email) {
 
 function recalcularTodosPuntos() {
   const regSheet = getSheet('Registros');
-  if (!regSheet) return;
+  const puntosSheet = getSheet('Puntos');
+  if (!regSheet || !puntosSheet) return;
 
+  const config = getConfig();
+  const puntosBase = config.puntosAsistencia || 10;
+
+  // Leer TODO una sola vez
   const regData = regSheet.getDataRange().getValues();
-  const emails = [];
+  const asistSheet = getSheet('Asistencia');
+  const trackSheet = getSheet('EventosTracking');
+  const clasesSheet = getSheet('Clases');
+
+  const asistData = asistSheet ? asistSheet.getDataRange().getValues() : [];
+  const trackData = trackSheet ? trackSheet.getDataRange().getValues() : [];
+  const clasesData = clasesSheet ? clasesSheet.getDataRange().getValues() : [];
+
+  // Contar clases activas/finalizadas
+  let totalClases = 0;
+  for (let i = 1; i < clasesData.length; i++) {
+    if (clasesData[i][8] === 'activa' || clasesData[i][8] === 'finalizada') totalClases++;
+  }
+
+  // Construir mapa de estudiantes
+  const estudiantes = {};
   for (let i = 1; i < regData.length; i++) {
     if (regData[i][2]) {
-      emails.push(regData[i][2].toString().toLowerCase().trim());
+      const email = regData[i][2].toString().toLowerCase().trim();
+      estudiantes[email] = {
+        nombre: regData[i][1],
+        puntosAsistencia: 0, puntosPuntualidad: 0, puntosEmail: 0,
+        puntosManuales: 0, clasesAsistidas: 0
+      };
     }
   }
 
-  // Limpiar hoja Puntos (mantener headers)
-  const puntosSheet = getSheet('Puntos');
-  if (puntosSheet && puntosSheet.getLastRow() > 1) {
-    puntosSheet.getRange(2, 1, puntosSheet.getLastRow() - 1, 8).clearContent();
+  // Sumar asistencia
+  for (let i = 1; i < asistData.length; i++) {
+    if (asistData[i][1]) {
+      const email = asistData[i][1].toString().toLowerCase().trim();
+      if (estudiantes[email]) {
+        estudiantes[email].clasesAsistidas++;
+        const ptsTotal = Number(asistData[i][6]) || 0;
+        estudiantes[email].puntosAsistencia += puntosBase;
+        estudiantes[email].puntosPuntualidad += Math.max(0, ptsTotal - puntosBase);
+      }
+    }
   }
 
-  emails.forEach(function(email) {
-    recalcularPuntosEstudiante(email);
+  // Sumar tracking y manuales
+  for (let i = 1; i < trackData.length; i++) {
+    if (trackData[i][1]) {
+      const email = trackData[i][1].toString().toLowerCase().trim();
+      if (estudiantes[email]) {
+        if (trackData[i][3] === 'manual') {
+          estudiantes[email].puntosManuales += Number(trackData[i][4]) || 0;
+        } else {
+          estudiantes[email].puntosEmail += Number(trackData[i][4]) || 0;
+        }
+      }
+    }
+  }
+
+  // Construir todas las filas de una vez
+  const emails = Object.keys(estudiantes);
+  const rows = emails.map(email => {
+    const e = estudiantes[email];
+    const total = e.puntosAsistencia + e.puntosPuntualidad + e.puntosEmail + e.puntosManuales;
+    const pct = totalClases > 0 ? Math.round((e.clasesAsistidas / totalClases) * 100) + '%' : '0%';
+    return [email, e.nombre, total, e.puntosAsistencia, e.puntosPuntualidad, e.puntosEmail, e.clasesAsistidas, pct, e.puntosManuales];
   });
+
+  // Limpiar hoja Puntos completamente y escribir todo de una vez
+  if (puntosSheet.getLastRow() > 1) {
+    puntosSheet.getRange(2, 1, puntosSheet.getLastRow() - 1, 9).clearContent();
+  }
+  if (rows.length > 0) {
+    puntosSheet.getRange(2, 1, rows.length, 9).setValues(rows);
+  }
 }
