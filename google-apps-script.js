@@ -189,7 +189,7 @@ function handleGetAsistencia(params) {
 function handleGetPuntos() {
   const sheet = getSheet('Puntos');
   if (!sheet) return jsonResponse({ status: 'ok', data: [] });
-  const data = sheetToObjects(sheet, null);
+  const data = sheetToObjects(sheet, null).filter(r => r.Email && r.Email.trim() !== '');
   return jsonResponse({ status: 'ok', data: data });
 }
 
@@ -824,14 +824,14 @@ function recalcularTodosPuntos() {
     return [email, e.nombre, total, e.puntosAsistencia, e.puntosPuntualidad, e.puntosEmail, e.clasesAsistidas, pct, e.puntosManuales];
   });
 
-  // Eliminar todas las filas de datos (no solo limpiar contenido)
-  const lastRow = puntosSheet.getLastRow();
-  if (lastRow > 1) {
-    puntosSheet.deleteRows(2, lastRow - 1);
+  // Limpiar TODA la hoja excepto header (contenido + formato numérico residual)
+  const maxRow = puntosSheet.getMaxRows();
+  if (maxRow > 1) {
+    // Limpiar todas las celdas debajo del header
+    puntosSheet.getRange(2, 1, maxRow - 1, puntosSheet.getMaxColumns()).clear();
   }
-  // Escribir todo de una vez
+  // Escribir datos desde fila 2
   if (rows.length > 0) {
-    puntosSheet.insertRowsAfter(1, rows.length);
     puntosSheet.getRange(2, 1, rows.length, 9).setValues(rows);
   }
 }
