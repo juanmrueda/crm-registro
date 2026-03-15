@@ -151,6 +151,13 @@
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if (!email) return;
 
+            // Mostrar loading
+            const btn = document.querySelector('#loginView button');
+            const btnText = btn.textContent;
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Cargando...</span>';
+
             try {
                 const res = await fetch(APPS_SCRIPT_URL + '?action=getPortal&email=' + encodeURIComponent(email));
                 const json = await res.json();
@@ -173,6 +180,10 @@
                 err.textContent = 'Error de conexion';
                 err.classList.remove('hidden');
             }
+
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.textContent = btnText;
         }
 
         function logoutPortal() {
@@ -260,8 +271,8 @@
 
             const btn = document.getElementById('checkinBtn');
             btn.disabled = true;
-            btn.style.opacity = '0.5';
-            btn.textContent = '...';
+            btn.style.opacity = '0.6';
+            btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Registrando...</span>';
 
             try {
                 // POST con mode: 'no-cors' porque Google Apps Script redirige (302)
