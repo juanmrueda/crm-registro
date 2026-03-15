@@ -40,6 +40,10 @@
 
 // ============ HELPERS ============
 
+function nowColombia() {
+  return Utilities.formatDate(new Date(), 'America/Bogota', "yyyy-MM-dd'T'HH:mm:ss");
+}
+
 function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
@@ -320,7 +324,7 @@ function handleRegistro(data) {
   if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja Registros no encontrada' });
 
   const row = [
-    data.timestamp || new Date().toISOString(),
+    data.timestamp || nowColombia(),
     data.nombre || '', data.email || '', data.celular || '',
     data.ciudad || '', data.genero || '', data.fechaNacimiento || '',
     data.empresa || '', data.cargo || '', data.sector || '',
@@ -353,7 +357,7 @@ function handleCrearClase(data) {
     claseId,
     numero,
     data.titulo || 'Clase ' + numero,
-    data.fecha || new Date().toISOString().split('T')[0],
+    data.fecha || nowColombia().split('T')[0],
     data.horaInicio || '',
     data.horaFin || '',
     '', // CodigoAsistencia (se genera al activar)
@@ -391,7 +395,7 @@ function handleActivarAsistencia(data) {
     const config = getConfig();
     const codigo = generarCodigo();
     const vigencia = (config.codigoVigenciaMin || 30) * 60 * 1000;
-    const expira = new Date(Date.now() + vigencia).toISOString();
+    const expira = Utilities.formatDate(new Date(Date.now() + vigencia), 'America/Bogota', "yyyy-MM-dd'T'HH:mm:ss");
 
     sheet.getRange(rowIndex, 7).setValue(codigo); // G: CodigoAsistencia
     sheet.getRange(rowIndex, 8).setValue(expira); // H: CodigoExpira
@@ -491,19 +495,23 @@ function handleCheckin(data) {
       }
     }
 
-    // Calcular puntualidad
+    // Calcular puntualidad (todo en hora Colombia)
     const config = getConfig();
-    const ahora = new Date();
+    const ahoraCOL = Utilities.formatDate(new Date(), 'America/Bogota', 'yyyy-MM-dd HH:mm');
 
-    // Construir datetime de inicio de clase
+    // Construir datetime de inicio de clase en hora Colombia
     let fechaClase = claseEncontrada.fecha;
     if (fechaClase instanceof Date) {
-      fechaClase = fechaClase.toISOString().split('T')[0];
+      fechaClase = Utilities.formatDate(fechaClase, 'America/Bogota', 'yyyy-MM-dd');
     }
-    const horaInicio = claseEncontrada.horaInicio || '00:00';
-    const inicioClase = new Date(fechaClase + 'T' + horaInicio + ':00');
-
-    const diffMs = inicioClase.getTime() - ahora.getTime();
+    const horaInicio = claseEncontrada.horaInicio instanceof Date
+      ? Utilities.formatDate(claseEncontrada.horaInicio, 'America/Bogota', 'HH:mm')
+      : (claseEncontrada.horaInicio || '00:00');
+    // Parsear ambos como minutos desde medianoche para comparar
+    const aHora = ahoraCOL.split(' ')[1];
+    const aMin = parseInt(aHora.split(':')[0]) * 60 + parseInt(aHora.split(':')[1]);
+    const iMin = parseInt(horaInicio.split(':')[0]) * 60 + parseInt(horaInicio.split(':')[1]);
+    const diffMs = (iMin - aMin) * 60000;
     const minutosAntes = Math.round(diffMs / 60000);
 
     // Calcular puntos de puntualidad
@@ -528,7 +536,7 @@ function handleCheckin(data) {
 
     // Registrar asistencia
     const row = [
-      ahora.toISOString(),
+      nowColombia(),
       email,
       nombreEstudiante,
       claseEncontrada.claseId,
@@ -588,7 +596,7 @@ function handleLogTracking(data) {
   }
 
   const row = [
-    new Date().toISOString(),
+    nowColombia(),
     email,
     data.claseId,
     data.tipo,
@@ -633,7 +641,7 @@ function handleDarPuntos(data) {
   if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja EventosTracking no encontrada' });
 
   sheet.appendRow([
-    new Date().toISOString(),
+    nowColombia(),
     email,
     data.motivo,
     'manual',
