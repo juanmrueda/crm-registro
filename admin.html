@@ -693,7 +693,7 @@
                             <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs font-medium hover:bg-indigo-500/25 transition-colors">
                                 + Dar Puntos
                             </button>
-                            <button onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
+                            <button id="recalcularBtn" onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
                                 Recalcular
                             </button>
                         </div>
@@ -2241,10 +2241,25 @@
         }
 
         async function recalcularPuntos() {
+            const btn = document.getElementById('recalcularBtn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.innerHTML = '<span class="inline-flex items-center gap-1"><svg class="animate-spin h-3 w-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Recalculando...</span>';
             try {
                 await postAppsScript({ action: 'recalcularPuntos' });
-                setTimeout(() => loadPuntos(), 3000);
-            } catch (e) { alert('Error: ' + e.message); }
+                // Con 21+ estudiantes toma más tiempo
+                setTimeout(() => {
+                    loadPuntos();
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.textContent = 'Recalcular';
+                }, 8000);
+            } catch (e) {
+                alert('Error: ' + e.message);
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.textContent = 'Recalcular';
+            }
         }
 
         // ========================================
