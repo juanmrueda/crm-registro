@@ -135,6 +135,7 @@ function doPost(e) {
       case 'checkin': return handleCheckin(body);
       case 'logTracking': return handleLogTracking(body);
       case 'recalcularPuntos': return handleRecalcularPuntos();
+      case 'darPuntos': return handleDarPuntos(body);
       default: return handleRegistro(body);
     }
   } catch (error) {
@@ -604,6 +605,47 @@ function handleLogTracking(data) {
   return jsonResponse({ status: 'ok', puntos: puntos, nuevo: !yaExiste });
 }
 
+function handleDarPuntos(data) {
+  if (!data.email || !data.puntos || !data.motivo) {
+    return jsonResponse({ status: 'error', message: 'email, puntos y motivo son requeridos' });
+  }
+
+  const email = data.email.toLowerCase().trim();
+  const puntos = Number(data.puntos) || 0;
+  if (puntos <= 0) return jsonResponse({ status: 'error', message: 'Puntos debe ser mayor a 0' });
+
+  // Verificar que el estudiante existe
+  const regSheet = getSheet('Registros');
+  if (!regSheet) return jsonResponse({ status: 'error', message: 'Sistema no configurado' });
+
+  let nombre = '';
+  const regData = regSheet.getDataRange().getValues();
+  for (let i = 1; i < regData.length; i++) {
+    if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
+      nombre = regData[i][1];
+      break;
+    }
+  }
+  if (!nombre) return jsonResponse({ status: 'error', message: 'Email no registrado' });
+
+  // Registrar en EventosTracking con tipo "manual"
+  const sheet = getSheet('EventosTracking');
+  if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja EventosTracking no encontrada' });
+
+  sheet.appendRow([
+    new Date().toISOString(),
+    email,
+    data.motivo,
+    'manual',
+    puntos
+  ]);
+
+  // Recalcular puntos del estudiante
+  try { recalcularPuntosEstudiante(email); } catch(e) {}
+
+  return jsonResponse({ status: 'ok', message: 'Puntos asignados', email: email, puntos: puntos });
+}
+
 function handleRecalcularPuntos() {
   recalcularTodosPuntos();
   return jsonResponse({ status: 'ok', message: 'Puntos recalculados' });
@@ -663,18 +705,23 @@ function recalcularPuntosEstudiante(email) {
     }
   }
 
-  // Sumar puntos de tracking
+  // Sumar puntos de tracking y manuales
   let puntosEmail = 0;
+  let puntosManuales = 0;
   if (trackSheet) {
     const trackData = trackSheet.getDataRange().getValues();
     for (let i = 1; i < trackData.length; i++) {
       if (trackData[i][1] && trackData[i][1].toString().toLowerCase().trim() === email) {
-        puntosEmail += Number(trackData[i][4]) || 0;
+        if (trackData[i][3] === 'manual') {
+          puntosManuales += Number(trackData[i][4]) || 0;
+        } else {
+          puntosEmail += Number(trackData[i][4]) || 0;
+        }
       }
     }
   }
 
-  const totalPuntos = puntosAsistencia + puntosPuntualidad + puntosEmail;
+  const totalPuntos = puntosAsistencia + puntosPuntualidad + puntosEmail + puntosManuales;
   const porcentaje = totalClases > 0 ? Math.round((clasesAsistidas / totalClases) * 100) + '%' : '0%';
 
   // Buscar si ya existe fila para este estudiante
@@ -687,10 +734,10 @@ function recalcularPuntosEstudiante(email) {
     }
   }
 
-  const rowData = [email, nombre, totalPuntos, puntosAsistencia, puntosPuntualidad, puntosEmail, clasesAsistidas, porcentaje];
+  const rowData = [email, nombre, totalPuntos, puntosAsistencia, puntosPuntualidad, puntosEmail, clasesAsistidas, porcentaje, puntosManuales];
 
   if (filaExistente > 0) {
-    puntosSheet.getRange(filaExistente, 1, 1, 8).setValues([rowData]);
+    puntosSheet.getRange(filaExistente, 1, 1, 9).setValues([rowData]);
   } else {
     puntosSheet.appendRow(rowData);
   }

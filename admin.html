@@ -689,9 +689,14 @@
                 <div class="card">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-white/80 text-sm font-semibold">Ranking de Estudiantes</h3>
-                        <button onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
-                            Recalcular
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs font-medium hover:bg-indigo-500/25 transition-colors">
+                                + Dar Puntos
+                            </button>
+                            <button onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
+                                Recalcular
+                            </button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="data-table">
@@ -703,6 +708,7 @@
                                     <th class="hidden sm:table-cell">Asistencia</th>
                                     <th class="hidden md:table-cell">Puntualidad</th>
                                     <th class="hidden lg:table-cell">Email</th>
+                                    <th class="hidden lg:table-cell">Manual</th>
                                     <th>% Asist.</th>
                                 </tr>
                             </thead>
@@ -714,6 +720,58 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dar Puntos Modal -->
+    <div class="modal-overlay" id="darPuntosModal" onclick="if(event.target===this)cerrarDarPuntos()">
+        <div class="modal-content" style="max-width:480px;">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-white text-lg font-bold">Dar Puntos</h2>
+                        <p class="text-white/40 text-xs">Asignar puntos manualmente</p>
+                    </div>
+                </div>
+                <button onclick="cerrarDarPuntos()" class="p-2 rounded-lg hover:bg-white/5">
+                    <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-white/50 text-xs font-medium mb-1 block">Estudiante</label>
+                    <select id="puntosEstudiante" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        <option value="">Seleccionar estudiante...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-white/50 text-xs font-medium mb-1 block">Puntos</label>
+                    <input type="number" id="puntosCantidad" min="1" max="100" value="5" placeholder="Cantidad de puntos"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                </div>
+                <div>
+                    <label class="text-white/50 text-xs font-medium mb-1 block">Motivo</label>
+                    <select id="puntosMotivo" onchange="if(this.value==='otro')document.getElementById('puntosMotivoOtro').classList.remove('hidden');else document.getElementById('puntosMotivoOtro').classList.add('hidden');"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        <option value="Participacion en clase">Participacion en clase</option>
+                        <option value="Quiz / Taller">Quiz / Taller</option>
+                        <option value="Exposicion">Exposicion</option>
+                        <option value="Trabajo extra">Trabajo extra</option>
+                        <option value="Bonus">Bonus</option>
+                        <option value="otro">Otro...</option>
+                    </select>
+                    <input type="text" id="puntosMotivoOtro" placeholder="Escribe el motivo"
+                        class="hidden w-full mt-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                </div>
+                <div id="puntosResult" class="hidden rounded-xl p-3 text-sm"></div>
+                <button onclick="enviarPuntos()" id="enviarPuntosBtn"
+                    class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    Asignar Puntos
+                </button>
             </div>
         </div>
     </div>
@@ -2176,6 +2234,7 @@
                     <td class="hidden sm:table-cell text-white/60">${Number(s.PuntosAsistencia) || 0}</td>
                     <td class="hidden md:table-cell text-white/60">${Number(s.PuntosPuntualidad) || 0}</td>
                     <td class="hidden lg:table-cell text-white/60">${Number(s.PuntosEmail) || 0}</td>
+                    <td class="hidden lg:table-cell text-amber-300/80">${Number(s.PuntosManuales) || 0}</td>
                     <td><span class="px-2 py-0.5 rounded-md text-xs ${(parseInt(s.PorcentajeAsistencia) || 0) >= 80 ? 'bg-emerald-500/15 text-emerald-300' : (parseInt(s.PorcentajeAsistencia) || 0) >= 50 ? 'bg-amber-500/15 text-amber-300' : 'bg-red-500/15 text-red-300'}">${s.PorcentajeAsistencia || '0%'}</span></td>
                 </tr>`;
             }).join('');
@@ -2186,6 +2245,73 @@
                 await postAppsScript({ action: 'recalcularPuntos' });
                 setTimeout(() => loadPuntos(), 3000);
             } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        // ========================================
+        // DAR PUNTOS MANUAL
+        // ========================================
+        function abrirDarPuntos() {
+            const select = document.getElementById('puntosEstudiante');
+            select.innerHTML = '<option value="">Seleccionar estudiante...</option>';
+            const estudiantes = [...allData].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+            estudiantes.forEach(est => {
+                if (est.email) {
+                    select.innerHTML += `<option value="${est.email}">${est.nombre || est.email}</option>`;
+                }
+            });
+            document.getElementById('puntosResult').classList.add('hidden');
+            document.getElementById('puntosCantidad').value = '5';
+            document.getElementById('puntosMotivo').value = 'Participacion en clase';
+            document.getElementById('puntosMotivoOtro').classList.add('hidden');
+            document.getElementById('darPuntosModal').classList.add('active');
+        }
+
+        function cerrarDarPuntos() {
+            document.getElementById('darPuntosModal').classList.remove('active');
+        }
+
+        async function enviarPuntos() {
+            const email = document.getElementById('puntosEstudiante').value;
+            const puntos = document.getElementById('puntosCantidad').value;
+            let motivo = document.getElementById('puntosMotivo').value;
+            if (motivo === 'otro') {
+                motivo = document.getElementById('puntosMotivoOtro').value.trim();
+            }
+
+            if (!email) { alert('Selecciona un estudiante'); return; }
+            if (!puntos || Number(puntos) <= 0) { alert('Ingresa una cantidad valida'); return; }
+            if (!motivo) { alert('Ingresa un motivo'); return; }
+
+            const btn = document.getElementById('enviarPuntosBtn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.textContent = 'Asignando...';
+
+            try {
+                await postAppsScript({
+                    action: 'darPuntos',
+                    email: email,
+                    puntos: Number(puntos),
+                    motivo: motivo
+                });
+
+                const result = document.getElementById('puntosResult');
+                const nombre = allData.find(d => d.email === email)?.nombre || email;
+                result.textContent = `+${puntos} puntos asignados a ${nombre} por "${motivo}"`;
+                result.style.background = 'rgba(16,185,129,0.1)';
+                result.style.border = '1px solid rgba(16,185,129,0.2)';
+                result.style.color = '#6ee7b7';
+                result.classList.remove('hidden');
+
+                // Reload data after a delay
+                setTimeout(() => loadPuntos(), 2500);
+            } catch (e) {
+                alert('Error de conexion: ' + e.message);
+            }
+
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.textContent = 'Asignar Puntos';
         }
 
         function buildEmailTemplate(customMessage) {
