@@ -377,6 +377,14 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
                 Canvas Insights
             </div>
+            <div class="nav-item" data-section="clases" onclick="showSection('clases')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Clases
+            </div>
+            <div class="nav-item" data-section="calificaciones" onclick="showSection('calificaciones')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                Calificaciones
+            </div>
 
             <div class="px-4 mt-6 mb-2">
                 <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest">Acciones</p>
@@ -396,7 +404,7 @@
         </nav>
 
         <div class="p-4 border-t border-white/5">
-            <p class="text-white/20 text-[10px] text-center">UAO - CRM v1.0</p>
+            <p class="text-white/20 text-[10px] text-center">UAO - CRM v2.0</p>
         </div>
     </aside>
 
@@ -589,6 +597,124 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ============================== -->
+            <!-- SECTION: CLASES -->
+            <!-- ============================== -->
+            <div class="section" id="section-clases">
+                <!-- Crear clase -->
+                <div class="card mb-4">
+                    <h3 class="text-white/80 text-sm font-semibold mb-4">Crear Nueva Clase</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div class="sm:col-span-2">
+                            <input type="text" id="claseTitle" placeholder="Titulo de la clase"
+                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        </div>
+                        <div>
+                            <input type="time" id="claseHoraInicio" value="14:00"
+                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        </div>
+                        <div>
+                            <button onclick="crearClase()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                                + Crear Clase
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Codigo activo -->
+                <div id="codigoActivoPanel" class="hidden mb-4">
+                    <div class="card" style="border-color:rgba(16,185,129,0.3);background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(6,182,212,0.05));">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-emerald-400 text-xs font-semibold uppercase tracking-wider">Asistencia Activa</p>
+                                <p class="text-white/60 text-sm mt-1" id="codigoClaseTitulo">--</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-white/40 text-xs" id="codigoCountdown">--</span>
+                                <button onclick="cerrarAsistencia()" class="px-3 py-1.5 rounded-lg bg-red-500/15 text-red-300 text-xs font-medium hover:bg-red-500/25 transition-colors">
+                                    Cerrar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center py-6">
+                            <p class="text-white text-7xl sm:text-8xl font-black tracking-[0.3em] font-mono" id="codigoDisplay">------</p>
+                            <p class="text-white/30 text-xs mt-3">Los estudiantes ingresan este codigo en el portal</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                                <span class="text-emerald-400/80 text-sm font-medium" id="codigoAsistentes">0 presentes</span>
+                            </div>
+                            <span class="text-white/30 text-xs" id="codigoTotal">de 0 registrados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de clases -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="clasesGrid">
+                    <div class="text-center py-8 text-white/30 text-sm col-span-full">No hay clases creadas aun</div>
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- SECTION: CALIFICACIONES -->
+            <!-- ============================== -->
+            <div class="section" id="section-calificaciones">
+                <!-- KPIs -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="kpi-card green">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Asistencia Promedio</p>
+                        <p class="counter text-white" id="kpiAsistencia">0%</p>
+                        <p class="text-white/30 text-xs mt-1">del grupo</p>
+                    </div>
+                    <div class="kpi-card purple">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Mejor Estudiante</p>
+                        <p class="text-white text-lg font-bold truncate" id="kpiMejor">--</p>
+                        <p class="text-white/30 text-xs mt-1" id="kpiMejorPuntos">0 pts</p>
+                    </div>
+                    <div class="kpi-card blue">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Promedio Puntos</p>
+                        <p class="counter text-white" id="kpiPromPuntos">0</p>
+                        <p class="text-white/30 text-xs mt-1">por estudiante</p>
+                    </div>
+                    <div class="kpi-card amber">
+                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Clases Realizadas</p>
+                        <p class="counter text-white" id="kpiTotalClases">0</p>
+                        <p class="text-white/30 text-xs mt-1">sesiones</p>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white/80 text-sm font-semibold">Ranking de Estudiantes</h3>
+                        <button onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
+                            Recalcular
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Estudiante</th>
+                                    <th>Puntos</th>
+                                    <th class="hidden sm:table-cell">Asistencia</th>
+                                    <th class="hidden md:table-cell">Puntualidad</th>
+                                    <th class="hidden lg:table-cell">Email</th>
+                                    <th>% Asist.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardTable">
+                            </tbody>
+                        </table>
+                        <div class="text-center py-8 text-white/30 text-sm" id="emptyLeaderboard">
+                            No hay datos de calificaciones aun
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -693,7 +819,7 @@
         // ========================================
         // CONFIG
         // ========================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrghUZeteiLwkHFxl_d8oJegIdeV8Uqd4uPErbDIr6qlZywrEeL4aTMYBD5xcPf-mRxw/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6EH-mcYAyXPcw1zLSFlVu4XdJWX-DPJpvIKReESx2pdIGkHkZ05MzdX7PumLuvmLqdg/exec';
         const AUTO_REFRESH_MS = 30000;
         const ADMIN_HASH = '65cfa935991f95603b116cc69ca79ed99556dcec54616620387c81c9e9f680d3';
         const AUTH_KEY = 'crm_admin_auth';
@@ -747,6 +873,11 @@
         let sortDir = 'desc';
         let activeFilters = {};
         let autoRefreshTimer = null;
+        let clasesData = [];
+        let puntosData = [];
+        let asistenciaData = [];
+        let claseActiva = null;
+        let codigoTimer = null;
 
         // DEMO DATA (will be replaced by real data when Apps Script is configured)
         const DEMO_DATA = [
@@ -807,7 +938,6 @@
                     const json = await response.json();
                     allData = json.data || json || [];
                 } else {
-                    // Use demo data
                     allData = DEMO_DATA;
                 }
             } catch (e) {
@@ -818,6 +948,36 @@
             filteredData = [...allData];
             updateAll();
             document.getElementById('lastUpdate').textContent = 'Ahora';
+
+            // Cargar clases y puntos
+            loadClases();
+            loadPuntos();
+        }
+
+        async function loadClases() {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getClases');
+                const json = await res.json();
+                clasesData = json.data || [];
+                updateClasesView();
+            } catch (e) { console.warn('Error loading clases:', e); }
+        }
+
+        async function loadPuntos() {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getPuntos');
+                const json = await res.json();
+                puntosData = json.data || [];
+                updateCalificaciones();
+            } catch (e) { console.warn('Error loading puntos:', e); }
+        }
+
+        async function loadAsistenciaClase(claseId) {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getAsistencia&claseId=' + claseId);
+                const json = await res.json();
+                return json.data || [];
+            } catch (e) { return []; }
         }
 
         function refreshData() {
@@ -1466,7 +1626,9 @@
                 overview: ['Overview', 'Resumen general del CRM'],
                 contacts: ['Contactos', 'Todos los estudiantes registrados'],
                 segments: ['Segmentos', 'Segmentacion automatica del grupo'],
-                insights: ['Canvas Insights', 'Inteligencia colectiva del grupo']
+                insights: ['Canvas Insights', 'Inteligencia colectiva del grupo'],
+                clases: ['Clases', 'Gestion de sesiones y asistencia'],
+                calificaciones: ['Calificaciones', 'Ranking y puntos de estudiantes']
             };
             document.getElementById('sectionTitle').textContent = titles[name]?.[0] || name;
             document.getElementById('sectionSubtitle').textContent = titles[name]?.[1] || '';
@@ -1759,6 +1921,284 @@
 
             document.getElementById('emailSendBtn').disabled = false;
             document.getElementById('emailSendBtn').style.opacity = '1';
+        }
+
+        // ========================================
+        // CLASES MANAGEMENT
+        // ========================================
+        async function crearClase() {
+            const titulo = document.getElementById('claseTitle').value.trim();
+            const horaInicio = document.getElementById('claseHoraInicio').value;
+
+            if (!titulo) { alert('Ingresa un titulo para la clase'); return; }
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        action: 'crearClase',
+                        titulo: titulo,
+                        fecha: new Date().toISOString().split('T')[0],
+                        horaInicio: horaInicio,
+                        horaFin: ''
+                    })
+                });
+                const json = await res.json();
+                if (json.status === 'ok') {
+                    document.getElementById('claseTitle').value = '';
+                    loadClases();
+                } else {
+                    alert('Error: ' + (json.message || 'No se pudo crear'));
+                }
+            } catch (e) { alert('Error de conexion: ' + e.message); }
+        }
+
+        async function activarAsistencia(claseId) {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'activarAsistencia', claseId: claseId })
+                });
+                const json = await res.json();
+                if (json.status === 'ok') {
+                    claseActiva = {
+                        claseId: claseId,
+                        codigo: json.codigo,
+                        expira: new Date(json.expira),
+                        titulo: clasesData.find(c => c.ClaseId === claseId)?.Titulo || claseId
+                    };
+                    mostrarCodigoActivo();
+                    loadClases();
+                    // Auto-refresh asistencia
+                    iniciarRefreshAsistencia();
+                } else {
+                    alert('Error: ' + (json.message || 'No se pudo activar'));
+                }
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function cerrarAsistencia() {
+            if (!claseActiva) return;
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'cerrarAsistencia', claseId: claseActiva.claseId })
+                });
+            } catch (e) {}
+            claseActiva = null;
+            document.getElementById('codigoActivoPanel').classList.add('hidden');
+            if (codigoTimer) { clearInterval(codigoTimer); codigoTimer = null; }
+            loadClases();
+            loadPuntos();
+        }
+
+        function mostrarCodigoActivo() {
+            if (!claseActiva) return;
+            const panel = document.getElementById('codigoActivoPanel');
+            panel.classList.remove('hidden');
+            document.getElementById('codigoDisplay').textContent = claseActiva.codigo;
+            document.getElementById('codigoClaseTitulo').textContent = claseActiva.titulo;
+
+            // Countdown
+            if (codigoTimer) clearInterval(codigoTimer);
+            codigoTimer = setInterval(() => {
+                const now = new Date();
+                const diff = claseActiva.expira - now;
+                if (diff <= 0) {
+                    document.getElementById('codigoCountdown').textContent = 'Expirado';
+                    clearInterval(codigoTimer);
+                    return;
+                }
+                const min = Math.floor(diff / 60000);
+                const sec = Math.floor((diff % 60000) / 1000);
+                document.getElementById('codigoCountdown').textContent = `${min}:${String(sec).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function iniciarRefreshAsistencia() {
+            // Refresh attendance count every 5 seconds while active
+            const interval = setInterval(async () => {
+                if (!claseActiva) { clearInterval(interval); return; }
+                const asist = await loadAsistenciaClase(claseActiva.claseId);
+                document.getElementById('codigoAsistentes').textContent = `${asist.length} presentes`;
+                document.getElementById('codigoTotal').textContent = `de ${allData.length} registrados`;
+            }, 5000);
+        }
+
+        function updateClasesView() {
+            const grid = document.getElementById('clasesGrid');
+            if (clasesData.length === 0) {
+                grid.innerHTML = '<div class="text-center py-8 text-white/30 text-sm col-span-full">No hay clases creadas aun</div>';
+                return;
+            }
+
+            // Check if there's an active class
+            const activa = clasesData.find(c => c.Estado === 'activa');
+            if (activa && !claseActiva) {
+                claseActiva = {
+                    claseId: activa.ClaseId,
+                    codigo: activa.CodigoAsistencia,
+                    expira: new Date(activa.CodigoExpira),
+                    titulo: activa.Titulo
+                };
+                mostrarCodigoActivo();
+                iniciarRefreshAsistencia();
+            }
+
+            grid.innerHTML = clasesData.sort((a, b) => (Number(b.Numero) || 0) - (Number(a.Numero) || 0)).map(c => {
+                const estado = c.Estado || 'programada';
+                const estadoColors = {
+                    programada: 'bg-white/10 text-white/50',
+                    activa: 'bg-emerald-500/20 text-emerald-300',
+                    finalizada: 'bg-indigo-500/15 text-indigo-300'
+                };
+                const fecha = c.Fecha ? new Date(c.Fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '--';
+
+                let actionBtn = '';
+                if (estado === 'programada') {
+                    actionBtn = `<button onclick="activarAsistencia('${c.ClaseId}')" class="w-full mt-3 py-2 rounded-lg bg-emerald-500/15 text-emerald-300 text-xs font-medium hover:bg-emerald-500/25 transition-colors">Activar Asistencia</button>`;
+                } else if (estado === 'finalizada') {
+                    actionBtn = `<button onclick="verAsistenciaClase('${c.ClaseId}')" class="w-full mt-3 py-2 rounded-lg bg-white/5 text-white/50 text-xs font-medium hover:bg-white/10 transition-colors">Ver Asistencia</button>`;
+                }
+
+                return `
+                <div class="card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-white/40 text-xs font-mono">Clase ${c.Numero}</span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-medium ${estadoColors[estado] || estadoColors.programada}">${estado}</span>
+                    </div>
+                    <h4 class="text-white font-semibold text-sm mb-1">${c.Titulo || 'Sin titulo'}</h4>
+                    <div class="flex items-center gap-3 text-white/40 text-xs">
+                        <span>${fecha}</span>
+                        ${c.HoraInicio ? `<span>${c.HoraInicio}</span>` : ''}
+                    </div>
+                    ${actionBtn}
+                </div>`;
+            }).join('');
+        }
+
+        async function verAsistenciaClase(claseId) {
+            const asist = await loadAsistenciaClase(claseId);
+            const clase = clasesData.find(c => c.ClaseId === claseId);
+            const titulo = clase ? `Clase ${clase.Numero}: ${clase.Titulo}` : claseId;
+
+            let html = `
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-white text-lg font-bold">${titulo}</h2>
+                        <p class="text-white/40 text-sm">${asist.length} asistentes</p>
+                    </div>
+                    <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-white/5">
+                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>`;
+
+            if (asist.length === 0) {
+                html += '<p class="text-white/30 text-sm text-center py-8">No hay registros de asistencia</p>';
+            } else {
+                html += '<div class="space-y-2">';
+                asist.forEach(a => {
+                    const mins = Number(a.MinutosAntes) || 0;
+                    const pts = Number(a.PuntosPuntualidad) || 0;
+                    const puntualLabel = mins > 0 ? `${mins} min temprano` : mins < 0 ? `${Math.abs(mins)} min tarde` : 'A tiempo';
+                    const puntualColor = mins > 0 ? 'text-emerald-400' : mins < 0 ? 'text-amber-400' : 'text-white/50';
+                    html += `
+                    <div class="flex items-center justify-between bg-white/3 rounded-xl p-3">
+                        <div>
+                            <p class="text-white text-sm font-medium">${a.Nombre || a.Email}</p>
+                            <p class="${puntualColor} text-xs">${puntualLabel}</p>
+                        </div>
+                        <span class="text-indigo-300 text-sm font-bold">${pts} pts</span>
+                    </div>`;
+                });
+                html += '</div>';
+            }
+
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        // ========================================
+        // CALIFICACIONES
+        // ========================================
+        function updateCalificaciones() {
+            const tbody = document.getElementById('leaderboardTable');
+            const empty = document.getElementById('emptyLeaderboard');
+
+            if (puntosData.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                // Reset KPIs
+                document.getElementById('kpiAsistencia').textContent = '0%';
+                document.getElementById('kpiMejor').textContent = '--';
+                document.getElementById('kpiMejorPuntos').textContent = '0 pts';
+                document.getElementById('kpiPromPuntos').textContent = '0';
+                document.getElementById('kpiTotalClases').textContent = '0';
+                return;
+            }
+            empty.style.display = 'none';
+
+            // Sort by total points descending
+            const sorted = [...puntosData].sort((a, b) => (Number(b.TotalPuntos) || 0) - (Number(a.TotalPuntos) || 0));
+
+            // KPIs
+            const totalClases = clasesData.filter(c => c.Estado === 'activa' || c.Estado === 'finalizada').length;
+            const avgAsist = sorted.length > 0
+                ? Math.round(sorted.reduce((sum, s) => sum + (parseInt(s.PorcentajeAsistencia) || 0), 0) / sorted.length)
+                : 0;
+            const avgPuntos = sorted.length > 0
+                ? Math.round(sorted.reduce((sum, s) => sum + (Number(s.TotalPuntos) || 0), 0) / sorted.length)
+                : 0;
+
+            document.getElementById('kpiAsistencia').textContent = avgAsist + '%';
+            document.getElementById('kpiMejor').textContent = sorted[0]?.Nombre?.split(' ')[0] || '--';
+            document.getElementById('kpiMejorPuntos').textContent = (Number(sorted[0]?.TotalPuntos) || 0) + ' pts';
+            document.getElementById('kpiPromPuntos').textContent = avgPuntos;
+            document.getElementById('kpiTotalClases').textContent = totalClases;
+
+            tbody.innerHTML = sorted.map((s, i) => {
+                const rank = i + 1;
+                const medalColors = ['text-yellow-400', 'text-gray-300', 'text-amber-600'];
+                const rankClass = i < 3 ? `font-bold ${medalColors[i]}` : 'text-white/40';
+                const initials = getInitials(s.Nombre);
+                const colorClass = AVATAR_COLORS[i % AVATAR_COLORS.length];
+
+                return `
+                <tr>
+                    <td class="${rankClass}">${rank}</td>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="avatar ${colorClass}" style="width:32px;height:32px;font-size:11px;border-radius:8px;">${initials}</div>
+                            <div>
+                                <p class="text-white text-sm font-medium">${s.Nombre || s.Email}</p>
+                                <p class="text-white/40 text-xs">${s.Email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="text-indigo-300 font-bold">${Number(s.TotalPuntos) || 0}</span></td>
+                    <td class="hidden sm:table-cell text-white/60">${Number(s.PuntosAsistencia) || 0}</td>
+                    <td class="hidden md:table-cell text-white/60">${Number(s.PuntosPuntualidad) || 0}</td>
+                    <td class="hidden lg:table-cell text-white/60">${Number(s.PuntosEmail) || 0}</td>
+                    <td><span class="px-2 py-0.5 rounded-md text-xs ${(parseInt(s.PorcentajeAsistencia) || 0) >= 80 ? 'bg-emerald-500/15 text-emerald-300' : (parseInt(s.PorcentajeAsistencia) || 0) >= 50 ? 'bg-amber-500/15 text-amber-300' : 'bg-red-500/15 text-red-300'}">${s.PorcentajeAsistencia || '0%'}</span></td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function recalcularPuntos() {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'recalcularPuntos' })
+                });
+                const json = await res.json();
+                if (json.status === 'ok') {
+                    loadPuntos();
+                }
+            } catch (e) { alert('Error: ' + e.message); }
         }
 
         function buildEmailTemplate(customMessage) {
