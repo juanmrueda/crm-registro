@@ -264,8 +264,10 @@
             btn.textContent = '...';
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
+                // POST con mode: 'no-cors' porque Google Apps Script redirige (302)
+                await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({
                         action: 'checkin',
@@ -273,22 +275,25 @@
                         codigo: code
                     })
                 });
-                const json = await res.json();
 
-                if (json.status === 'ok') {
-                    let msg = `Asistencia registrada! +${json.puntos} puntos`;
-                    if (json.puntosPuntualidad > 0) {
-                        msg += ` (${json.puntosBase} base + ${json.puntosPuntualidad} puntualidad)`;
+                // Con no-cors no podemos leer la respuesta,
+                // mostramos mensaje de espera y recargamos datos para confirmar
+                showCheckinResult('Procesando check-in...', true);
+                document.getElementById('checkinCode').value = '';
+
+                // Esperar a que Apps Script procese, luego recargar datos del portal
+                setTimeout(async () => {
+                    const oldPuntos = portalData ? portalData.totalPuntos || 0 : 0;
+                    await loginPortal();
+                    const newPuntos = portalData ? portalData.totalPuntos || 0 : 0;
+                    if (newPuntos > oldPuntos) {
+                        showCheckinResult(`Asistencia registrada! +${newPuntos - oldPuntos} puntos`, true);
+                    } else {
+                        showCheckinResult('Check-in enviado. Si ya estabas registrado, no se duplica.', true);
                     }
-                    showCheckinResult(msg, true);
-                    document.getElementById('checkinCode').value = '';
-                    // Reload data
-                    setTimeout(() => loginPortal(), 1500);
-                } else {
-                    showCheckinResult(json.message || 'Error', false);
-                }
+                }, 2500);
             } catch (e) {
-                showCheckinResult('Error de conexion', false);
+                showCheckinResult('Error de conexion. Intenta de nuevo.', false);
             }
 
             btn.disabled = false;

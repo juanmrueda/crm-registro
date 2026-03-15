@@ -1926,6 +1926,16 @@
         // ========================================
         // CLASES MANAGEMENT
         // ========================================
+        // Helper: POST to Apps Script (no-cors, then reload)
+        async function postAppsScript(data) {
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        }
+
         async function crearClase() {
             const titulo = document.getElementById('claseTitle').value.trim();
             const horaInicio = document.getElementById('claseHoraInicio').value;
@@ -1933,66 +1943,50 @@
             if (!titulo) { alert('Ingresa un titulo para la clase'); return; }
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        action: 'crearClase',
-                        titulo: titulo,
-                        fecha: new Date().toISOString().split('T')[0],
-                        horaInicio: horaInicio,
-                        horaFin: ''
-                    })
+                await postAppsScript({
+                    action: 'crearClase',
+                    titulo: titulo,
+                    fecha: new Date().toISOString().split('T')[0],
+                    horaInicio: horaInicio,
+                    horaFin: ''
                 });
-                const json = await res.json();
-                if (json.status === 'ok') {
-                    document.getElementById('claseTitle').value = '';
-                    loadClases();
-                } else {
-                    alert('Error: ' + (json.message || 'No se pudo crear'));
-                }
+                document.getElementById('claseTitle').value = '';
+                // Wait for GAS to process, then reload
+                setTimeout(() => loadClases(), 2000);
             } catch (e) { alert('Error de conexion: ' + e.message); }
         }
 
         async function activarAsistencia(claseId) {
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'activarAsistencia', claseId: claseId })
-                });
-                const json = await res.json();
-                if (json.status === 'ok') {
-                    claseActiva = {
-                        claseId: claseId,
-                        codigo: json.codigo,
-                        expira: new Date(json.expira),
-                        titulo: clasesData.find(c => c.ClaseId === claseId)?.Titulo || claseId
-                    };
-                    mostrarCodigoActivo();
-                    loadClases();
-                    // Auto-refresh asistencia
-                    iniciarRefreshAsistencia();
-                } else {
-                    alert('Error: ' + (json.message || 'No se pudo activar'));
-                }
+                await postAppsScript({ action: 'activarAsistencia', claseId: claseId });
+                // Wait for GAS, then reload clases to get the generated code
+                setTimeout(async () => {
+                    await loadClases();
+                    // Find the active class and show its code
+                    const activa = clasesData.find(c => c.ClaseId === claseId && c.Estado === 'activa');
+                    if (activa && activa.CodigoAsistencia) {
+                        claseActiva = {
+                            claseId: claseId,
+                            codigo: activa.CodigoAsistencia,
+                            expira: new Date(activa.CodigoExpira),
+                            titulo: activa.Titulo || claseId
+                        };
+                        mostrarCodigoActivo();
+                        iniciarRefreshAsistencia();
+                    }
+                }, 2500);
             } catch (e) { alert('Error: ' + e.message); }
         }
 
         async function cerrarAsistencia() {
             if (!claseActiva) return;
             try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'cerrarAsistencia', claseId: claseActiva.claseId })
-                });
+                await postAppsScript({ action: 'cerrarAsistencia', claseId: claseActiva.claseId });
             } catch (e) {}
             claseActiva = null;
             document.getElementById('codigoActivoPanel').classList.add('hidden');
             if (codigoTimer) { clearInterval(codigoTimer); codigoTimer = null; }
-            loadClases();
-            loadPuntos();
+            setTimeout(() => { loadClases(); loadPuntos(); }, 2000);
         }
 
         function mostrarCodigoActivo() {
@@ -2189,15 +2183,8 @@
 
         async function recalcularPuntos() {
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'recalcularPuntos' })
-                });
-                const json = await res.json();
-                if (json.status === 'ok') {
-                    loadPuntos();
-                }
+                await postAppsScript({ action: 'recalcularPuntos' });
+                setTimeout(() => loadPuntos(), 3000);
             } catch (e) { alert('Error: ' + e.message); }
         }
 
