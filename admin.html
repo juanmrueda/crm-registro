@@ -812,6 +812,13 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1" id="emailRecipientsList" style="max-height:120px;overflow-y:auto;"></div>
+                <!-- Add manual email -->
+                <div class="flex gap-2 mt-2">
+                    <input type="email" id="emailManualInput" placeholder="Agregar correo manualmente..."
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-indigo-500/50 transition-all"
+                        onkeydown="if(event.key==='Enter')addManualEmail()">
+                    <button onclick="addManualEmail()" class="px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 text-[11px] hover:bg-indigo-500/30 transition-colors">+ Agregar</button>
+                </div>
             </div>
 
             <!-- Subject -->
@@ -1788,20 +1795,18 @@
         let selectedPdfFile = null;
         let selectedPdfBase64 = null;
         let emailSelectedRecipients = new Set();
+        let emailManualRecipients = new Set();
+        let emailAllKnown = [];
 
         function openEmailModal() {
             const emails = allData.filter(d => d.email).map(d => d.email);
-            const uniqueEmails = [...new Set(emails)];
-
-            if (uniqueEmails.length === 0) {
-                alert('No hay estudiantes registrados para enviar email.');
-                return;
-            }
+            emailAllKnown = [...new Set(emails)];
 
             // Reset state
             selectedPdfFile = null;
             selectedPdfBase64 = null;
-            emailSelectedRecipients = new Set(uniqueEmails);
+            emailSelectedRecipients = new Set(emailAllKnown);
+            emailManualRecipients = new Set();
             document.getElementById('emailFileInput').value = '';
             document.getElementById('emailDropContent').classList.remove('hidden');
             document.getElementById('emailFileInfo').classList.add('hidden');
@@ -1810,9 +1815,10 @@
             document.getElementById('emailResult').classList.add('hidden');
             document.getElementById('emailSendBtn').disabled = false;
             document.getElementById('emailSendBtn').style.opacity = '1';
+            document.getElementById('emailManualInput').value = '';
 
             // Render recipients
-            renderEmailRecipients(uniqueEmails);
+            renderEmailRecipients();
 
             // Default subject
             const today = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -1824,11 +1830,13 @@
             closeSidebar();
         }
 
-        function renderEmailRecipients(allEmails) {
+        function renderEmailRecipients() {
             const list = document.getElementById('emailRecipientsList');
+            const allEmails = [...emailAllKnown, ...emailManualRecipients];
             list.innerHTML = allEmails.map(e => {
                 const active = emailSelectedRecipients.has(e);
-                return `<span onclick="toggleEmailRecipient('${e}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] cursor-pointer transition-all ${active ? 'bg-indigo-500/20 text-indigo-300' : 'bg-white/5 text-white/20 line-through'}">${e}<svg class="w-3 h-3 ${active ? 'text-indigo-400' : 'text-white/10'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${active ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}"/></svg></span>`;
+                const isManual = emailManualRecipients.has(e);
+                return `<span onclick="toggleEmailRecipient('${e}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] cursor-pointer transition-all ${active ? (isManual ? 'bg-emerald-500/20 text-emerald-300' : 'bg-indigo-500/20 text-indigo-300') : 'bg-white/5 text-white/20 line-through'}">${e}<svg class="w-3 h-3 ${active ? (isManual ? 'text-emerald-400' : 'text-indigo-400') : 'text-white/10'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${active ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}"/></svg></span>`;
             }).join('');
             updateEmailCount();
         }
@@ -1839,21 +1847,35 @@
             } else {
                 emailSelectedRecipients.add(email);
             }
-            const allEmails = allData.filter(d => d.email).map(d => d.email);
-            renderEmailRecipients([...new Set(allEmails)]);
+            renderEmailRecipients();
         }
 
         function emailSelectAll() {
-            const allEmails = allData.filter(d => d.email).map(d => d.email);
-            const unique = [...new Set(allEmails)];
-            emailSelectedRecipients = new Set(unique);
-            renderEmailRecipients(unique);
+            emailSelectedRecipients = new Set([...emailAllKnown, ...emailManualRecipients]);
+            renderEmailRecipients();
         }
 
         function emailDeselectAll() {
             emailSelectedRecipients.clear();
-            const allEmails = allData.filter(d => d.email).map(d => d.email);
-            renderEmailRecipients([...new Set(allEmails)]);
+            renderEmailRecipients();
+        }
+
+        function addManualEmail() {
+            const input = document.getElementById('emailManualInput');
+            const email = input.value.trim().toLowerCase();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                input.style.borderColor = 'rgba(239,68,68,0.5)';
+                setTimeout(() => input.style.borderColor = '', 1500);
+                return;
+            }
+            if (emailSelectedRecipients.has(email)) {
+                input.value = '';
+                return;
+            }
+            emailManualRecipients.add(email);
+            emailSelectedRecipients.add(email);
+            input.value = '';
+            renderEmailRecipients();
         }
 
         function updateEmailCount() {
@@ -1952,6 +1974,12 @@
                     }
                     return acc;
                 }, []);
+            // Add manual recipients not in allData
+            for (const manualEmail of emailManualRecipients) {
+                if (emailSelectedRecipients.has(manualEmail) && !recipients.find(r => r.email === manualEmail)) {
+                    recipients.push({ email: manualEmail, nombre: 'Destinatario' });
+                }
+            }
 
             if (recipients.length === 0) return showEmailError('Selecciona al menos un destinatario.');
 
