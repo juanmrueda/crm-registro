@@ -2,107 +2,165 @@
 
 ## Que es esto?
 
-Sistema CRM para el curso **Mercadeo Relacional y CRM** de la UAO con dos componentes:
+Sistema CRM para el curso **Mercadeo Relacional y CRM** de la UAO con cuatro componentes principales:
 
-| Archivo | Descripcion | URL ejemplo |
-|---------|-------------|-------------|
-| `index.html` | Formulario de registro (mobile first, glassmorphism) | tuusuario.github.io/crm-registro/ |
-| `admin.html` | Panel admin CRM (dashboard, graficas, segmentos) | tuusuario.github.io/crm-registro/admin.html |
+| Archivo | Descripcion | URL |
+|---------|-------------|-----|
+| `index.html` | Formulario de registro (mobile first) | juanmrueda.github.io/crm-registro/ |
+| `admin.html` | Panel admin CRM (dashboard, clases, puntos, emails) | juanmrueda.github.io/crm-registro/admin.html |
+| `portal.html` | Portal del estudiante (puntos, asistencia, check-in) | juanmrueda.github.io/crm-registro/portal.html |
+| `google-apps-script.js` | Backend en Google Apps Script | Se despliega en Apps Script |
+| `lambda/index.mjs` | Lambda AWS para envio de emails con SES | Se despliega en AWS Lambda |
 
 ---
 
-## Paso 1: Configurar Google Sheets como Backend
+## Arquitectura
 
-### 1.1 Crear el Sheet
+```
+Estudiante                    Admin
+    |                           |
+    v                           v
+index.html               admin.html
+portal.html                    |
+    |                          |
+    +-------+     +------------+
+            |     |
+            v     v
+      Google Apps Script  <---  AWS Lambda (track-pixel)
+            |                       |
+            v                       v
+      Google Sheets            AWS SES (emails)
+```
 
-1. Ve a [sheets.google.com](https://sheets.google.com) y crea una nueva hoja
-2. Renombra la pestaña inferior a **"Registros"** (click derecho > Cambiar nombre)
-3. En la fila 1, escribe estos encabezados (uno por columna, de A a U):
+**Google Sheets** (6 hojas):
+- `Registros` — datos de estudiantes (A-U)
+- `Clases` — sesiones del curso (A-I)
+- `Asistencia` — check-ins de estudiantes (A-G)
+- `EventosTracking` — apertura de emails, puntos manuales (A-E)
+- `Puntos` — leaderboard calculado (A-I)
+- `Config` — configuracion de puntos (A-B)
 
+**AWS**:
+- Lambda: `crm-send-pdf-email` (Node.js 20.x)
+- API Gateway: `crm-api` (HTTP API)
+- SES: envio de correos con PDFs adjuntos y tracking pixel
+
+---
+
+## Hojas de Google Sheets
+
+### Registros (A-U)
 ```
 Timestamp | Nombre | Email | Celular | Ciudad | Genero | FechaNacimiento | Empresa | Cargo | Sector | TamanoEmpresa | Web | EmpresaPropia | QueVende | ClienteIdeal | CanalesCaptacion | UsaCRM | CualCRM | Expectativas | RetosClientes | PrefiereTrabajar
 ```
 
-### 1.2 Crear el Apps Script
-
-1. En el Sheet, ve a **Extensiones > Apps Script**
-2. Borra el codigo por defecto
-3. Copia y pega **todo** el contenido de `google-apps-script.js`
-4. Guarda con **Ctrl+S**
-
-### 1.3 Publicar como Web App
-
-1. Click en **Implementar > Nueva implementacion**
-2. Tipo: **Aplicacion web**
-3. Ejecutar como: **Yo (tu email)**
-4. Quien tiene acceso: **Cualquier persona**
-5. Click en **Implementar**
-6. Google te pedira permisos — **Acepta todos**
-7. **Copia la URL** que te genera (algo como `https://script.google.com/macros/s/ABC.../exec`)
-
-### 1.4 Conectar la URL
-
-Abre `index.html` y `admin.html` con un editor de texto y busca:
-
-```javascript
-const APPS_SCRIPT_URL = 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI';
+### Clases (A-I)
+```
+ClaseId | Numero | Titulo | Fecha | HoraInicio | HoraFin | CodigoAsistencia | CodigoExpira | Estado
 ```
 
-Reemplaza `'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI'` con la URL que copiaste:
-
-```javascript
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_ID_AQUI/exec';
+### Asistencia (A-G)
+```
+Timestamp | Email | Nombre | ClaseId | ClaseNumero | MinutosAntes | PuntosPuntualidad
 ```
 
-Guarda ambos archivos.
+### EventosTracking (A-E)
+```
+Timestamp | Email | ClaseId | TipoEvento | PuntosOtorgados
+```
+
+### Puntos (A-I)
+```
+Email | Nombre | TotalPuntos | PuntosAsistencia | PuntosPuntualidad | PuntosEmail | ClasesAsistidas | PorcentajeAsistencia | PuntosManuales
+```
+
+### Config (A-B)
+```
+Clave              | Valor
+puntosAsistencia   | 10
+puntosPuntualidadMax | 5
+ventanaPuntualidad | 15
+puntosEmailOpen    | 3
+toleranciaLlegadaTarde | 15
+codigoVigenciaMin  | 30
+```
 
 ---
 
-## Paso 2: Probar Localmente
+## Sistema de Puntos
 
-1. Abre `index.html` en tu navegador (doble click o arrastrar al navegador)
-2. Completa el formulario de registro
-3. Verifica que los datos aparezcan en tu Google Sheet
-4. Abre `admin.html` para ver el dashboard con los datos
+| Tipo | Puntos | Condicion |
+|------|--------|-----------|
+| Asistencia | 10 pts | Por registrar check-in con codigo |
+| Puntualidad | 0-5 pts | Proporcional: llegar 15+ min antes = 5 pts max, 0 si llega tarde |
+| Email | 3 pts | Por abrir el correo enviado (1 vez por clase, via tracking pixel) |
+| Manual | Variable | Asignados desde "Dar Puntos" en admin |
 
-**Nota:** Sin la URL configurada, ambas paginas funcionan con datos demo para que puedas ver el diseno.
+**Maximo por clase:** 15 pts (asistencia) + 3 pts (email) = 18 pts
 
----
-
-## Paso 3: Publicar en GitHub Pages
-
-### 3.1 Crear repositorio
-
-1. Ve a [github.com](https://github.com) y crea un nuevo repositorio llamado `crm-registro`
-2. Hazlo **publico**
-3. Sube los archivos: `index.html` y `admin.html`
-
-### 3.2 Activar GitHub Pages
-
-1. En el repositorio, ve a **Settings > Pages**
-2. Source: **Deploy from a branch**
-3. Branch: **main** / carpeta **/ (root)**
-4. Click en **Save**
-5. En ~2 minutos tendras tu URL: `https://TU_USUARIO.github.io/crm-registro/`
-
-### 3.3 Compartir con estudiantes
-
-- Formulario: `https://TU_USUARIO.github.io/crm-registro/`
-- Admin: `https://TU_USUARIO.github.io/crm-registro/admin.html`
-
-Tip: Genera un QR code del link del formulario para proyectarlo en clase.
+**Tolerancia:** Hasta 15 min tarde aun cuenta asistencia (10 pts) pero 0 de puntualidad.
 
 ---
 
-## Datos Demo
+## Funcionalidades del Admin
 
-Ambas paginas incluyen 10 registros de prueba que se muestran cuando no hay URL de Apps Script configurada. Esto te permite:
+- **Dashboard**: KPIs, graficas de genero/ciudad/sector, segmentacion
+- **Clases**: Crear, activar asistencia (codigo de 6 digitos), cerrar
+- **Calificaciones**: Leaderboard, dar puntos manuales, recalcular, sistema de puntos
+- **Enviar PDF por Email**: Hasta 3 PDFs adjuntos, seleccion/deseleccion de destinatarios, agregar correos manuales, tracking por clase
+- **Portal estudiante**: Login por email, ver puntos, ranking, historial, hacer check-in
 
-- Ver el diseno completo antes de configurar el backend
-- Hacer demos en clase sin necesidad de registros reales
-- Probar todas las funcionalidades (filtros, graficas, segmentos, exportar CSV)
+---
 
-Una vez configures la URL de Apps Script, los datos reales reemplazaran los demo automaticamente.
+## Configuracion Inicial
+
+### 1. Google Sheets + Apps Script
+
+1. Crear Google Sheet con las 6 hojas (headers como arriba)
+2. Extensiones > Apps Script > pegar `google-apps-script.js`
+3. Implementar > Nueva implementacion > App web > Ejecutar como: Yo > Cualquier persona con cuenta Google
+4. Copiar URL generada
+
+### 2. Conectar URL en los HTML
+
+En `index.html`, `admin.html` y `portal.html`, buscar y reemplazar:
+
+```javascript
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_ID/exec';
+```
+
+### 3. AWS Lambda + SES
+
+Variables de entorno en Lambda:
+
+| Variable | Valor |
+|----------|-------|
+| `FROM_EMAIL` | Email verificado en SES (ej: hola@juanmrueda.com) |
+| `API_KEY` | Clave para autenticar requests (ej: crm-uao-2026-ses) |
+| `APPS_SCRIPT_URL` | URL del Apps Script (para tracking pixel) |
+| `API_BASE_URL` | URL base del API Gateway (ej: https://xxx.execute-api.us-east-1.amazonaws.com) |
+
+Rutas API Gateway:
+- `POST /send-pdf` — envio de emails (requiere x-api-key)
+- `GET /track-pixel` — tracking de apertura (sin auth)
+- `OPTIONS /send-pdf` y `OPTIONS /track-pixel` — CORS preflight
+
+### 4. GitHub Pages
+
+1. Subir archivos al repo
+2. Settings > Pages > Deploy from branch > master > / (root)
+3. URL: `https://juanmrueda.github.io/crm-registro/`
+
+---
+
+## Notas Importantes
+
+- **Timezone**: Todo usa hora Colombia (America/Bogota)
+- **Apps Script**: Cada cambio requiere NUEVA implementacion (nuevo URL)
+- **Lambda**: Actualizar codigo y hacer Deploy tras cambios
+- **CORS**: Los POST a Apps Script usan `mode: 'no-cors'` con `Content-Type: text/plain`
+- **SES Sandbox**: En modo sandbox solo se puede enviar a emails verificados. Solicitar salir de sandbox para produccion.
+- **Tracking pixel**: Solo se inyecta si se selecciona una clase al enviar email
 
 ---
 
@@ -110,11 +168,13 @@ Una vez configures la URL de Apps Script, los datos reales reemplazaran los demo
 
 | Problema | Solucion |
 |----------|----------|
-| Los datos no llegan al Sheet | Verifica que la URL sea correcta y que el Sheet tenga la pestaña "Registros" |
-| Error de permisos en Apps Script | Re-implementa y acepta todos los permisos de Google |
-| El admin no muestra datos | Verifica que la URL sea la misma en ambos archivos |
-| CORS error en consola | Es normal con `mode: 'no-cors'`. Los datos se envian correctamente |
-| Quiero actualizar el codigo | En Apps Script, haz una NUEVA implementacion (no edites la existente) |
+| Datos no llegan al Sheet | Verificar URL y que exista la hoja "Registros" |
+| Error de permisos | Re-implementar Apps Script y aceptar permisos |
+| POST silencioso (no error, no datos) | Verificar Content-Type: text/plain y mode: no-cors |
+| 401 en Apps Script | Cambiar "Ejecutar como" a "Yo" y crear nueva implementacion |
+| Emails no llegan | Verificar FROM_EMAIL verificado en SES y salir de sandbox |
+| Tracking no registra | Verificar APPS_SCRIPT_URL en Lambda y que se seleccione clase |
+| Filas fantasma en Puntos | Ejecutar Recalcular, usa .clear() + filtro de emails vacios |
 
 ---
 
@@ -124,6 +184,9 @@ Una vez configures la URL de Apps Script, los datos reales reemplazaran los demo
 crm-registro/
 ├── index.html              <- Formulario de registro
 ├── admin.html              <- Panel admin CRM
-├── google-apps-script.js   <- Codigo para Google Apps Script
+├── portal.html             <- Portal del estudiante
+├── google-apps-script.js   <- Backend Google Apps Script
+├── lambda/
+│   └── index.mjs           <- Lambda AWS (emails + tracking)
 └── README-setup.md         <- Esta guia
 ```
