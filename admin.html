@@ -891,28 +891,17 @@
 
             <!-- PDF Upload -->
             <div class="mb-5">
-                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Archivo PDF</label>
+                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Archivos PDF <span class="text-white/20">(max 3)</span></label>
                 <div id="emailDropZone" onclick="document.getElementById('emailFileInput').click()"
-                    class="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-indigo-500/30 hover:bg-white/3 transition-all">
-                    <input type="file" id="emailFileInput" accept=".pdf" class="hidden" onchange="handlePdfSelect(event)">
+                    class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center cursor-pointer hover:border-indigo-500/30 hover:bg-white/3 transition-all">
+                    <input type="file" id="emailFileInput" accept=".pdf" multiple class="hidden" onchange="handlePdfSelect(event)">
                     <div id="emailDropContent">
                         <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                        <p class="text-white/40 text-sm">Arrastra un PDF aqui o haz click para seleccionar</p>
-                        <p class="text-white/20 text-xs mt-1">Maximo 7MB</p>
-                    </div>
-                    <div id="emailFileInfo" class="hidden">
-                        <div class="flex items-center justify-center gap-3">
-                            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                            <div class="text-left">
-                                <p class="text-white text-sm font-medium" id="emailFileName">--</p>
-                                <p class="text-white/40 text-xs" id="emailFileSize">--</p>
-                            </div>
-                            <button onclick="event.stopPropagation();clearPdfSelection()" class="p-1.5 rounded-lg hover:bg-white/10 ml-2">
-                                <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
-                        </div>
+                        <p class="text-white/40 text-sm">Arrastra PDFs aqui o haz click para seleccionar</p>
+                        <p class="text-white/20 text-xs mt-1">Maximo 7MB por archivo, hasta 3 archivos</p>
                     </div>
                 </div>
+                <div id="emailFilesList" class="space-y-2 mt-2"></div>
             </div>
 
             <!-- Error message -->
@@ -1863,8 +1852,7 @@
         // ========================================
         // EMAIL PDF
         // ========================================
-        let selectedPdfFile = null;
-        let selectedPdfBase64 = null;
+        let selectedPdfFiles = []; // [{file, base64}]
         let emailSelectedRecipients = new Set();
         let emailManualRecipients = new Set();
         let emailAllKnown = [];
@@ -1874,13 +1862,12 @@
             emailAllKnown = [...new Set(emails)];
 
             // Reset state
-            selectedPdfFile = null;
-            selectedPdfBase64 = null;
+            selectedPdfFiles = [];
             emailSelectedRecipients = new Set(emailAllKnown);
             emailManualRecipients = new Set();
             document.getElementById('emailFileInput').value = '';
             document.getElementById('emailDropContent').classList.remove('hidden');
-            document.getElementById('emailFileInfo').classList.add('hidden');
+            document.getElementById('emailFilesList').innerHTML = '';
             document.getElementById('emailError').classList.add('hidden');
             document.getElementById('emailProgress').classList.add('hidden');
             document.getElementById('emailResult').classList.add('hidden');
@@ -1980,41 +1967,66 @@
         }
 
         function handlePdfSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
 
-            if (file.type !== 'application/pdf') {
-                showEmailError('Solo se permiten archivos PDF.');
-                return;
+            for (const file of files) {
+                if (selectedPdfFiles.length >= 3) {
+                    showEmailError('Maximo 3 archivos.');
+                    break;
+                }
+                if (file.type !== 'application/pdf') {
+                    showEmailError(`"${file.name}" no es un PDF.`);
+                    continue;
+                }
+                const maxSize = 7 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    showEmailError(`"${file.name}" pesa ${(file.size / 1024 / 1024).toFixed(1)}MB. Maximo 7MB.`);
+                    continue;
+                }
+                if (selectedPdfFiles.find(f => f.file.name === file.name)) continue;
+
+                const entry = { file, base64: null };
+                selectedPdfFiles.push(entry);
+
+                const reader = new FileReader();
+                reader.onload = () => { entry.base64 = reader.result.split(',')[1]; };
+                reader.readAsDataURL(file);
             }
 
-            const maxSize = 7 * 1024 * 1024; // 7MB
-            if (file.size > maxSize) {
-                showEmailError(`El archivo pesa ${(file.size / 1024 / 1024).toFixed(1)}MB. El maximo es 7MB. Intenta comprimirlo.`);
-                return;
-            }
-
-            selectedPdfFile = file;
-            document.getElementById('emailFileName').textContent = file.name;
-            document.getElementById('emailFileSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
-            document.getElementById('emailDropContent').classList.add('hidden');
-            document.getElementById('emailFileInfo').classList.remove('hidden');
+            document.getElementById('emailFileInput').value = '';
             document.getElementById('emailError').classList.add('hidden');
-
-            // Read as base64
-            const reader = new FileReader();
-            reader.onload = () => {
-                selectedPdfBase64 = reader.result.split(',')[1]; // remove data:...;base64, prefix
-            };
-            reader.readAsDataURL(file);
+            renderPdfFiles();
         }
 
-        function clearPdfSelection() {
-            selectedPdfFile = null;
-            selectedPdfBase64 = null;
-            document.getElementById('emailFileInput').value = '';
-            document.getElementById('emailDropContent').classList.remove('hidden');
-            document.getElementById('emailFileInfo').classList.add('hidden');
+        function removePdfFile(index) {
+            selectedPdfFiles.splice(index, 1);
+            renderPdfFiles();
+        }
+
+        function renderPdfFiles() {
+            const list = document.getElementById('emailFilesList');
+            if (selectedPdfFiles.length === 0) {
+                list.innerHTML = '';
+                document.getElementById('emailDropContent').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('emailDropContent').classList.add('hidden');
+            list.innerHTML = selectedPdfFiles.map((entry, i) => `
+                <div class="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2">
+                    <svg class="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-white text-xs font-medium truncate">${entry.file.name}</p>
+                        <p class="text-white/40 text-[10px]">${(entry.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                    <button onclick="removePdfFile(${i})" class="p-1 rounded-lg hover:bg-white/10 flex-shrink-0">
+                        <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            `).join('');
+            if (selectedPdfFiles.length < 3) {
+                document.getElementById('emailDropContent').classList.remove('hidden');
+            }
         }
 
         // Drag & drop
@@ -2028,13 +2040,8 @@
                 dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.style.borderColor = ''; });
             });
             dropZone.addEventListener('drop', e => {
-                const file = e.dataTransfer.files[0];
-                if (file) {
-                    const input = document.getElementById('emailFileInput');
-                    const dt = new DataTransfer();
-                    dt.items.add(file);
-                    input.files = dt.files;
-                    handlePdfSelect({ target: input });
+                if (e.dataTransfer.files.length > 0) {
+                    handlePdfSelect({ target: { files: e.dataTransfer.files } });
                 }
             });
         });
@@ -2051,7 +2058,8 @@
             const message = document.getElementById('emailMessage').value.trim();
 
             if (!subject) return showEmailError('El asunto es obligatorio.');
-            if (!selectedPdfBase64) return showEmailError('Selecciona un archivo PDF.');
+            if (selectedPdfFiles.length === 0) return showEmailError('Selecciona al menos un archivo PDF.');
+            if (selectedPdfFiles.some(f => !f.base64)) return showEmailError('Espera a que los archivos terminen de cargar.');
 
             if (LAMBDA_EMAIL_URL === 'PEGAR_URL_API_GATEWAY_AQUI') {
                 return showEmailError('Falta configurar la URL de Lambda. Revisa LAMBDA_EMAIL_URL en el codigo.');
@@ -2095,8 +2103,7 @@
                     },
                     body: JSON.stringify({
                         recipients,
-                        pdfBase64: selectedPdfBase64,
-                        pdfName: selectedPdfFile.name,
+                        attachments: selectedPdfFiles.map(f => ({ base64: f.base64, name: f.file.name })),
                         subject,
                         htmlBody,
                         senderName: 'Mercadeo Relacional y CRM - UAO',

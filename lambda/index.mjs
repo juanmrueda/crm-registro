@@ -99,23 +99,21 @@ async function handleSendPdf(event) {
         return corsResponse(400, { error: 'JSON invalido' });
     }
 
-    const { recipients, pdfBase64, pdfName, subject, htmlBody, senderName, claseId } = body;
+    const { recipients, pdfBase64, pdfName, attachments, subject, htmlBody, senderName, claseId } = body;
+
+    // Build attachments array (support both old single-file and new multi-file format)
+    const pdfAttachments = attachments || (pdfBase64 ? [{ base64: pdfBase64, name: pdfName }] : []);
 
     // Validate required fields
     if (!recipients?.length) return corsResponse(400, { error: 'recipients es requerido' });
-    if (!pdfBase64) return corsResponse(400, { error: 'pdfBase64 es requerido' });
-    if (!pdfName) return corsResponse(400, { error: 'pdfName es requerido' });
+    if (pdfAttachments.length === 0) return corsResponse(400, { error: 'Se requiere al menos un archivo adjunto' });
     if (!subject) return corsResponse(400, { error: 'subject es requerido' });
     if (!htmlBody) return corsResponse(400, { error: 'htmlBody es requerido' });
 
     const fromHeader = senderName ? `"${senderName}" <${FROM_EMAIL}>` : FROM_EMAIL;
 
-    // Build tracking pixel URL if claseId is provided
+    // Tracking pixel config
     const apiBaseUrl = process.env.API_BASE_URL || '';
-    let trackingPixelHtml = '';
-    if (claseId && apiBaseUrl) {
-        // Pixel will be injected per-recipient in the loop
-    }
 
     let sent = 0;
     let failed = 0;
@@ -139,8 +137,7 @@ async function handleSendPdf(event) {
                     to: recipient.email,
                     subject,
                     html: personalizedHtml,
-                    pdfBase64,
-                    pdfName
+                    attachments: pdfAttachments
                 });
 
                 await ses.send(new SendRawEmailCommand({
@@ -163,10 +160,10 @@ async function handleSendPdf(event) {
 // ========================================
 // MIME EMAIL BUILDER
 // ========================================
-function buildMimeEmail({ from, to, subject, html, pdfBase64, pdfName }) {
+function buildMimeEmail({ from, to, subject, html, attachments }) {
     const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-    return [
+    const parts = [
         `From: ${from}`,
         `To: ${to}`,
         `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
@@ -178,16 +175,22 @@ function buildMimeEmail({ from, to, subject, html, pdfBase64, pdfName }) {
         `Content-Transfer-Encoding: 7bit`,
         ``,
         html,
-        ``,
-        `--${boundary}`,
-        `Content-Type: application/pdf; name="${pdfName}"`,
-        `Content-Transfer-Encoding: base64`,
-        `Content-Disposition: attachment; filename="${pdfName}"`,
-        ``,
-        ...pdfBase64.match(/.{1,76}/g),
-        ``,
-        `--${boundary}--`
-    ].join('\r\n');
+    ];
+
+    for (const att of attachments) {
+        parts.push(
+            ``,
+            `--${boundary}`,
+            `Content-Type: application/pdf; name="${att.name}"`,
+            `Content-Transfer-Encoding: base64`,
+            `Content-Disposition: attachment; filename="${att.name}"`,
+            ``,
+            ...att.base64.match(/.{1,76}/g),
+        );
+    }
+
+    parts.push(``, `--${boundary}--`);
+    return parts.join('\r\n');
 }
 
 // ========================================
