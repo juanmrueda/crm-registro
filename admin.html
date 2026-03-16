@@ -1834,13 +1834,18 @@
             if (clasesData && clasesData.length > 0) {
                 const sorted = [...clasesData].sort((a, b) => (Number(b.Numero) || 0) - (Number(a.Numero) || 0));
                 sorted.forEach(c => {
-                    const id = c.ClaseId;
-                    const nombre = c.Nombre || id;
-                    const fecha = c.Fecha ? new Date(c.Fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '';
-                    claseSelect.innerHTML += `<option value="${id}">${nombre} (${fecha})</option>`;
+                    const id = c.ClaseId || c.claseId || '';
+                    const nombre = c.Titulo || c.Nombre || c.titulo || id;
+                    const fecha = c.Fecha || c.fecha || '';
+                    let fechaStr = '';
+                    try { fechaStr = fecha ? new Date(fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : ''; } catch(e) { fechaStr = fecha; }
+                    const opt = document.createElement('option');
+                    opt.value = id;
+                    opt.textContent = `${nombre} (${fechaStr})`;
+                    claseSelect.appendChild(opt);
                 });
                 // Select most recent class by default
-                claseSelect.value = sorted[0].ClaseId || '';
+                claseSelect.value = sorted[0].ClaseId || sorted[0].claseId || '';
             }
 
             // Default subject
