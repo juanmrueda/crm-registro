@@ -821,6 +821,14 @@
                 </div>
             </div>
 
+            <!-- Clase asociada -->
+            <div class="mb-4">
+                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Clase asociada (tracking)</label>
+                <select id="emailClaseId" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all [&>option]:text-black [&>option]:bg-white">
+                    <option value="">Sin clase asociada</option>
+                </select>
+            </div>
+
             <!-- Subject -->
             <div class="mb-4">
                 <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Asunto</label>
@@ -1820,6 +1828,21 @@
             // Render recipients
             renderEmailRecipients();
 
+            // Populate clase selector
+            const claseSelect = document.getElementById('emailClaseId');
+            claseSelect.innerHTML = '<option value="">Sin clase asociada</option>';
+            if (clasesData && clasesData.length > 0) {
+                const sorted = [...clasesData].sort((a, b) => (Number(b.Numero) || 0) - (Number(a.Numero) || 0));
+                sorted.forEach(c => {
+                    const id = c.ClaseId;
+                    const nombre = c.Nombre || id;
+                    const fecha = c.Fecha ? new Date(c.Fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '';
+                    claseSelect.innerHTML += `<option value="${id}">${nombre} (${fecha})</option>`;
+                });
+                // Select most recent class by default
+                claseSelect.value = sorted[0].ClaseId || '';
+            }
+
             // Default subject
             const today = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('emailSubject').value = `Resumen de Clase ${today} - Mercadeo Relacional y CRM`;
@@ -2008,7 +2031,8 @@
                         pdfName: selectedPdfFile.name,
                         subject,
                         htmlBody,
-                        senderName: 'Mercadeo Relacional y CRM - UAO'
+                        senderName: 'Mercadeo Relacional y CRM - UAO',
+                        claseId: document.getElementById('emailClaseId').value || undefined
                     })
                 });
 
