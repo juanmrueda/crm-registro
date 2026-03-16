@@ -55,21 +55,25 @@ async function handleTrackPixel(event) {
     const email = params.email;
     const claseId = params.claseId;
 
-    // Log to Apps Script (fire and forget - don't block pixel response)
+    // Log to Apps Script (must await before Lambda exits)
     if (email && claseId && APPS_SCRIPT_URL) {
-        fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({
-                action: 'logTracking',
-                email: email,
-                claseId: claseId,
-                tipo: 'email-open'
-            })
-        }).catch(() => {}); // fire and forget
+        try {
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'logTracking',
+                    email: email,
+                    claseId: claseId,
+                    tipo: 'email-open'
+                })
+            });
+        } catch (e) {
+            console.error('Track pixel log error:', e);
+        }
     }
 
-    // Return 1x1 transparent GIF immediately
+    // Return 1x1 transparent GIF
     return {
         statusCode: 200,
         headers: {
