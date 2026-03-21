@@ -87,7 +87,14 @@ function sheetToObjects(sheet, fieldMap) {
     for (let j = 0; j < headers.length; j++) {
       const key = fieldMap ? (fieldMap[headers[j]] || headers[j]) : headers[j];
       let val = row[j];
-      if (val instanceof Date) val = val.toISOString();
+      if (val instanceof Date) {
+        // If year is 1899, it's a time-only value (Google Sheets stores times as 1899-12-30)
+        if (val.getFullYear() < 1900) {
+          val = Utilities.formatDate(val, 'America/Bogota', 'HH:mm');
+        } else {
+          val = Utilities.formatDate(val, 'America/Bogota', "yyyy-MM-dd'T'HH:mm:ss");
+        }
+      }
       obj[key] = val !== undefined && val !== null ? val.toString() : '';
     }
     data.push(obj);
