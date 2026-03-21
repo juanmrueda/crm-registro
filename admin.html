@@ -385,6 +385,10 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                 Calificaciones
             </div>
+            <div class="nav-item" data-section="quiz" onclick="showSection('quiz')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                Quiz
+            </div>
 
             <div class="px-4 mt-6 mb-2">
                 <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest">Acciones</p>
@@ -770,6 +774,93 @@
         </div>
     </div>
 
+            <!-- ============================== -->
+            <!-- QUIZ SECTION                  -->
+            <!-- ============================== -->
+            <div class="section" id="section-quiz">
+                <!-- Quiz activo -->
+                <div id="quizActivoPanel" class="hidden mb-6">
+                    <div class="card" style="border:1px solid rgba(251,191,36,0.2); background: rgba(251,191,36,0.05);">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-amber-400 text-xs font-semibold uppercase tracking-wider">Quiz Activo</p>
+                                <p class="text-white text-lg font-bold mt-1" id="quizActivoTitulo">--</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="mostrarResultadosQuiz()" class="px-4 py-2 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs font-medium hover:bg-indigo-500/25 transition-colors">Resultados</button>
+                                <button onclick="cerrarQuizAdmin()" class="px-4 py-2 rounded-lg bg-red-500/15 text-red-300 text-xs font-medium hover:bg-red-500/25 transition-colors">Cerrar</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+                                <span class="text-amber-400/80 text-sm font-medium" id="quizRespondidos">0 respondidos</span>
+                            </div>
+                            <span class="text-white/30 text-xs" id="quizTotalEst">de 0 registrados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crear Quiz -->
+                <div class="card mb-6" id="crearQuizPanel">
+                    <h3 class="text-white text-lg font-bold mb-4">Crear Quiz</h3>
+                    <div class="mb-4">
+                        <label class="text-white/50 text-xs font-medium mb-1 block">Titulo del Quiz</label>
+                        <input type="text" id="quizTituloInput" placeholder="Ej: Quiz Clase 3" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-500/50 transition-all">
+                    </div>
+                    <div id="quizPreguntasForm" class="space-y-4 mb-4"></div>
+                    <button onclick="crearQuizAdmin()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                        Crear Quiz
+                    </button>
+                </div>
+
+                <!-- Lista quizzes -->
+                <div class="card">
+                    <h3 class="text-white text-lg font-bold mb-4">Quizzes Anteriores</h3>
+                    <div id="quizzesList" class="space-y-2">
+                        <p class="text-white/30 text-sm text-center py-4">Cargando...</p>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Quiz Resultados Modal -->
+    <div class="modal-overlay hidden" id="quizResultadosModal" onclick="if(event.target===this)this.classList.add('hidden')">
+        <div class="modal-content" style="max-width:700px;">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-white text-lg font-bold">Resultados del Quiz</h3>
+                        <p class="text-white/40 text-xs" id="quizResultadosSub">--</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('quizResultadosModal').classList.add('hidden')" class="text-white/30 hover:text-white/60 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                <div class="bg-white/5 rounded-xl p-3 text-center">
+                    <p class="text-amber-400 text-2xl font-bold" id="qrPromedio">0</p>
+                    <p class="text-white/40 text-[10px]">Promedio</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3 text-center">
+                    <p class="text-emerald-400 text-2xl font-bold" id="qrMejor">0</p>
+                    <p class="text-white/40 text-[10px]">Mejor Nota</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3 text-center">
+                    <p class="text-white/60 text-2xl font-bold" id="qrRespondieron">0/0</p>
+                    <p class="text-white/40 text-[10px]">Respondieron</p>
+                </div>
+            </div>
+            <!-- Leaderboard -->
+            <div class="max-h-96 overflow-y-auto space-y-2" id="quizLeaderboard">
+            </div>
+        </div>
+    </div>
+
     <!-- Dar Puntos Modal -->
     <div class="modal-overlay" id="darPuntosModal" onclick="if(event.target===this)cerrarDarPuntos()">
         <div class="modal-content" style="max-width:480px;">
@@ -1068,6 +1159,7 @@
             loadClases();
             loadPuntos();
             loadConfig();
+            loadQuizzes();
         }
 
         async function loadConfig() {
@@ -1760,7 +1852,8 @@
                 segments: ['Segmentos', 'Segmentacion automatica del grupo'],
                 insights: ['Canvas Insights', 'Inteligencia colectiva del grupo'],
                 clases: ['Clases', 'Gestion de sesiones y asistencia'],
-                calificaciones: ['Calificaciones', 'Ranking y puntos de estudiantes']
+                calificaciones: ['Calificaciones', 'Ranking y puntos de estudiantes'],
+                quiz: ['Quiz', 'Crear y gestionar quizzes']
             };
             document.getElementById('sectionTitle').textContent = titles[name]?.[0] || name;
             document.getElementById('sectionSubtitle').textContent = titles[name]?.[1] || '';
@@ -2528,6 +2621,194 @@
                 </div>
             </div>`;
         }
+
+        // ========================================
+        // QUIZ MANAGEMENT
+        // ========================================
+        let quizzesData = [];
+        let quizActivoId = null;
+        let quizRefreshInterval = null;
+
+        function generarFormPreguntas() {
+            const container = document.getElementById('quizPreguntasForm');
+            let html = '';
+            for (let i = 0; i < 10; i++) {
+                html += `
+                <div class="bg-white/3 rounded-xl p-4 border border-white/5">
+                    <label class="text-amber-400/80 text-xs font-bold mb-2 block">Pregunta ${i + 1}</label>
+                    <input type="text" id="qp_${i}" placeholder="Escribe la pregunta..." class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm mb-2 focus:outline-none focus:border-amber-500/50">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="qo_${i}_0" placeholder="A." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
+                        <input type="text" id="qo_${i}_1" placeholder="B." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
+                        <input type="text" id="qo_${i}_2" placeholder="C." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
+                        <input type="text" id="qo_${i}_3" placeholder="D." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
+                    </div>
+                    <div class="mt-2">
+                        <label class="text-white/30 text-[10px] uppercase tracking-wider">Correcta:</label>
+                        <select id="qc_${i}" class="ml-2 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none [&>option]:text-black [&>option]:bg-white">
+                            <option value="0">A</option>
+                            <option value="1">B</option>
+                            <option value="2">C</option>
+                            <option value="3">D</option>
+                        </select>
+                    </div>
+                </div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        async function crearQuizAdmin() {
+            const titulo = document.getElementById('quizTituloInput').value.trim();
+            if (!titulo) { alert('Ingresa un titulo'); return; }
+
+            const preguntas = [];
+            for (let i = 0; i < 10; i++) {
+                const pregunta = document.getElementById(`qp_${i}`).value.trim();
+                const opciones = [
+                    document.getElementById(`qo_${i}_0`).value.trim(),
+                    document.getElementById(`qo_${i}_1`).value.trim(),
+                    document.getElementById(`qo_${i}_2`).value.trim(),
+                    document.getElementById(`qo_${i}_3`).value.trim()
+                ];
+                const correcta = parseInt(document.getElementById(`qc_${i}`).value);
+
+                if (!pregunta || opciones.some(o => !o)) {
+                    alert(`Completa la pregunta ${i + 1} con todas sus opciones`);
+                    return;
+                }
+                preguntas.push({ pregunta, opciones, correcta });
+            }
+
+            await postAppsScript({ action: 'crearQuiz', titulo, preguntas });
+            document.getElementById('quizTituloInput').value = '';
+            alert('Quiz creado. Activalo cuando estes listo.');
+            setTimeout(loadQuizzes, 2500);
+        }
+
+        async function loadQuizzes() {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizzes');
+                const json = await res.json();
+                quizzesData = json.data || [];
+                renderQuizzes();
+            } catch (e) { console.warn('Error loading quizzes:', e); }
+        }
+
+        function renderQuizzes() {
+            const list = document.getElementById('quizzesList');
+            const activoPanel = document.getElementById('quizActivoPanel');
+
+            // Check for active quiz
+            const activo = quizzesData.find(q => q.Estado === 'activo');
+            if (activo) {
+                quizActivoId = activo.QuizId;
+                activoPanel.classList.remove('hidden');
+                document.getElementById('quizActivoTitulo').textContent = activo.Titulo;
+                iniciarRefreshQuiz();
+            } else {
+                quizActivoId = null;
+                activoPanel.classList.add('hidden');
+                clearInterval(quizRefreshInterval);
+            }
+
+            const otros = quizzesData.filter(q => q.Estado !== 'activo');
+            if (otros.length === 0 && !activo) {
+                list.innerHTML = '<p class="text-white/30 text-sm text-center py-4">No hay quizzes creados</p>';
+                return;
+            }
+
+            list.innerHTML = otros.map(q => {
+                const estadoColor = q.Estado === 'cerrado' ? 'bg-red-500/15 text-red-300' : 'bg-white/10 text-white/50';
+                const btn = q.Estado === 'borrador'
+                    ? `<button onclick="activarQuizAdmin('${q.QuizId}')" class="px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 text-xs hover:bg-amber-500/25 transition-colors">Activar</button>`
+                    : `<button onclick="mostrarResultadosQuizId('${q.QuizId}')" class="px-3 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs hover:bg-indigo-500/25 transition-colors">Resultados</button>`;
+                return `
+                <div class="flex items-center justify-between bg-white/3 rounded-xl p-3">
+                    <div>
+                        <p class="text-white text-sm font-medium">${q.Titulo}</p>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-medium ${estadoColor}">${q.Estado}</span>
+                    </div>
+                    ${btn}
+                </div>`;
+            }).join('');
+        }
+
+        async function activarQuizAdmin(quizId) {
+            await postAppsScript({ action: 'activarQuiz', quizId });
+            setTimeout(loadQuizzes, 2500);
+        }
+
+        async function cerrarQuizAdmin() {
+            if (!quizActivoId) return;
+            await postAppsScript({ action: 'cerrarQuiz', quizId: quizActivoId });
+            clearInterval(quizRefreshInterval);
+            setTimeout(loadQuizzes, 2500);
+        }
+
+        function iniciarRefreshQuiz() {
+            clearInterval(quizRefreshInterval);
+            refreshQuizCount();
+            quizRefreshInterval = setInterval(refreshQuizCount, 5000);
+        }
+
+        async function refreshQuizCount() {
+            if (!quizActivoId) return;
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizResultados&quizId=' + quizActivoId);
+                const json = await res.json();
+                document.getElementById('quizRespondidos').textContent = `${json.respondidos} respondidos`;
+                document.getElementById('quizTotalEst').textContent = `de ${json.totalEstudiantes} registrados`;
+            } catch (e) {}
+        }
+
+        async function mostrarResultadosQuiz() {
+            if (quizActivoId) await mostrarResultadosQuizId(quizActivoId);
+        }
+
+        async function mostrarResultadosQuizId(quizId) {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizResultados&quizId=' + quizId);
+                const json = await res.json();
+                const resultados = json.resultados || [];
+
+                document.getElementById('quizResultadosSub').textContent = `${json.respondidos} de ${json.totalEstudiantes} respondieron`;
+                document.getElementById('qrRespondieron').textContent = `${json.respondidos}/${json.totalEstudiantes}`;
+
+                if (resultados.length > 0) {
+                    const avg = Math.round(resultados.reduce((s, r) => s + r.puntos, 0) / resultados.length);
+                    const best = resultados[0].puntos;
+                    document.getElementById('qrPromedio').textContent = avg + '/20';
+                    document.getElementById('qrMejor').textContent = best + '/20';
+                } else {
+                    document.getElementById('qrPromedio').textContent = '0';
+                    document.getElementById('qrMejor').textContent = '0';
+                }
+
+                const podiumColors = ['from-amber-400 to-yellow-500', 'from-gray-300 to-gray-400', 'from-amber-600 to-amber-700'];
+                const podiumIcons = ['1', '2', '3'];
+
+                document.getElementById('quizLeaderboard').innerHTML = resultados.map((r, i) => {
+                    const isPodium = i < 3;
+                    return `
+                    <div class="flex items-center justify-between ${isPodium ? 'bg-white/5' : 'bg-white/3'} rounded-xl p-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg ${isPodium ? 'bg-gradient-to-br ' + podiumColors[i] : 'bg-white/10'} flex items-center justify-center">
+                                <span class="${isPodium ? 'text-white' : 'text-white/40'} text-xs font-bold">${i + 1}</span>
+                            </div>
+                            <p class="text-white text-sm font-medium">${r.nombre}</p>
+                        </div>
+                        <span class="text-amber-300 text-sm font-bold">${r.puntos}/20</span>
+                    </div>`;
+                }).join('');
+
+                document.getElementById('quizResultadosModal').classList.remove('hidden');
+            } catch (e) {
+                alert('Error cargando resultados');
+            }
+        }
+
+        // Generate quiz form on load
+        generarFormPreguntas();
     </script>
 </body>
 </html>

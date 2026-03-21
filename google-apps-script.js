@@ -124,6 +124,9 @@ function doGet(e) {
       case 'getPuntos': return handleGetPuntos();
       case 'getPortal': return handleGetPortal(e.parameter);
       case 'getConfig': return jsonResponse({ status: 'ok', config: getConfig() });
+      case 'getQuizActivo': return handleGetQuizActivo(e.parameter);
+      case 'getQuizResultados': return handleGetQuizResultados(e.parameter);
+      case 'getQuizzes': return handleGetQuizzes();
       default: return handleGetRegistros();
     }
   } catch (error) {
@@ -147,6 +150,10 @@ function doPost(e) {
       case 'logTracking': return handleLogTracking(body);
       case 'recalcularPuntos': return handleRecalcularPuntos();
       case 'darPuntos': return handleDarPuntos(body);
+      case 'crearQuiz': return handleCrearQuiz(body);
+      case 'activarQuiz': return handleActivarQuiz(body);
+      case 'cerrarQuiz': return handleCerrarQuiz(body);
+      case 'enviarQuiz': return handleEnviarQuiz(body);
       default: return handleRegistro(body);
     }
   } catch (error) {
@@ -856,4 +863,261 @@ function recalcularTodosPuntos() {
   if (rows.length > 0) {
     puntosSheet.getRange(2, 1, rows.length, 9).setValues(rows);
   }
+}
+
+// ============ QUIZ HANDLERS ============
+
+function handleGetQuizzes() {
+  const sheet = getSheet('Quizzes');
+  if (!sheet) return jsonResponse({ status: 'ok', data: [] });
+  const data = sheetToObjects(sheet, null);
+  // No enviar PreguntasJSON completo en listado
+  data.forEach(q => { delete q.PreguntasJSON; });
+  return jsonResponse({ status: 'ok', data: data });
+}
+
+function handleGetQuizActivo(params) {
+  const sheet = getSheet('Quizzes');
+  if (!sheet) return jsonResponse({ status: 'ok', quiz: null });
+
+  const values = sheet.getDataRange().getValues();
+  let quizActivo = null;
+
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][2] === 'activo') {
+      let preguntas = [];
+      try { preguntas = JSON.parse(values[i][3]); } catch(e) {}
+      // Quitar respuestas correctas para el estudiante
+      const preguntasSinRespuesta = preguntas.map(p => ({
+        pregunta: p.pregunta,
+        opciones: p.opciones
+      }));
+      quizActivo = {
+        quizId: values[i][0],
+        titulo: values[i][1],
+        preguntas: preguntasSinRespuesta
+      };
+      break;
+    }
+  }
+
+  if (!quizActivo) return jsonResponse({ status: 'ok', quiz: null });
+
+  // Verificar si el estudiante ya respondió
+  if (params && params.email) {
+    const email = params.email.toLowerCase().trim();
+    const respSheet = getSheet('QuizRespuestas');
+    if (respSheet) {
+      const respData = respSheet.getDataRange().getValues();
+      for (let i = 1; i < respData.length; i++) {
+        if (respData[i][1] && respData[i][1].toString().toLowerCase().trim() === email
+            && respData[i][3] === quizActivo.quizId) {
+          return jsonResponse({ status: 'ok', quiz: null, yaRespondido: true });
+        }
+      }
+    }
+  }
+
+  // Contar respuestas
+  let respondidos = 0;
+  const respSheet = getSheet('QuizRespuestas');
+  if (respSheet) {
+    const respData = respSheet.getDataRange().getValues();
+    for (let i = 1; i < respData.length; i++) {
+      if (respData[i][3] === quizActivo.quizId) respondidos++;
+    }
+  }
+
+  quizActivo.respondidos = respondidos;
+  return jsonResponse({ status: 'ok', quiz: quizActivo });
+}
+
+function handleGetQuizResultados(params) {
+  if (!params || !params.quizId) return jsonResponse({ status: 'error', message: 'quizId requerido' });
+
+  const respSheet = getSheet('QuizRespuestas');
+  if (!respSheet) return jsonResponse({ status: 'ok', resultados: [] });
+
+  const quizId = params.quizId;
+  const respData = respSheet.getDataRange().getValues();
+  const resultados = [];
+
+  for (let i = 1; i < respData.length; i++) {
+    if (respData[i][3] === quizId) {
+      resultados.push({
+        email: respData[i][1],
+        nombre: respData[i][2],
+        puntos: Number(respData[i][5]) || 0
+      });
+    }
+  }
+
+  resultados.sort((a, b) => b.puntos - a.puntos);
+
+  // Obtener total de estudiantes registrados
+  const regSheet = getSheet('Registros');
+  let totalEstudiantes = 0;
+  if (regSheet) {
+    const regData = regSheet.getDataRange().getValues();
+    for (let i = 1; i < regData.length; i++) {
+      if (regData[i][2]) totalEstudiantes++;
+    }
+  }
+
+  return jsonResponse({
+    status: 'ok',
+    resultados: resultados,
+    respondidos: resultados.length,
+    totalEstudiantes: totalEstudiantes
+  });
+}
+
+function handleCrearQuiz(data) {
+  const sheet = getSheet('Quizzes');
+  if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja Quizzes no encontrada' });
+
+  const values = sheet.getDataRange().getValues();
+  let maxNum = 0;
+  for (let i = 1; i < values.length; i++) {
+    const id = values[i][0] || '';
+    const match = id.match(/quiz-(\d+)/);
+    if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+  }
+  const numero = maxNum + 1;
+  const quizId = 'quiz-' + String(numero).padStart(2, '0');
+
+  const preguntas = data.preguntas || '[]';
+  const preguntasStr = typeof preguntas === 'string' ? preguntas : JSON.stringify(preguntas);
+
+  sheet.appendRow([
+    quizId,
+    data.titulo || 'Quiz ' + numero,
+    'borrador',
+    preguntasStr
+  ]);
+
+  return jsonResponse({ status: 'ok', message: 'Quiz creado', quizId: quizId });
+}
+
+function handleActivarQuiz(data) {
+  const sheet = getSheet('Quizzes');
+  if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja Quizzes no encontrada' });
+
+  const values = sheet.getDataRange().getValues();
+
+  // Desactivar cualquier quiz activo
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][2] === 'activo') {
+      sheet.getRange(i + 1, 3).setValue('cerrado');
+    }
+  }
+
+  // Activar el solicitado
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][0] === data.quizId) {
+      sheet.getRange(i + 1, 3).setValue('activo');
+      return jsonResponse({ status: 'ok', message: 'Quiz activado' });
+    }
+  }
+
+  return jsonResponse({ status: 'error', message: 'Quiz no encontrado' });
+}
+
+function handleCerrarQuiz(data) {
+  const sheet = getSheet('Quizzes');
+  if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja Quizzes no encontrada' });
+
+  const values = sheet.getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][0] === data.quizId) {
+      sheet.getRange(i + 1, 3).setValue('cerrado');
+      return jsonResponse({ status: 'ok', message: 'Quiz cerrado' });
+    }
+  }
+  return jsonResponse({ status: 'error', message: 'Quiz no encontrado' });
+}
+
+function handleEnviarQuiz(data) {
+  if (!data.email || !data.quizId || !data.respuestas) {
+    return jsonResponse({ status: 'error', message: 'email, quizId y respuestas son requeridos' });
+  }
+
+  const email = data.email.toLowerCase().trim();
+  const respuestas = data.respuestas; // array de indices [0-3]
+
+  // Verificar estudiante
+  const regSheet = getSheet('Registros');
+  if (!regSheet) return jsonResponse({ status: 'error', message: 'Sistema no configurado' });
+
+  let nombre = '';
+  const regData = regSheet.getDataRange().getValues();
+  for (let i = 1; i < regData.length; i++) {
+    if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
+      nombre = regData[i][1];
+      break;
+    }
+  }
+  if (!nombre) return jsonResponse({ status: 'error', message: 'Email no registrado' });
+
+  // Verificar que no haya duplicado
+  const respSheet = getSheet('QuizRespuestas');
+  if (!respSheet) return jsonResponse({ status: 'error', message: 'Hoja QuizRespuestas no encontrada' });
+
+  const respData = respSheet.getDataRange().getValues();
+  for (let i = 1; i < respData.length; i++) {
+    if (respData[i][1] && respData[i][1].toString().toLowerCase().trim() === email
+        && respData[i][3] === data.quizId) {
+      return jsonResponse({ status: 'error', message: 'Ya respondiste este quiz' });
+    }
+  }
+
+  // Cargar quiz para obtener respuestas correctas
+  const quizSheet = getSheet('Quizzes');
+  if (!quizSheet) return jsonResponse({ status: 'error', message: 'Hoja Quizzes no encontrada' });
+
+  const quizData = quizSheet.getDataRange().getValues();
+  let preguntas = [];
+  for (let i = 1; i < quizData.length; i++) {
+    if (quizData[i][0] === data.quizId) {
+      try { preguntas = JSON.parse(quizData[i][3]); } catch(e) {}
+      break;
+    }
+  }
+
+  if (preguntas.length === 0) return jsonResponse({ status: 'error', message: 'Quiz no encontrado' });
+
+  // Calificar: 2 puntos por respuesta correcta
+  let puntosObtenidos = 0;
+  for (let i = 0; i < preguntas.length; i++) {
+    if (i < respuestas.length && respuestas[i] === preguntas[i].correcta) {
+      puntosObtenidos += 2;
+    }
+  }
+
+  // Guardar respuesta
+  respSheet.appendRow([
+    nowColombia(),
+    email,
+    nombre,
+    data.quizId,
+    JSON.stringify(respuestas),
+    puntosObtenidos
+  ]);
+
+  // Registrar en EventosTracking
+  const trackSheet = getSheet('EventosTracking');
+  if (trackSheet) {
+    trackSheet.appendRow([
+      nowColombia(),
+      email,
+      data.quizId,
+      'quiz',
+      puntosObtenidos
+    ]);
+  }
+
+  // Recalcular puntos
+  try { recalcularPuntosEstudiante(email); } catch(e) {}
+
+  return jsonResponse({ status: 'ok', message: 'Quiz enviado' });
 }

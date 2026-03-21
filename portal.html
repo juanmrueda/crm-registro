@@ -120,6 +120,50 @@
                 <div id="checkinResult" class="hidden mt-3 px-4 py-3 rounded-xl text-sm"></div>
             </div>
 
+            <!-- Quiz -->
+            <div id="quizSection" class="hidden mb-4 fade-in" style="animation-delay:0.17s;">
+                <div id="quizAvailable" class="glass p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-white text-sm font-semibold" id="quizTitulo">Quiz Disponible</h3>
+                            <p class="text-white/40 text-xs">10 preguntas · 1:30 min c/u · 2 pts c/u</p>
+                        </div>
+                    </div>
+                    <button onclick="iniciarQuiz()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                        Comenzar Quiz
+                    </button>
+                </div>
+                <div id="quizYaRespondido" class="hidden glass p-6 text-center">
+                    <p class="text-emerald-400 text-sm font-semibold">Quiz enviado</p>
+                    <p class="text-white/40 text-xs mt-1">Ya respondiste este quiz</p>
+                </div>
+            </div>
+
+            <!-- Quiz Fullscreen -->
+            <div id="quizFullscreen" class="hidden fixed inset-0 bg-[#0a0e1a] z-50 flex flex-col">
+                <!-- Header -->
+                <div class="p-4 flex items-center justify-between border-b border-white/5">
+                    <div class="flex items-center gap-3">
+                        <span class="text-white/40 text-xs font-mono" id="quizProgress">1 / 10</span>
+                        <div class="w-32 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-300" id="quizProgressBar" style="width:10%"></div>
+                        </div>
+                    </div>
+                    <div id="quizTimerDisplay" class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5">
+                        <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-white font-mono text-sm font-bold" id="quizTimer">1:30</span>
+                    </div>
+                </div>
+                <!-- Question -->
+                <div class="flex-1 flex flex-col justify-center p-6 max-w-lg mx-auto w-full">
+                    <p class="text-white text-lg font-semibold mb-6 text-center leading-relaxed" id="quizPregunta">--</p>
+                    <div class="space-y-3" id="quizOpciones"></div>
+                </div>
+            </div>
+
             <!-- Historial -->
             <div class="glass p-6 fade-in" style="animation-delay:0.2s;">
                 <h3 class="text-white/80 text-sm font-semibold mb-3">Historial de Clases</h3>
@@ -169,6 +213,7 @@
                     document.getElementById('loginView').classList.add('hidden');
                     document.getElementById('dashboardView').classList.remove('hidden');
                     renderDashboard();
+                    checkQuizActivo();
                 } else {
                     const err = document.getElementById('loginError');
                     err.textContent = json.message || 'Email no registrado';
@@ -310,6 +355,175 @@
             btn.disabled = false;
             btn.style.opacity = '1';
             btn.textContent = 'Asistir';
+        }
+
+        // ============ QUIZ ============
+        let quizData = null;
+        let quizRespuestas = [];
+        let quizActual = 0;
+        let quizTimerInterval = null;
+        let quizTiempoRestante = 90;
+
+        async function checkQuizActivo() {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizActivo&email=' + encodeURIComponent(portalEmail));
+                const json = await res.json();
+                const section = document.getElementById('quizSection');
+                const available = document.getElementById('quizAvailable');
+                const yaResp = document.getElementById('quizYaRespondido');
+
+                if (json.yaRespondido) {
+                    section.classList.remove('hidden');
+                    available.classList.add('hidden');
+                    yaResp.classList.remove('hidden');
+                } else if (json.quiz) {
+                    quizData = json.quiz;
+                    section.classList.remove('hidden');
+                    available.classList.remove('hidden');
+                    yaResp.classList.add('hidden');
+                    document.getElementById('quizTitulo').textContent = quizData.titulo;
+                } else {
+                    section.classList.add('hidden');
+                }
+            } catch (e) {
+                console.warn('Error checking quiz:', e);
+            }
+        }
+
+        function iniciarQuiz() {
+            if (!quizData || !quizData.preguntas || quizData.preguntas.length === 0) return;
+            quizRespuestas = new Array(quizData.preguntas.length).fill(-1);
+            quizActual = 0;
+            document.getElementById('quizFullscreen').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            mostrarPregunta(0);
+        }
+
+        function mostrarPregunta(n) {
+            quizActual = n;
+            const total = quizData.preguntas.length;
+            const p = quizData.preguntas[n];
+
+            document.getElementById('quizProgress').textContent = `${n + 1} / ${total}`;
+            document.getElementById('quizProgressBar').style.width = `${((n + 1) / total) * 100}%`;
+            document.getElementById('quizPregunta').textContent = p.pregunta;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            const colors = [
+                'from-blue-500/20 to-blue-600/10 border-blue-500/20 hover:border-blue-400/40',
+                'from-emerald-500/20 to-emerald-600/10 border-emerald-500/20 hover:border-emerald-400/40',
+                'from-amber-500/20 to-amber-600/10 border-amber-500/20 hover:border-amber-400/40',
+                'from-purple-500/20 to-purple-600/10 border-purple-500/20 hover:border-purple-400/40'
+            ];
+
+            document.getElementById('quizOpciones').innerHTML = p.opciones.map((op, i) => `
+                <button onclick="seleccionarOpcion(${i})" class="w-full text-left p-4 rounded-xl bg-gradient-to-r ${colors[i]} border transition-all active:scale-[0.98]">
+                    <span class="text-white/40 text-xs font-bold mr-2">${labels[i]}.</span>
+                    <span class="text-white text-sm">${op}</span>
+                </button>
+            `).join('');
+
+            // Timer
+            clearInterval(quizTimerInterval);
+            quizTiempoRestante = 90;
+            actualizarTimer();
+            quizTimerInterval = setInterval(() => {
+                quizTiempoRestante--;
+                actualizarTimer();
+                if (quizTiempoRestante <= 0) {
+                    clearInterval(quizTimerInterval);
+                    avanzarPregunta();
+                }
+            }, 1000);
+        }
+
+        function actualizarTimer() {
+            const min = Math.floor(quizTiempoRestante / 60);
+            const sec = quizTiempoRestante % 60;
+            const display = document.getElementById('quizTimer');
+            display.textContent = `${min}:${String(sec).padStart(2, '0')}`;
+            const timerBox = document.getElementById('quizTimerDisplay');
+            if (quizTiempoRestante <= 10) {
+                timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-500/20';
+                display.className = 'text-red-400 font-mono text-sm font-bold';
+            } else if (quizTiempoRestante <= 30) {
+                timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/15';
+                display.className = 'text-amber-400 font-mono text-sm font-bold';
+            } else {
+                timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5';
+                display.className = 'text-white font-mono text-sm font-bold';
+            }
+        }
+
+        function seleccionarOpcion(opcion) {
+            quizRespuestas[quizActual] = opcion;
+            // Visual feedback
+            const btns = document.getElementById('quizOpciones').querySelectorAll('button');
+            btns.forEach((b, i) => {
+                b.disabled = true;
+                if (i === opcion) {
+                    b.classList.add('ring-2', 'ring-white/30', 'scale-[1.02]');
+                } else {
+                    b.style.opacity = '0.4';
+                }
+            });
+            clearInterval(quizTimerInterval);
+            setTimeout(() => avanzarPregunta(), 600);
+        }
+
+        function avanzarPregunta() {
+            if (quizActual < quizData.preguntas.length - 1) {
+                mostrarPregunta(quizActual + 1);
+            } else {
+                enviarQuiz();
+            }
+        }
+
+        async function enviarQuiz() {
+            clearInterval(quizTimerInterval);
+            // Show sending state
+            document.getElementById('quizPregunta').textContent = 'Enviando quiz...';
+            document.getElementById('quizOpciones').innerHTML = '<div class="flex justify-center"><svg class="animate-spin h-8 w-8 text-amber-400" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>';
+            document.getElementById('quizProgress').textContent = '';
+            document.getElementById('quizTimer').textContent = '';
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        action: 'enviarQuiz',
+                        email: portalEmail,
+                        quizId: quizData.quizId,
+                        respuestas: quizRespuestas
+                    })
+                });
+
+                // Show confirmation
+                document.getElementById('quizPregunta').textContent = 'Quiz enviado exitosamente';
+                document.getElementById('quizOpciones').innerHTML = `
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <p class="text-white/40 text-sm">Tus respuestas han sido registradas</p>
+                        <button onclick="cerrarQuiz()" class="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-sm">
+                            Volver al Portal
+                        </button>
+                    </div>`;
+            } catch (e) {
+                document.getElementById('quizPregunta').textContent = 'Error al enviar';
+                document.getElementById('quizOpciones').innerHTML = '<p class="text-red-400 text-sm text-center">Intenta de nuevo</p><button onclick="enviarQuiz()" class="w-full mt-4 py-3 rounded-xl bg-amber-500 text-white font-semibold text-sm">Reintentar</button>';
+            }
+        }
+
+        function cerrarQuiz() {
+            document.getElementById('quizFullscreen').classList.add('hidden');
+            document.body.style.overflow = '';
+            quizData = null;
+            // Reload portal data
+            setTimeout(() => loginPortal(), 2000);
         }
 
         function showCheckinResult(msg, success) {
