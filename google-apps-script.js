@@ -456,23 +456,23 @@ function handleCheckin(data) {
   const clasesData = clasesSheet.getDataRange().getValues();
   let claseEncontrada = null;
 
+  let codigoExpirado = false;
   for (let i = 1; i < clasesData.length; i++) {
     if (clasesData[i][6] === codigo && clasesData[i][8] === 'activa') {
       const expira = new Date(clasesData[i][7]);
-      if (new Date() <= expira) {
-        claseEncontrada = {
-          claseId: clasesData[i][0],
-          numero: clasesData[i][1],
-          horaInicio: clasesData[i][4],
-          fecha: clasesData[i][3]
-        };
-      }
+      codigoExpirado = new Date() > expira;
+      claseEncontrada = {
+        claseId: clasesData[i][0],
+        numero: clasesData[i][1],
+        horaInicio: clasesData[i][4],
+        fecha: clasesData[i][3]
+      };
       break;
     }
   }
 
   if (!claseEncontrada) {
-    return jsonResponse({ status: 'error', message: 'Codigo invalido o expirado' });
+    return jsonResponse({ status: 'error', message: 'Codigo invalido o clase no activa' });
   }
 
   // Verificar que no haya duplicado
@@ -520,19 +520,25 @@ function handleCheckin(data) {
     const maxPuntos = config.puntosPuntualidadMax || 5;
     const tolerancia = config.toleranciaLlegadaTarde || 15;
 
-    if (minutosAntes < -tolerancia) {
-      // Muy tarde, pero aun cuenta la asistencia
-      puntosPuntualidad = 0;
-    } else if (minutosAntes >= ventana) {
-      puntosPuntualidad = maxPuntos;
-    } else if (minutosAntes > 0) {
-      puntosPuntualidad = Math.round(maxPuntos * (minutosAntes / ventana));
-    } else {
-      puntosPuntualidad = 0;
-    }
-
     const puntosBase = config.puntosAsistencia || 10;
-    const puntosTotal = puntosBase + puntosPuntualidad;
+    let puntosTotal;
+
+    if (codigoExpirado) {
+      // Llegó tarde (después de expirar código): solo 5 puntos, sin puntualidad
+      puntosPuntualidad = 0;
+      puntosTotal = 5;
+    } else {
+      if (minutosAntes < -tolerancia) {
+        puntosPuntualidad = 0;
+      } else if (minutosAntes >= ventana) {
+        puntosPuntualidad = maxPuntos;
+      } else if (minutosAntes > 0) {
+        puntosPuntualidad = Math.round(maxPuntos * (minutosAntes / ventana));
+      } else {
+        puntosPuntualidad = 0;
+      }
+      puntosTotal = puntosBase + puntosPuntualidad;
+    }
 
     // Registrar asistencia
     const row = [
