@@ -535,13 +535,22 @@ function handleCheckin(data) {
       puntosPuntualidad = 0;
       puntosTotal = 5;
     } else {
+      const gracia = 5; // minutos después de inicio donde aún se dan puntos
       if (minutosAntes < -tolerancia) {
+        // Muy tarde (más de 15 min después)
         puntosPuntualidad = 0;
       } else if (minutosAntes >= ventana) {
+        // Llegó 15+ min antes: máximo
         puntosPuntualidad = maxPuntos;
       } else if (minutosAntes > 0) {
+        // Llegó entre 1 y 14 min antes: proporcional
         puntosPuntualidad = Math.round(maxPuntos * (minutosAntes / ventana));
+      } else if (minutosAntes >= -gracia) {
+        // Llegó entre la hora exacta y 5 min después: puntos decrecientes
+        // 0 min después = 3 pts, -5 min = 1 pt
+        puntosPuntualidad = Math.max(1, Math.round(maxPuntos * (gracia + minutosAntes) / (gracia + ventana)));
       } else {
+        // Llegó entre 6 y 15 min tarde
         puntosPuntualidad = 0;
       }
       puntosTotal = puntosBase + puntosPuntualidad;
