@@ -2163,6 +2163,18 @@
             });
         }
 
+        function formatHora(val) {
+            if (!val) return '';
+            const s = val.toString();
+            // If it's an ISO/Date string like "1899-12-30T22:56:16.000Z", extract time
+            const isoMatch = s.match(/T(\d{2}:\d{2})/);
+            if (isoMatch) return isoMatch[1];
+            // If it's already HH:mm
+            const timeMatch = s.match(/^(\d{1,2}:\d{2})/);
+            if (timeMatch) return timeMatch[1];
+            return s;
+        }
+
         async function crearClase() {
             const titulo = document.getElementById('claseTitle').value.trim();
             const horaInicio = document.getElementById('claseHoraInicio').value;
@@ -2294,7 +2306,7 @@
                     <h4 class="text-white font-semibold text-sm mb-1">${c.Titulo || 'Sin titulo'}</h4>
                     <div class="flex items-center gap-3 text-white/40 text-xs">
                         <span>${fecha}</span>
-                        ${c.HoraInicio ? `<span>${c.HoraInicio}</span>` : ''}
+                        ${c.HoraInicio ? `<span>${formatHora(c.HoraInicio)}</span>` : ''}
                     </div>
                     ${actionBtn}
                 </div>`;
