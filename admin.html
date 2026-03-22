@@ -772,98 +772,68 @@
                 </div>
             </div>
 
-            <!-- ============================== -->
-            <!-- QUIZ SECTION                  -->
-            <!-- ============================== -->
+            <!-- QUIZ -->
             <div class="section" id="section-quiz">
-                <!-- Quiz activo -->
-                <div id="quizActivoPanel" class="mb-6" style="display:none">
-                    <div class="card" style="border:1px solid rgba(251,191,36,0.2); background: rgba(251,191,36,0.05);">
-                        <div class="flex items-center justify-between mb-4">
+                <div id="quizActivoPanel" style="display:none;margin-bottom:24px">
+                    <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-radius:16px;padding:20px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
                             <div>
-                                <p class="text-amber-400 text-xs font-semibold uppercase tracking-wider">Quiz Activo</p>
-                                <p class="text-white text-lg font-bold mt-1" id="quizActivoTitulo">--</p>
+                                <p style="color:#fbbf24;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Quiz Activo</p>
+                                <p style="color:#fff;font-size:18px;font-weight:700;margin-top:4px" id="quizActivoTitulo">--</p>
                             </div>
-                            <div class="flex gap-2">
-                                <button onclick="mostrarResultadosQuiz()" class="px-4 py-2 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs font-medium hover:bg-indigo-500/25 transition-colors">Resultados</button>
-                                <button onclick="cerrarQuizAdmin()" class="px-4 py-2 rounded-lg bg-red-500/15 text-red-300 text-xs font-medium hover:bg-red-500/25 transition-colors">Cerrar</button>
+                            <div style="display:flex;gap:8px">
+                                <button onclick="mostrarResultadosQuiz()" style="padding:8px 16px;border-radius:8px;background:rgba(99,102,241,0.15);color:#a5b4fc;font-size:12px;font-weight:500;border:none;cursor:pointer">Resultados</button>
+                                <button onclick="cerrarQuizAdmin()" style="padding:8px 16px;border-radius:8px;background:rgba(239,68,68,0.15);color:#fca5a5;font-size:12px;font-weight:500;border:none;cursor:pointer">Cerrar Quiz</button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                                <span class="text-amber-400/80 text-sm font-medium" id="quizRespondidos">0 respondidos</span>
+                        <div style="display:flex;align-items:center;gap:16px">
+                            <div style="display:flex;align-items:center;gap:8px">
+                                <div style="width:8px;height:8px;border-radius:50%;background:#fbbf24;animation:pulse 2s infinite"></div>
+                                <span style="color:rgba(251,191,36,0.8);font-size:14px;font-weight:500" id="quizRespondidos">0 respondidos</span>
                             </div>
-                            <span class="text-white/30 text-xs" id="quizTotalEst">de 0 registrados</span>
+                            <span style="color:rgba(255,255,255,0.3);font-size:12px" id="quizTotalEst">de 0 registrados</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Crear Quiz (colapsable) -->
-                <div class="card mb-6" id="crearQuizPanel">
-                    <div class="flex items-center justify-between cursor-pointer" onclick="const el=document.getElementById('crearQuizBody');el.style.display=el.style.display==='none'?'block':'none'">
-                        <h3 class="text-white text-lg font-bold">Crear Nuevo Quiz</h3>
-                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </div>
-                    <div id="crearQuizBody" class="mt-4" style="display:none">
-                        <div class="mb-4">
-                            <label class="text-white/50 text-xs font-medium mb-1 block">Titulo del Quiz</label>
-                            <input type="text" id="quizTituloInput" placeholder="Ej: Quiz Clase 3" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-500/50 transition-all">
-                        </div>
-                        <div id="quizPreguntasForm" class="space-y-4 mb-4"></div>
-                        <button onclick="crearQuizAdmin()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
-                            Crear Quiz
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Lista quizzes -->
                 <div class="card">
-                    <h3 class="text-white text-lg font-bold mb-4">Quizzes Anteriores</h3>
-                    <div id="quizzesList" class="space-y-2">
-                        <p class="text-white/30 text-sm text-center py-4">Cargando...</p>
-                    </div>
+                    <h3 style="color:#fff;font-size:18px;font-weight:700;margin-bottom:16px">Quizzes</h3>
+                    <div id="quizzesList"><p style="color:rgba(255,255,255,0.3);font-size:14px;text-align:center;padding:16px 0">Cargando...</p></div>
                 </div>
             </div>
 
-        </div> <!-- close p-4 lg:p-8 content area -->
-    </div> <!-- close main-content -->
+        </div>
+    </div>
 
     <!-- Quiz Resultados Modal -->
-    <div class="modal-overlay hidden" id="quizResultadosModal" onclick="if(event.target===this)this.classList.add('hidden')">
-        <div class="modal-content" style="max-width:700px;">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    <div class="modal-overlay" id="quizResultadosModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-content" style="max-width:700px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#ea580c);display:flex;align-items:center;justify-content:center">
+                        <svg style="width:24px;height:24px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     </div>
                     <div>
-                        <h3 class="text-white text-lg font-bold">Resultados del Quiz</h3>
-                        <p class="text-white/40 text-xs" id="quizResultadosSub">--</p>
+                        <h3 style="color:#fff;font-size:18px;font-weight:700">Resultados del Quiz</h3>
+                        <p style="color:rgba(255,255,255,0.4);font-size:12px" id="quizResultadosSub">--</p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('quizResultadosModal').classList.add('hidden')" class="text-white/30 hover:text-white/60 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                <button onclick="document.getElementById('quizResultadosModal').style.display='none'" style="color:rgba(255,255,255,0.3);background:none;border:none;cursor:pointer;font-size:24px">&times;</button>
             </div>
-            <!-- Stats -->
-            <div class="grid grid-cols-3 gap-3 mb-4">
-                <div class="bg-white/5 rounded-xl p-3 text-center">
-                    <p class="text-amber-400 text-2xl font-bold" id="qrPromedio">0</p>
-                    <p class="text-white/40 text-[10px]">Promedio</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;text-align:center">
+                    <p style="color:#fbbf24;font-size:24px;font-weight:700" id="qrPromedio">0</p>
+                    <p style="color:rgba(255,255,255,0.4);font-size:10px">Promedio</p>
                 </div>
-                <div class="bg-white/5 rounded-xl p-3 text-center">
-                    <p class="text-emerald-400 text-2xl font-bold" id="qrMejor">0</p>
-                    <p class="text-white/40 text-[10px]">Mejor Nota</p>
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;text-align:center">
+                    <p style="color:#34d399;font-size:24px;font-weight:700" id="qrMejor">0</p>
+                    <p style="color:rgba(255,255,255,0.4);font-size:10px">Mejor Nota</p>
                 </div>
-                <div class="bg-white/5 rounded-xl p-3 text-center">
-                    <p class="text-white/60 text-2xl font-bold" id="qrRespondieron">0/0</p>
-                    <p class="text-white/40 text-[10px]">Respondieron</p>
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;text-align:center">
+                    <p style="color:rgba(255,255,255,0.6);font-size:24px;font-weight:700" id="qrRespondieron">0/0</p>
+                    <p style="color:rgba(255,255,255,0.4);font-size:10px">Respondieron</p>
                 </div>
             </div>
-            <!-- Leaderboard -->
-            <div class="max-h-96 overflow-y-auto space-y-2" id="quizLeaderboard">
-            </div>
+            <div style="max-height:384px;overflow-y:auto" id="quizLeaderboard"></div>
         </div>
     </div>
 
@@ -2635,62 +2605,6 @@
         let quizActivoId = null;
         let quizRefreshInterval = null;
 
-        function generarFormPreguntas() {
-            const container = document.getElementById('quizPreguntasForm');
-            let html = '';
-            for (let i = 0; i < 10; i++) {
-                html += `
-                <div class="bg-white/3 rounded-xl p-4 border border-white/5">
-                    <label class="text-amber-400/80 text-xs font-bold mb-2 block">Pregunta ${i + 1}</label>
-                    <input type="text" id="qp_${i}" placeholder="Escribe la pregunta..." class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm mb-2 focus:outline-none focus:border-amber-500/50">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="qo_${i}_0" placeholder="A." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
-                        <input type="text" id="qo_${i}_1" placeholder="B." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
-                        <input type="text" id="qo_${i}_2" placeholder="C." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
-                        <input type="text" id="qo_${i}_3" placeholder="D." class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none">
-                    </div>
-                    <div class="mt-2">
-                        <label class="text-white/30 text-[10px] uppercase tracking-wider">Correcta:</label>
-                        <select id="qc_${i}" class="ml-2 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none [&>option]:text-black [&>option]:bg-white">
-                            <option value="0">A</option>
-                            <option value="1">B</option>
-                            <option value="2">C</option>
-                            <option value="3">D</option>
-                        </select>
-                    </div>
-                </div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        async function crearQuizAdmin() {
-            const titulo = document.getElementById('quizTituloInput').value.trim();
-            if (!titulo) { alert('Ingresa un titulo'); return; }
-
-            const preguntas = [];
-            for (let i = 0; i < 10; i++) {
-                const pregunta = document.getElementById(`qp_${i}`).value.trim();
-                const opciones = [
-                    document.getElementById(`qo_${i}_0`).value.trim(),
-                    document.getElementById(`qo_${i}_1`).value.trim(),
-                    document.getElementById(`qo_${i}_2`).value.trim(),
-                    document.getElementById(`qo_${i}_3`).value.trim()
-                ];
-                const correcta = parseInt(document.getElementById(`qc_${i}`).value);
-
-                if (!pregunta || opciones.some(o => !o)) {
-                    alert(`Completa la pregunta ${i + 1} con todas sus opciones`);
-                    return;
-                }
-                preguntas.push({ pregunta, opciones, correcta });
-            }
-
-            await postAppsScript({ action: 'crearQuiz', titulo, preguntas });
-            document.getElementById('quizTituloInput').value = '';
-            alert('Quiz creado. Activalo cuando estes listo.');
-            setTimeout(loadQuizzes, 2500);
-        }
-
         async function loadQuizzes() {
             try {
                 const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizzes');
@@ -2701,46 +2615,49 @@
         }
 
         function renderQuizzes() {
-            const list = document.getElementById('quizzesList');
-            const activoPanel = document.getElementById('quizActivoPanel');
+            var list = document.getElementById('quizzesList');
+            var panel = document.getElementById('quizActivoPanel');
+            var activo = null;
+            var otros = [];
 
-            // Check for active quiz
-            const activo = quizzesData.find(q => q.Estado === 'activo');
+            for (var i = 0; i < quizzesData.length; i++) {
+                if (quizzesData[i].Estado === 'activo') activo = quizzesData[i];
+                else otros.push(quizzesData[i]);
+            }
+
             if (activo) {
                 quizActivoId = activo.QuizId;
-                activoPanel.style.display = 'block';
+                panel.style.display = 'block';
                 document.getElementById('quizActivoTitulo').textContent = activo.Titulo;
                 iniciarRefreshQuiz();
             } else {
                 quizActivoId = null;
-                activoPanel.style.display = 'none';
+                panel.style.display = 'none';
                 clearInterval(quizRefreshInterval);
             }
 
-            const otros = quizzesData.filter(q => q.Estado !== 'activo');
             if (otros.length === 0 && !activo) {
-                list.innerHTML = '<p class="text-white/30 text-sm text-center py-4">No hay quizzes creados</p>';
+                list.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:14px;text-align:center;padding:16px 0">No hay quizzes creados. Agregalos en la hoja Quizzes.</p>';
                 return;
             }
 
-            list.innerHTML = otros.map(q => {
-                const estadoColor = q.Estado === 'cerrado' ? 'bg-red-500/15 text-red-300' : 'bg-white/10 text-white/50';
-                const btn = q.Estado === 'borrador'
-                    ? `<button onclick="activarQuizAdmin('${q.QuizId}')" class="px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 text-xs hover:bg-amber-500/25 transition-colors">Activar</button>`
-                    : `<button onclick="mostrarResultadosQuizId('${q.QuizId}')" class="px-3 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs hover:bg-indigo-500/25 transition-colors">Resultados</button>`;
-                return `
-                <div class="flex items-center justify-between bg-white/3 rounded-xl p-3">
-                    <div>
-                        <p class="text-white text-sm font-medium">${q.Titulo}</p>
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-medium ${estadoColor}">${q.Estado}</span>
-                    </div>
-                    ${btn}
-                </div>`;
-            }).join('');
+            var html = '';
+            for (var j = 0; j < otros.length; j++) {
+                var q = otros[j];
+                var color = q.Estado === 'cerrado' ? 'color:#fca5a5' : 'color:rgba(255,255,255,0.5)';
+                var btn = q.Estado === 'borrador'
+                    ? '<button onclick="activarQuizAdmin(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(251,191,36,0.15);color:#fcd34d;font-size:12px;border:none;cursor:pointer">Activar</button>'
+                    : '<button onclick="mostrarResultadosQuizId(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(99,102,241,0.15);color:#a5b4fc;font-size:12px;border:none;cursor:pointer">Resultados</button>';
+                html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border-radius:12px;padding:12px;margin-bottom:8px">';
+                html += '<div><p style="color:#fff;font-size:14px;font-weight:500">' + q.Titulo + '</p>';
+                html += '<span style="font-size:10px;font-weight:500;' + color + '">' + q.Estado + '</span></div>';
+                html += btn + '</div>';
+            }
+            list.innerHTML = html;
         }
 
         async function activarQuizAdmin(quizId) {
-            await postAppsScript({ action: 'activarQuiz', quizId });
+            await postAppsScript({ action: 'activarQuiz', quizId: quizId });
             setTimeout(loadQuizzes, 2500);
         }
 
@@ -2760,61 +2677,55 @@
         async function refreshQuizCount() {
             if (!quizActivoId) return;
             try {
-                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizResultados&quizId=' + quizActivoId);
-                const json = await res.json();
-                document.getElementById('quizRespondidos').textContent = `${json.respondidos} respondidos`;
-                document.getElementById('quizTotalEst').textContent = `de ${json.totalEstudiantes} registrados`;
+                var res = await fetch(APPS_SCRIPT_URL + '?action=getQuizResultados&quizId=' + quizActivoId);
+                var json = await res.json();
+                document.getElementById('quizRespondidos').textContent = json.respondidos + ' respondidos';
+                document.getElementById('quizTotalEst').textContent = 'de ' + json.totalEstudiantes + ' registrados';
             } catch (e) {}
         }
 
-        async function mostrarResultadosQuiz() {
-            if (quizActivoId) await mostrarResultadosQuizId(quizActivoId);
+        function mostrarResultadosQuiz() {
+            if (quizActivoId) mostrarResultadosQuizId(quizActivoId);
         }
 
         async function mostrarResultadosQuizId(quizId) {
             try {
-                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizResultados&quizId=' + quizId);
-                const json = await res.json();
-                const resultados = json.resultados || [];
+                var res = await fetch(APPS_SCRIPT_URL + '?action=getQuizResultados&quizId=' + quizId);
+                var json = await res.json();
+                var resultados = json.resultados || [];
 
-                document.getElementById('quizResultadosSub').textContent = `${json.respondidos} de ${json.totalEstudiantes} respondieron`;
-                document.getElementById('qrRespondieron').textContent = `${json.respondidos}/${json.totalEstudiantes}`;
+                document.getElementById('quizResultadosSub').textContent = json.respondidos + ' de ' + json.totalEstudiantes + ' respondieron';
+                document.getElementById('qrRespondieron').textContent = json.respondidos + '/' + json.totalEstudiantes;
 
                 if (resultados.length > 0) {
-                    const avg = Math.round(resultados.reduce((s, r) => s + r.puntos, 0) / resultados.length);
-                    const best = resultados[0].puntos;
-                    document.getElementById('qrPromedio').textContent = avg + '/20';
-                    document.getElementById('qrMejor').textContent = best + '/20';
+                    var sum = 0;
+                    for (var i = 0; i < resultados.length; i++) sum += resultados[i].puntos;
+                    document.getElementById('qrPromedio').textContent = Math.round(sum / resultados.length) + '/20';
+                    document.getElementById('qrMejor').textContent = resultados[0].puntos + '/20';
                 } else {
                     document.getElementById('qrPromedio').textContent = '0';
                     document.getElementById('qrMejor').textContent = '0';
                 }
 
-                const podiumColors = ['from-amber-400 to-yellow-500', 'from-gray-300 to-gray-400', 'from-amber-600 to-amber-700'];
-                const podiumIcons = ['1', '2', '3'];
-
-                document.getElementById('quizLeaderboard').innerHTML = resultados.map((r, i) => {
-                    const isPodium = i < 3;
-                    return `
-                    <div class="flex items-center justify-between ${isPodium ? 'bg-white/5' : 'bg-white/3'} rounded-xl p-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg ${isPodium ? 'bg-gradient-to-br ' + podiumColors[i] : 'bg-white/10'} flex items-center justify-center">
-                                <span class="${isPodium ? 'text-white' : 'text-white/40'} text-xs font-bold">${i + 1}</span>
-                            </div>
-                            <p class="text-white text-sm font-medium">${r.nombre}</p>
-                        </div>
-                        <span class="text-amber-300 text-sm font-bold">${r.puntos}/20</span>
-                    </div>`;
-                }).join('');
-
-                document.getElementById('quizResultadosModal').classList.remove('hidden');
+                var podiumBg = ['linear-gradient(135deg,#fbbf24,#eab308)', 'linear-gradient(135deg,#d1d5db,#9ca3af)', 'linear-gradient(135deg,#d97706,#b45309)'];
+                var html = '';
+                for (var j = 0; j < resultados.length; j++) {
+                    var r = resultados[j];
+                    var bg = j < 3 ? podiumBg[j] : 'rgba(255,255,255,0.1)';
+                    var txtColor = j < 3 ? '#fff' : 'rgba(255,255,255,0.4)';
+                    html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,' + (j < 3 ? '0.05' : '0.03') + ');border-radius:12px;padding:12px;margin-bottom:8px">';
+                    html += '<div style="display:flex;align-items:center;gap:12px">';
+                    html += '<div style="width:32px;height:32px;border-radius:8px;background:' + bg + ';display:flex;align-items:center;justify-content:center">';
+                    html += '<span style="color:' + txtColor + ';font-size:12px;font-weight:700">' + (j + 1) + '</span></div>';
+                    html += '<p style="color:#fff;font-size:14px;font-weight:500">' + r.nombre + '</p></div>';
+                    html += '<span style="color:#fcd34d;font-size:14px;font-weight:700">' + r.puntos + '/20</span></div>';
+                }
+                document.getElementById('quizLeaderboard').innerHTML = html;
+                document.getElementById('quizResultadosModal').style.display = 'flex';
             } catch (e) {
                 alert('Error cargando resultados');
             }
         }
-
-        // Generate quiz form on load
-        generarFormPreguntas();
     </script>
 </body>
 </html>
