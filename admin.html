@@ -771,15 +771,13 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
             <!-- ============================== -->
             <!-- QUIZ SECTION                  -->
             <!-- ============================== -->
             <div class="section" id="section-quiz">
                 <!-- Quiz activo -->
-                <div id="quizActivoPanel" class="hidden mb-6">
+                <div id="quizActivoPanel" class="mb-6" style="display:none">
                     <div class="card" style="border:1px solid rgba(251,191,36,0.2); background: rgba(251,191,36,0.05);">
                         <div class="flex items-center justify-between mb-4">
                             <div>
@@ -801,17 +799,22 @@
                     </div>
                 </div>
 
-                <!-- Crear Quiz -->
+                <!-- Crear Quiz (colapsable) -->
                 <div class="card mb-6" id="crearQuizPanel">
-                    <h3 class="text-white text-lg font-bold mb-4">Crear Quiz</h3>
-                    <div class="mb-4">
-                        <label class="text-white/50 text-xs font-medium mb-1 block">Titulo del Quiz</label>
-                        <input type="text" id="quizTituloInput" placeholder="Ej: Quiz Clase 3" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-500/50 transition-all">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="const el=document.getElementById('crearQuizBody');el.style.display=el.style.display==='none'?'block':'none'">
+                        <h3 class="text-white text-lg font-bold">Crear Nuevo Quiz</h3>
+                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </div>
-                    <div id="quizPreguntasForm" class="space-y-4 mb-4"></div>
-                    <button onclick="crearQuizAdmin()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
-                        Crear Quiz
-                    </button>
+                    <div id="crearQuizBody" class="mt-4" style="display:none">
+                        <div class="mb-4">
+                            <label class="text-white/50 text-xs font-medium mb-1 block">Titulo del Quiz</label>
+                            <input type="text" id="quizTituloInput" placeholder="Ej: Quiz Clase 3" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-500/50 transition-all">
+                        </div>
+                        <div id="quizPreguntasForm" class="space-y-4 mb-4"></div>
+                        <button onclick="crearQuizAdmin()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                            Crear Quiz
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Lista quizzes -->
@@ -822,6 +825,9 @@
                     </div>
                 </div>
             </div>
+
+        </div> <!-- close p-4 lg:p-8 content area -->
+    </div> <!-- close main-content -->
 
     <!-- Quiz Resultados Modal -->
     <div class="modal-overlay hidden" id="quizResultadosModal" onclick="if(event.target===this)this.classList.add('hidden')">
@@ -2702,12 +2708,12 @@
             const activo = quizzesData.find(q => q.Estado === 'activo');
             if (activo) {
                 quizActivoId = activo.QuizId;
-                activoPanel.classList.remove('hidden');
+                activoPanel.style.display = 'block';
                 document.getElementById('quizActivoTitulo').textContent = activo.Titulo;
                 iniciarRefreshQuiz();
             } else {
                 quizActivoId = null;
-                activoPanel.classList.add('hidden');
+                activoPanel.style.display = 'none';
                 clearInterval(quizRefreshInterval);
             }
 
