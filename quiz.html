@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz · Mercadeo Relacional y CRM · UAO</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0C0C0E;
+  --surface:  #141416;
+  --border:   #222226;
+  --orange:   #E8530A;
+  --orange2:  #FF6B2B;
+  --gold:     #C9A84C;
+  --white:    #F5F0E8;
+  --muted:    #6B6860;
+  --correct:  #1A9E6E;
+  --wrong:    #C0392B;
+  --cbg:      rgba(26,158,110,0.12);
+  --wbg:      rgba(192,57,43,0.12);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  overflow-x: hidden;
+}
+
+/* grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: .4;
+}
+
+.blob { position: fixed; border-radius: 50%; filter: blur(130px); pointer-events: none; z-index: 0; }
+.b1 { width: 600px; height: 600px; background: var(--orange); top:-250px; right:-200px; opacity:.12; }
+.b2 { width: 500px; height: 500px; background: var(--gold);   bottom:-200px; left:-150px; opacity:.10; }
+
+.wrap { position: relative; z-index: 1; width: 100%; max-width: 860px; }
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeUp .5s ease both; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── START SCREEN ── */
+.start-logo {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(232,83,10,.3);
+  padding: 5px 16px; border-radius: 2px;
+  margin-bottom: 20px;
+}
+.start-logo h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900; line-height: 1.0;
+  margin-bottom: 14px;
+}
+.start-logo h1 span { color: var(--orange); }
+.start-logo p { font-size: 15px; color: var(--muted); max-width: 440px; margin: 0 auto; line-height: 1.6; }
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 14px; margin: 40px 0;
+}
+.stat-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px; padding: 22px 16px; text-align: center;
+}
+.stat-box .n {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 900;
+  color: var(--orange); line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-box .l { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+.btn-start {
+  display: block; width: 100%;
+  padding: 17px;
+  background: var(--orange); color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  border: none; border-radius: 3px; cursor: pointer;
+  transition: all .2s ease;
+}
+.btn-start:hover { background: var(--orange2); transform: translateY(-2px); }
+
+/* ── QUIZ SCREEN ── */
+.prog-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px;
+}
+.prog-outer { flex:1; height:3px; background: var(--border); border-radius:2px; overflow:hidden; }
+.prog-inner {
+  height:100%;
+  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  border-radius:2px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+.prog-txt  { font-size:12px; color:var(--muted); min-width:52px; text-align:right; }
+.score-lbl { font-size:12px; font-weight:500; color:var(--gold); min-width:48px; }
+
+.qcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 38px 44px 32px;
+  position: relative; overflow: hidden;
+  animation: fadeUp .45s ease both;
+}
+.qcard::before {
+  content:''; position:absolute; top:0;left:0;right:0; height:3px;
+  background: linear-gradient(90deg, var(--orange), transparent);
+}
+.qmeta {
+  display:flex; align-items:center; gap:10px; margin-bottom:18px;
+}
+.qnum {
+  font-family:'Playfair Display',serif;
+  font-size:13px; color:var(--orange); font-weight:700;
+}
+.qmod {
+  font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  padding:3px 10px; border-radius:2px;
+}
+.qlvl {
+  font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  padding:3px 10px; border-radius:2px;
+  border:1px solid;
+}
+.qlvl.basico    { color:#6DB3A8; border-color:rgba(109,179,168,.35); background:rgba(109,179,168,.07); }
+.qlvl.intermedio{ color:var(--gold); border-color:rgba(201,168,76,.35); background:rgba(201,168,76,.07); }
+
+.qtext {
+  font-family:'Playfair Display',serif;
+  font-size: clamp(17px,2.4vw,22px);
+  font-weight:700; line-height:1.4;
+  color:var(--white); margin-bottom:30px;
+}
+
+.opts { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:560px){ .opts{grid-template-columns:1fr;} }
+
+.opt {
+  display:flex; align-items:flex-start; gap:13px;
+  padding:15px 17px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--border);
+  border-radius:3px; cursor:pointer;
+  transition:all .2s ease;
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px; color:rgba(245,240,232,.72);
+  line-height:1.45; text-align:left;
+}
+.opt:hover:not(.dis) {
+  border-color:rgba(232,83,10,.45);
+  background:rgba(232,83,10,.07);
+  color:var(--white);
+}
+.opt.dis { cursor:default; }
+.opt-l {
+  flex-shrink:0; width:26px; height:26px;
+  border-radius:2px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:var(--muted);
+  transition:all .2s; margin-top:1px;
+  font-family:'Playfair Display',serif;
+}
+.opt.ok  { background:var(--cbg); border-color:var(--correct); color:var(--white); }
+.opt.ok .opt-l { background:var(--correct); border-color:var(--correct); color:#fff; }
+.opt.sel-wrong { background:var(--wbg); border-color:var(--wrong); color:var(--white); }
+.opt.sel-wrong .opt-l { background:var(--wrong); border-color:var(--wrong); color:#fff; }
+.opt.show-right { background:var(--cbg); border-color:var(--correct); color:var(--white); }
+.opt.show-right .opt-l { background:var(--correct); border-color:var(--correct); color:#fff; }
+
+.fb {
+  display:none; margin-top:18px;
+  padding:14px 18px; border-radius:3px;
+  font-size:13px; line-height:1.65;
+  animation:fadeUp .3s ease both;
+}
+.fb.show { display:block; }
+.fb.ok-fb { background:var(--cbg); border:1px solid rgba(26,158,110,.3); color:#5DD4A8; }
+.fb.ko-fb { background:var(--wbg); border:1px solid rgba(192,57,43,.3); color:#E88070; }
+
+.btn-next {
+  display:none; margin-top:22px; width:100%;
+  padding:15px; background:var(--orange); color:#fff;
+  font-family:'DM Sans',sans-serif; font-size:14px;
+  font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+  border:none; border-radius:3px; cursor:pointer;
+  transition:all .2s;
+}
+.btn-next:hover { background:var(--orange2); transform:translateY(-1px); }
+.btn-next.show { display:block; animation:fadeUp .3s ease both; }
+
+/* ── RESULTS SCREEN ── */
+.res-wrap { text-align:center; }
+.res-circle {
+  width:170px; height:170px; border-radius:50%;
+  border:3px solid var(--orange);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  margin:0 auto 32px; position:relative;
+}
+.res-circle::before {
+  content:''; position:absolute; inset:7px;
+  border-radius:50%; background:rgba(232,83,10,.07);
+}
+.res-big {
+  font-family:'Playfair Display',serif;
+  font-size:54px; font-weight:900; color:var(--orange); line-height:1; position:relative;
+}
+.res-sub { font-size:13px; color:var(--muted); position:relative; margin-top:3px; }
+.res-wrap h2 {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(26px,4vw,36px); font-weight:900; margin-bottom:10px;
+}
+.res-wrap p { font-size:15px; color:var(--muted); margin-bottom:34px; max-width:460px; margin-left:auto; margin-right:auto; line-height:1.65; }
+
+.breakdown {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:12px; margin-bottom:34px;
+}
+@media(max-width:500px){ .breakdown{grid-template-columns:repeat(2,1fr);} }
+.bd-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:3px; padding:18px 10px; text-align:center;
+}
+.bd-n { font-family:'Playfair Display',serif; font-size:28px; font-weight:900; margin-bottom:4px; }
+.bd-n.c { color:var(--correct); }
+.bd-n.w { color:var(--wrong); }
+.bd-n.p { color:var(--gold); }
+.bd-n.b { color:var(--orange); }
+.bd-l { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+
+.btn-restart {
+  padding:14px 40px;
+  background:transparent; border:1px solid var(--orange);
+  color:var(--orange);
+  font-family:'DM Sans',sans-serif; font-size:13px;
+  font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  border-radius:3px; cursor:pointer; transition:all .2s;
+}
+.btn-restart:hover { background:var(--orange); color:#fff; }
+
+/* pulse */
+@keyframes pulse-ok {
+  0%   { box-shadow:0 0 0 0 rgba(26,158,110,.5); }
+  70%  { box-shadow:0 0 0 14px rgba(26,158,110,0); }
+  100% { box-shadow:0 0 0 0 rgba(26,158,110,0); }
+}
+.pulse { animation:pulse-ok .45s ease; }
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="wrap">
+
+  <!-- ══ START ══════════════════════════════════════════════════ -->
+  <div class="screen active" id="scStart">
+    <div class="start-logo">
+      <div class="tag">UAO · Especialización · 2026</div>
+      <h1>Mercadeo <span>Relacional</span><br>y CRM</h1>
+      <p>Pon a prueba lo aprendido en los tres módulos del curso. 25 preguntas, nivel básico e intermedio.</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="n">25</div><div class="l">Preguntas</div></div>
+      <div class="stat-box"><div class="n">2</div><div class="l">Niveles</div></div>
+      <div class="stat-box"><div class="n">3</div><div class="l">Módulos</div></div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Comenzar quiz →</button>
+  </div>
+
+  <!-- ══ QUIZ ════════════════════════════════════════════════════ -->
+  <div class="screen" id="scQuiz">
+    <div class="prog-row">
+      <div class="score-lbl" id="scoreLbl">0 pts</div>
+      <div class="prog-outer"><div class="prog-inner" id="progBar" style="width:0%"></div></div>
+      <div class="prog-txt" id="progTxt">1 / 25</div>
+    </div>
+    <div class="qcard" id="qcard">
+      <div class="qmeta">
+        <span class="qnum" id="qNum">Pregunta 01</span>
+        <span class="qmod" id="qMod"></span>
+        <span class="qlvl" id="qLvl"></span>
+      </div>
+      <div class="qtext" id="qText"></div>
+      <div class="opts"  id="optsGrid"></div>
+      <div class="fb"    id="fb"></div>
+      <button class="btn-next" id="btnNext" onclick="nextQ()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- ══ RESULTS ════════════════════════════════════════════════ -->
+  <div class="screen" id="scResults">
+    <div class="res-wrap">
+      <div class="res-circle">
+        <div class="res-big" id="rScore">0</div>
+        <div class="res-sub" id="rTotal">de 25</div>
+      </div>
+      <h2 id="rTitle"></h2>
+      <p  id="rMsg"></p>
+      <div class="breakdown">
+        <div class="bd-item"><div class="bd-n c" id="rC">0</div><div class="bd-l">Correctas</div></div>
+        <div class="bd-item"><div class="bd-n w" id="rW">0</div><div class="bd-l">Incorrectas</div></div>
+        <div class="bd-item"><div class="bd-n p" id="rP">0%</div><div class="bd-l">Puntaje</div></div>
+        <div class="bd-item"><div class="bd-n b" id="rB">—</div><div class="bd-l">Mejor módulo</div></div>
+      </div>
+      <button class="btn-restart" onclick="restart()">Reiniciar quiz</button>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+const Q = [
+  // ── MÓDULO 1 · BÁSICO ──────────────────────────────────────────
+  {
+    mod:"Módulo 1 · Mercadeo Relacional", lvl:"basico",
+    text:"¿Cuál es el objetivo principal del mercadeo relacional?",
+    opts:["Maximizar las ventas en el corto plazo","Construir relaciones duraderas y de valor mutuo con los clientes","Reducir los costos de publicidad","Captar el mayor número de clientes posible en poco tiempo"],
+    ok:1, fb:"El mercadeo relacional pone en el centro la relación de largo plazo: conocer al cliente, generar confianza y crear valor para ambas partes, más allá de una sola transacción."
+  },
+  {
+    mod:"Módulo 1 · Mercadeo Relacional", lvl:"basico",
+    text:"¿En qué se diferencia el mercadeo transaccional del mercadeo relacional?",
+    opts:["El transaccional usa tecnología y el relacional no","El transaccional se enfoca en ventas individuales; el relacional en la relación de largo plazo con el cliente","El relacional es más barato que el transaccional","No hay diferencia real entre los dos enfoques"],
+    ok:1, fb:"El mercadeo transaccional ve cada venta como un fin. El relacional la ve como el inicio o continuación de una relación que genera valor acumulado en el tiempo."
+  },
+  {
+    mod:"Módulo 1 · Mercadeo Relacional", lvl:"basico",
+    text:"¿Qué significa que una empresa tenga 'orientación al cliente' en el mercadeo relacional?",
+    opts:["Que responde rápido los mensajes de WhatsApp","Que pone las necesidades y expectativas del cliente en el centro de sus decisiones de negocio","Que ofrece descuentos frecuentes para mantener clientes","Que tiene un área de servicio al cliente bien dotada"],
+    ok:1, fb:"Orientación al cliente significa que todas las decisiones —producto, precio, comunicación, proceso— parten de entender profundamente qué necesita, espera y valora el cliente."
+  },
+  {
+    mod:"Módulo 1 · Mercadeo Relacional", lvl:"basico",
+    text:"¿Cuál de estos indicadores refleja mejor el éxito del mercadeo relacional?",
+    opts:["Número de anuncios publicados en un mes","Tasa de retención de clientes a lo largo del tiempo","Alcance de una campaña en redes sociales","Costo por clic en publicidad digital"],
+    ok:1, fb:"La retención es el indicador estrella del mercadeo relacional: si los clientes se quedan y vuelven a comprar, la relación está generando valor real para ambas partes."
+  },
+  {
+    mod:"Módulo 1 · Mercadeo Relacional", lvl:"intermedio",
+    text:"Una empresa de seguros detecta que el 70% de sus clientes no renueva después del segundo año. Desde el mercadeo relacional, ¿cuál es la causa más probable de este problema?",
+    opts:["El precio de los seguros es demasiado alto","La empresa no ha construido valor percibido ni relación con el cliente entre compras","El mercado está saturado y no hay diferenciación","Los clientes prefieren buscar opciones online por su cuenta"],
+    ok:1, fb:"Si no hay contacto, valor percibido ni relación entre transacciones, el cliente no tiene razón para ser leal. El mercadeo relacional actúa precisamente en esos momentos de silencio entre compras."
+  },
+  {
+    mod:"Módulo 1 · Mercadeo Relacional", lvl:"intermedio",
+    text:"¿Qué rol cumplen los empleados en el mercadeo relacional, especialmente los de contacto directo con clientes?",
+    opts:["Son solo ejecutores de protocolos de atención al cliente","Son actores clave: la relación con el cliente se construye o destruye en cada interacción que tienen","Su impacto es mínimo comparado con la publicidad y el precio","Solo importan los empleados del área comercial"],
+    ok:1, fb:"En el mercadeo relacional, cada punto de contacto importa. El empleado que atiende al cliente es la cara de la empresa; una mala interacción puede destruir años de construcción de relación."
+  },
+
+  // ── B2B VS B2C · BÁSICO ─────────────────────────────────────────
+  {
+    mod:"B2B vs B2C Relacional", lvl:"basico",
+    text:"¿Qué significa B2B en el contexto del mercadeo relacional?",
+    opts:["Back to Business: estrategia de recuperación de clientes perdidos","Business to Business: relaciones comerciales entre empresas","Business to Buyer: venta directa al consumidor final","Brand to Brand: alianzas entre marcas"],
+    ok:1, fb:"B2B (Business to Business) describe las relaciones comerciales entre empresas. En este contexto, el 'cliente' es otra organización, no un consumidor individual."
+  },
+  {
+    mod:"B2B vs B2C Relacional", lvl:"basico",
+    text:"¿Por qué el ciclo de venta en B2B suele ser más largo que en B2C?",
+    opts:["Porque los vendedores B2B son menos eficientes","Porque intervienen múltiples tomadores de decisión, el riesgo es mayor y las compras requieren evaluación profunda","Porque las empresas no tienen presupuesto claro","Porque el marketing B2B es menos efectivo"],
+    ok:1, fb:"En B2B, una compra involucra a usuarios, influenciadores, evaluadores y decisores. Cada uno tiene criterios distintos y el riesgo percibido es alto, lo que alarga el proceso naturalmente."
+  },
+  {
+    mod:"B2B vs B2C Relacional", lvl:"basico",
+    text:"En una relación B2C relacional, ¿qué herramienta es más usada para personalizar la comunicación con el cliente?",
+    opts:["Llamadas en frío a bases de datos compradas","Programas de fidelización y CRM que registran el historial y preferencias de cada cliente","Publicidad masiva en televisión","Catálogos impresos enviados por correo"],
+    ok:1, fb:"Los programas de fidelización y el CRM permiten en B2C lo que sería imposible de otra forma: conocer a cada cliente individualmente entre transacciones y comunicarse de forma relevante."
+  },
+  {
+    mod:"B2B vs B2C Relacional", lvl:"intermedio",
+    text:"Una distribuidora de alimentos tiene 40 supermercados clientes en el Valle del Cauca. Cada uno negocia precios, volúmenes y condiciones distintas. ¿Qué implica esto para su estrategia relacional?",
+    opts:["Que deben estandarizar condiciones para todos para ser más eficientes","Que deben gestionar cada cuenta como una relación única con sus propias necesidades, historial y potencial","Que deben reducir el número de clientes para simplificar la gestión","Que solo deben relacionarse con los 10 clientes más grandes"],
+    ok:1, fb:"En B2B con pocos clientes de alto valor, la personalización por cuenta es esencial. Cada cliente tiene su propio contexto, necesidades y potencial de crecimiento que debe gestionarse individualmente."
+  },
+  {
+    mod:"B2B vs B2C Relacional", lvl:"intermedio",
+    text:"¿Cuál es el principal reto del mercadeo relacional B2B comparado con B2C?",
+    opts:["En B2B no se pueden usar herramientas digitales","Gestionar relaciones con múltiples contactos dentro de la misma empresa cliente, cada uno con diferentes intereses y poder de decisión","En B2B los clientes son más leales automáticamente","El presupuesto de marketing B2B es siempre menor"],
+    ok:1, fb:"En B2B, la 'relación' no es con una persona sino con una organización. Gestionar simultáneamente al usuario, el comprador, el influenciador y el decisor dentro del mismo cliente es el gran reto."
+  },
+
+  // ── MÓDULO 2 · BÁSICO ──────────────────────────────────────────
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"basico",
+    text:"¿Qué es un CRM en términos simples?",
+    opts:["Un software de contabilidad para gestionar facturas","Un sistema para gestionar y mejorar las relaciones con los clientes, centralizando su información e historial","Una plataforma exclusiva para enviar campañas de email","Un módulo de recursos humanos para gestionar empleados"],
+    ok:1, fb:"CRM (Customer Relationship Management) es, antes que una herramienta, una estrategia. El software es solo el medio: lo importante es centralizar el conocimiento del cliente para tomar mejores decisiones."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"basico",
+    text:"¿Para qué sirve segmentar una base de clientes?",
+    opts:["Para reducir el número de clientes y trabajar con menos","Para agrupar clientes con características similares y diseñar estrategias específicas para cada grupo","Para ordenar los clientes alfabéticamente","Para identificar cuáles clientes tienen más seguidores en redes sociales"],
+    ok:1, fb:"La segmentación permite dejar de tratar a todos los clientes igual. Cada segmento tiene necesidades, comportamientos y valor diferente, lo que permite acciones más pertinentes y eficientes."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"basico",
+    text:"¿Qué es un Buyer Persona?",
+    opts:["El cliente que más compra en un mes determinado","Una representación semi-ficticia del cliente ideal, basada en datos reales sobre comportamiento, metas y contexto","El perfil de un empleado de ventas exitoso","Un término para el cliente que más se queja"],
+    ok:1, fb:"El Buyer Persona humaniza los datos: le pone nombre, historia, miedos y motivaciones a un segmento. Esto permite diseñar comunicaciones y ofertas que realmente resuenen con ese tipo de cliente."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"basico",
+    text:"¿Cuál es el riesgo de NO tener un CRM en una empresa que está creciendo?",
+    opts:["Que los empleados trabajen demasiado","Que el conocimiento del cliente quede disperso o en la cabeza de pocas personas, y se pierda cuando alguien sale","Que la empresa gaste demasiado en tecnología","Que los clientes dejen de comprar por falta de descuentos"],
+    ok:1, fb:"Sin CRM, el conocimiento del cliente no está institucionalizado. Cuando un vendedor sale, se va con toda la relación. El CRM hace que el activo 'clientes' pertenezca a la empresa, no a las personas."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"basico",
+    text:"¿Cuál de estas acciones corresponde a una estrategia de CRM bien implementada?",
+    opts:["Enviar el mismo correo de promociones a todos los clientes cada semana","Registrar cada interacción con el cliente y usar ese historial para personalizar la siguiente comunicación","Comprar una base de datos de contactos para ampliar el alcance","Hacer llamadas en frío a números al azar"],
+    ok:1, fb:"Un CRM bien implementado convierte cada interacción en aprendizaje. Registrar, analizar y actuar sobre el historial del cliente es lo que diferencia una relación genuina de un contacto genérico."
+  },
+
+  // ── MÓDULO 2 · INTERMEDIO ─────────────────────────────────────
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"Una empresa tiene 3 segmentos: clientes frecuentes de alto valor, clientes ocasionales y clientes inactivos hace más de 1 año. ¿Cuál sería la estrategia CRM más adecuada para los clientes inactivos?",
+    opts:["Eliminarlos de la base de datos para limpiar el CRM","Enviarles la misma comunicación que a los frecuentes","Diseñar una campaña de reactivación con incentivo específico y mensaje que reconozca el tiempo sin contacto","Ignorarlos porque ya no son rentables"],
+    ok:2, fb:"Los clientes inactivos tienen valor latente: ya conocen la empresa. Una campaña de reactivación bien diseñada, con el tono adecuado ('te echamos de menos') y un incentivo claro, puede recuperar una parte significativa."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"¿Cuál es la diferencia entre segmentar por datos demográficos y segmentar por comportamiento en el CRM?",
+    opts:["No hay diferencia, ambos métodos producen los mismos grupos","La segmentación demográfica agrupa por edad/sexo/ubicación; la conductual por lo que el cliente realmente hace: compra, frecuencia, valor, canales usados","La segmentación conductual solo aplica para e-commerce","La demográfica es más moderna y precisa que la conductual"],
+    ok:1, fb:"La segmentación conductual es más accionable: saber que un cliente compra cada 3 meses, siempre en diciembre y por montos altos, permite anticipar necesidades y actuar antes que el competidor."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"Un Buyer Persona llamado 'Carlos, gerente general de 45 años' incluye: sus retos diarios, cómo toma decisiones de compra, qué medios consume y qué objeciones pone. ¿Por qué esto es más útil que solo saber su edad y cargo?",
+    opts:["No es más útil; los datos demográficos son suficientes para cualquier campaña","Porque permite diseñar mensajes, canales y ofertas que abordan sus motivaciones reales, no solo características superficiales","Porque la edad y el cargo son datos privados que no se deben usar","Porque los datos cualitativos siempre son más confiables que los cuantitativos"],
+    ok:1, fb:"Saber que Carlos tiene 45 años no le dice cómo hablarle. Saber que su mayor miedo es perder el control sobre las ventas del equipo, y que decide basado en referidos, sí permite diseñar algo que lo mueva."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"¿Por qué tener muchos datos de clientes en el CRM no garantiza buenas decisiones?",
+    opts:["Porque los datos siempre son incorrectos o están desactualizados","Porque sin análisis, interpretación y acción, los datos son solo ruido; la clave es convertirlos en insights accionables","Porque el CRM no puede almacenar grandes volúmenes de información","Porque los clientes no quieren que les guarden datos"],
+    ok:1, fb:"Los datos por sí solos no deciden nada. El valor del CRM está en la capacidad de leer patrones, extraer conclusiones y traducirlas en acciones concretas hacia segmentos específicos."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"Una empresa implementó un CRM hace 6 meses pero el equipo de ventas no lo usa. Siguen anotando todo en hojas de cálculo propias. ¿Cuál es el problema real?",
+    opts:["El CRM elegido es de mala calidad técnica","El problema no es tecnológico sino de adopción: falta capacitación, incentivos y cultura para que el equipo vea el valor de registrar las interacciones","Los vendedores son demasiado mayores para aprender tecnología nueva","El CRM no se conecta con el email de la empresa"],
+    ok:1, fb:"La implementación de CRM falla más por razones humanas que técnicas. Si el equipo no entiende el beneficio directo para ellos, nunca lo adoptará. La tecnología es el 20%; el cambio cultural es el 80%."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"¿Qué significa que el Buyer Journey de un cliente B2B pase por las etapas de conciencia, consideración y decisión?",
+    opts:["Que el cliente siempre tarda exactamente 3 meses en comprar","Que el cliente primero reconoce un problema, luego evalúa soluciones y finalmente elige; el CRM debe acompañarlo con contenido y acciones adecuadas en cada etapa","Que solo hay que contactar al cliente cuando ya está listo para decidir","Que estas etapas solo aplican para productos de tecnología"],
+    ok:1, fb:"El Buyer Journey muestra que la venta no comienza cuando el cliente llama, sino cuando reconoce que tiene un problema. El CRM permite identificar en qué etapa está cada prospecto y actuar con el mensaje correcto en el momento correcto."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"Una empresa de servicios financieros tiene 500 clientes. Solo el 20% genera el 80% de sus ingresos. ¿Qué estrategia CRM sugiere este hallazgo?",
+    opts:["Enfocarse únicamente en conseguir clientes nuevos para diversificar","Aplicar atención diferenciada: máximo esfuerzo relacional y personalización para el 20% clave, y estrategias eficientes de desarrollo para el 80% restante","Eliminar a los clientes del 80% porque no son rentables","Bajar los precios para que el 80% compre más"],
+    ok:1, fb:"Este es el principio de Pareto aplicado al CRM. No todos los clientes merecen el mismo nivel de inversión relacional. Identificar y proteger el 20% clave es tan importante como desarrollar el potencial del 80%."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"¿Cuál es la diferencia entre un cliente satisfecho y un cliente leal en el contexto del CRM?",
+    opts:["No hay diferencia; si un cliente está satisfecho, automáticamente es leal","Un cliente satisfecho quedó conforme con una transacción; un cliente leal elige la empresa repetidamente por encima de la competencia, incluso cuando hay opciones similares","La lealtad solo se logra con programas de puntos y descuentos","La satisfacción es más importante que la lealtad para los ingresos de la empresa"],
+    ok:1, fb:"La satisfacción es el piso, no el techo. Un cliente puede estar satisfecho y aun así irse si la competencia ofrece algo ligeramente mejor. La lealtad implica preferencia y resistencia a cambiar, y eso se construye con relación."
+  },
+  {
+    mod:"Módulo 2 · CRM y Segmentación", lvl:"intermedio",
+    text:"En el contexto del curso, ¿qué relación hay entre los datos del CRM y el diseño de un Buyer Persona actualizado?",
+    opts:["No hay relación; el Buyer Persona se construye con intuición y experiencia del equipo","El CRM provee datos reales de comportamiento, compras y preferencias que permiten validar, enriquecer y actualizar continuamente el Buyer Persona con evidencia concreta","El Buyer Persona solo se construye con encuestas externas, no con datos del CRM","Los datos del CRM son demasiado técnicos para construir un perfil de cliente"],
+    ok:1, fb:"El CRM es la fuente de verdad del Buyer Persona. Sin datos reales, el persona es solo un supuesto. Con datos de compra, frecuencia, canales y feedback, el persona se convierte en una herramienta estratégica con respaldo empírico."
+  },
+];
+
+let cur=0, score=0, done=false;
+const modScore = {};
+
+// ── SHUFFLE HELPERS ────────────────────────────────────────────────
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// QS = versión mezclada de Q con opciones también mezcladas
+let QS = [];
+
+function buildShuffled(){
+  // 1. Mezcla el orden de las preguntas
+  QS = shuffle([...Q]).map(q => {
+    // 2. Para cada pregunta, mezcla las opciones y guarda cuál es la correcta
+    const correctText = q.opts[q.ok];
+    const shuffledOpts = shuffle([...q.opts]);
+    const newOk = shuffledOpts.indexOf(correctText);
+    return { ...q, opts: shuffledOpts, ok: newOk };
+  });
+}
+
+function startQuiz(){
+  show('scQuiz');
+  cur=0; score=0;
+  Object.keys(modScore).forEach(k=>delete modScore[k]);
+  buildShuffled();
+  render();
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function render(){
+  const q = QS[cur];
+  done = false;
+
+  document.getElementById('qNum').textContent  = `Pregunta ${String(cur+1).padStart(2,'0')}`;
+  document.getElementById('qMod').textContent  = q.mod;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('progTxt').textContent = `${cur+1} / ${QS.length}`;
+  document.getElementById('progBar').style.width = `${(cur/QS.length)*100}%`;
+  document.getElementById('scoreLbl').textContent = `${score} pts`;
+
+  const lvlEl = document.getElementById('qLvl');
+  lvlEl.textContent = q.lvl === 'basico' ? 'Básico' : 'Intermedio';
+  lvlEl.className = `qlvl ${q.lvl}`;
+
+  const grid = document.getElementById('optsGrid');
+  const letters = ['A','B','C','D'];
+  grid.innerHTML = q.opts.map((o,i)=>`
+    <button class="opt" onclick="pick(${i})" id="op${i}">
+      <span class="opt-l">${letters[i]}</span>
+      <span>${o}</span>
+    </button>`).join('');
+
+  const fb = document.getElementById('fb');
+  fb.className = 'fb';
+  fb.innerHTML = '';
+
+  const btn = document.getElementById('btnNext');
+  btn.className = 'btn-next';
+  btn.textContent = cur === QS.length-1 ? 'Ver resultados →' : 'Siguiente pregunta →';
+
+  const card = document.getElementById('qcard');
+  card.style.animation='none'; void card.offsetWidth;
+  card.style.animation='fadeUp .4s ease both';
+}
+
+function pick(idx){
+  if(done) return;
+  done = true;
+  const q = QS[cur];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('dis'));
+
+  const fb = document.getElementById('fb');
+  if(idx === q.ok){
+    score++;
+    document.getElementById(`op${idx}`).classList.add('ok','pulse');
+    fb.className='fb ok-fb show';
+    fb.innerHTML=`<strong>✓ Correcto.</strong> ${q.fb}`;
+    modScore[q.mod] = (modScore[q.mod]||[0,0]);
+    modScore[q.mod][0]++;
+  } else {
+    document.getElementById(`op${idx}`).classList.add('sel-wrong');
+    document.getElementById(`op${q.ok}`).classList.add('show-right');
+    fb.className='fb ko-fb show';
+    fb.innerHTML=`<strong>✗ Incorrecto.</strong> La correcta es <strong>${letters[q.ok]}</strong>. ${q.fb}`;
+    modScore[q.mod] = (modScore[q.mod]||[0,0]);
+  }
+  modScore[q.mod][1] = (modScore[q.mod][1]||0)+1;
+  document.getElementById('scoreLbl').textContent=`${score} pts`;
+  document.getElementById('btnNext').classList.add('show');
+}
+
+const letters = ['A','B','C','D'];
+
+function nextQ(){
+  cur++;
+  if(cur >= QS.length) showResults();
+  else render();
+}
+
+function showResults(){
+  document.getElementById('progBar').style.width='100%';
+  const pct = Math.round(score/QS.length*100);
+  document.getElementById('rScore').textContent = score;
+  document.getElementById('rTotal').textContent = `de ${QS.length}`;
+  document.getElementById('rC').textContent = score;
+  document.getElementById('rW').textContent = QS.length - score;
+  document.getElementById('rP').textContent = pct+'%';
+
+  // mejor módulo
+  let bestMod='—', bestPct=0;
+  Object.entries(modScore).forEach(([mod,[c,t]])=>{
+    const p = t>0 ? c/t : 0;
+    if(p>bestPct){ bestPct=p; bestMod=mod.split('·')[1]?.trim()||mod; }
+  });
+  document.getElementById('rB').textContent = bestMod;
+
+  let title, msg;
+  if(pct>=88){ title='¡Dominio sobresaliente!'; msg='Tienes un manejo sólido y aplicado de los tres módulos. Estás listo para llevar estos conceptos a tu empresa y tus datos reales.'; }
+  else if(pct>=72){ title='Buen trabajo'; msg='Los conceptos clave están claros. Repasa los temas donde tuviste dificultad y conéctalos con los casos de tu propia empresa.'; }
+  else if(pct>=52){ title='En construcción'; msg='Hay conceptos importantes que vale la pena reforzar. Vuelve a los materiales del módulo y aplícalos a tu contexto real.'; }
+  else { title='A reforzar'; msg='Los fundamentos requieren más atención. No te preocupes: la práctica con tus propios datos de hoy va a hacer la diferencia.'; }
+
+  document.getElementById('rTitle').textContent = title;
+  document.getElementById('rMsg').textContent   = msg;
+  show('scResults');
+}
+
+function restart(){
+  cur=0; score=0;
+  Object.keys(modScore).forEach(k=>delete modScore[k]);
+  show('scStart');
+}
+</script>
+</body>
+</html>
