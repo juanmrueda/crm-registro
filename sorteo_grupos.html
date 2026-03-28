@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteo de Grupos — UAO</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #050510;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Grid de particulas de fondo */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 40%, rgba(120, 40, 200, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0, 200, 180, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(100, 60, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 60, 255, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(160, 120, 255, 0.7);
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  /* Numero principal */
+  .number-display {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 2px solid rgba(120, 60, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 48px;
+    transition: all 0.3s ease;
+    background: rgba(10, 5, 30, 0.8);
+  }
+
+  .number-display::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(120, 60, 255, 0.4), rgba(0, 220, 180, 0.3), rgba(255, 60, 150, 0.3)) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    transition: all 0.3s;
+  }
+
+  .number-display.active::before {
+    background: linear-gradient(135deg, rgba(120, 60, 255, 0.9), rgba(0, 220, 180, 0.8), rgba(255, 60, 150, 0.8)) border-box;
+    animation: rotateBorder 3s linear infinite;
+  }
+
+  @keyframes rotateBorder {
+    to { transform: rotate(360deg); }
+  }
+
+  .number-text {
+    font-size: 120px;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+    transition: all 0.2s;
+    text-shadow:
+      0 0 20px rgba(120, 60, 255, 0.6),
+      0 0 60px rgba(120, 60, 255, 0.3);
+  }
+
+  .number-text.rolling {
+    animation: roll 0.08s linear infinite;
+  }
+
+  @keyframes roll {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(0.9); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .number-text.reveal {
+    animation: reveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes reveal {
+    0%   { transform: scale(0.5); opacity: 0; }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Grupo label */
+  .group-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-top: -36px;
+    margin-bottom: 36px;
+    transition: color 0.3s;
+  }
+
+  .group-label.active {
+    color: rgba(0, 220, 180, 0.8);
+  }
+
+  /* Botón */
+  .btn-sortear {
+    padding: 18px 56px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+    background: transparent;
+    border: 1.5px solid rgba(120, 60, 255, 0.6);
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    outline: none;
+    margin-bottom: 48px;
+  }
+
+  .btn-sortear::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(120, 60, 255, 0.2), rgba(0, 220, 180, 0.15));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn-sortear:hover::before { opacity: 1; }
+  .btn-sortear:hover {
+    border-color: rgba(120, 60, 255, 0.9);
+    box-shadow: 0 0 30px rgba(120, 60, 255, 0.3), 0 0 60px rgba(120, 60, 255, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .btn-sortear:active { transform: scale(0.97) translateY(0); }
+
+  .btn-sortear:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-text { position: relative; z-index: 1; }
+
+  /* Chips de grupos */
+  .groups-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 480px;
+  }
+
+  .group-chip {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border: 1.5px solid;
+    transition: all 0.4s ease;
+    user-select: none;
+  }
+
+  /* Colores neon por grupo */
+  .chip-1 { color: #ff4ecd; border-color: rgba(255, 78, 205, 0.5); background: rgba(255, 78, 205, 0.08); }
+  .chip-2 { color: #00e5ff; border-color: rgba(0, 229, 255, 0.5); background: rgba(0, 229, 255, 0.08); }
+  .chip-3 { color: #69ff47; border-color: rgba(105, 255, 71, 0.5); background: rgba(105, 255, 71, 0.08); }
+  .chip-4 { color: #ff9500; border-color: rgba(255, 149, 0, 0.5); background: rgba(255, 149, 0, 0.08); }
+  .chip-5 { color: #bf5af2; border-color: rgba(191, 90, 242, 0.5); background: rgba(191, 90, 242, 0.08); }
+  .chip-6 { color: #30d158; border-color: rgba(48, 209, 88, 0.5); background: rgba(48, 209, 88, 0.08); }
+  .chip-7 { color: #ffd60a; border-color: rgba(255, 214, 10, 0.5); background: rgba(255, 214, 10, 0.08); }
+  .chip-8 { color: #ff453a; border-color: rgba(255, 69, 58, 0.5); background: rgba(255, 69, 58, 0.08); }
+
+  /* Estado: ya salió */
+  .group-chip.used {
+    opacity: 0.18;
+    text-decoration: line-through;
+    transform: scale(0.9);
+    border-style: dashed;
+  }
+
+  /* Estado: recién salió (glowing) */
+  .group-chip.current {
+    transform: scale(1.1);
+    animation: chipPulse 1s ease-in-out infinite;
+  }
+
+  .chip-1.current { box-shadow: 0 0 20px rgba(255, 78, 205, 0.6); }
+  .chip-2.current { box-shadow: 0 0 20px rgba(0, 229, 255, 0.6); }
+  .chip-3.current { box-shadow: 0 0 20px rgba(105, 255, 71, 0.6); }
+  .chip-4.current { box-shadow: 0 0 20px rgba(255, 149, 0, 0.6); }
+  .chip-5.current { box-shadow: 0 0 20px rgba(191, 90, 242, 0.6); }
+  .chip-6.current { box-shadow: 0 0 20px rgba(48, 209, 88, 0.6); }
+  .chip-7.current { box-shadow: 0 0 20px rgba(255, 214, 10, 0.6); }
+  .chip-8.current { box-shadow: 0 0 20px rgba(255, 69, 58, 0.6); }
+
+  @keyframes chipPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Estado: todos jugados */
+  .final-msg {
+    display: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0, 220, 180, 0.7);
+    margin-top: 8px;
+    animation: fadePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes fadePulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  /* Número color por grupo */
+  .n-1 { color: #ff4ecd; text-shadow: 0 0 30px rgba(255,78,205,0.7), 0 0 80px rgba(255,78,205,0.3); }
+  .n-2 { color: #00e5ff; text-shadow: 0 0 30px rgba(0,229,255,0.7), 0 0 80px rgba(0,229,255,0.3); }
+  .n-3 { color: #69ff47; text-shadow: 0 0 30px rgba(105,255,71,0.7), 0 0 80px rgba(105,255,71,0.3); }
+  .n-4 { color: #ff9500; text-shadow: 0 0 30px rgba(255,149,0,0.7), 0 0 80px rgba(255,149,0,0.3); }
+  .n-5 { color: #bf5af2; text-shadow: 0 0 30px rgba(191,90,242,0.7), 0 0 80px rgba(191,90,242,0.3); }
+  .n-6 { color: #30d158; text-shadow: 0 0 30px rgba(48,209,88,0.7), 0 0 80px rgba(48,209,88,0.3); }
+  .n-7 { color: #ffd60a; text-shadow: 0 0 30px rgba(255,214,10,0.7), 0 0 80px rgba(255,214,10,0.3); }
+  .n-8 { color: #ff453a; text-shadow: 0 0 30px rgba(255,69,58,0.7), 0 0 80px rgba(255,69,58,0.3); }
+
+  /* Reset link */
+  .reset-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    outline: none;
+  }
+  .reset-btn:hover {
+    color: rgba(255,255,255,0.7);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  /* Orden de salida */
+  .order-list {
+    position: fixed;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .order-item {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.4s;
+  }
+
+  .order-item .pos {
+    font-size: 9px;
+    color: rgba(255,255,255,0.15);
+    width: 16px;
+    text-align: right;
+  }
+
+  .order-item.filled {
+    color: rgba(255,255,255,0.7);
+  }
+
+  .order-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    transition: all 0.4s;
+    flex-shrink: 0;
+  }
+
+  .order-item.filled .order-dot {
+    background: white;
+    box-shadow: 0 0 8px white;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<p class="title">Mercadeo Relacional · UAO · Sorteo</p>
+
+<div class="number-display" id="display">
+  <span class="number-text" id="numText">?</span>
+</div>
+
+<p class="group-label" id="groupLabel">Presiona para sortear</p>
+
+<button class="btn-sortear" id="btnSortear" onclick="sortear()">
+  <span class="btn-text">Sortear grupo</span>
+</button>
+
+<div class="groups-grid" id="groupsGrid"></div>
+
+<p class="final-msg" id="finalMsg">— Todos los grupos han salido —</p>
+
+<div class="order-list" id="orderList"></div>
+
+<button class="reset-btn" onclick="reset()">Reiniciar</button>
+
+<script>
+  const TOTAL = 8;
+  const neonColors = ['#ff4ecd','#00e5ff','#69ff47','#ff9500','#bf5af2','#30d158','#ffd60a','#ff453a'];
+
+  let remaining = [];
+  let order = [];
+  let rolling = false;
+  let rollInterval = null;
+
+  function init() {
+    remaining = Array.from({length: TOTAL}, (_, i) => i + 1);
+    order = [];
+    rolling = false;
+    clearInterval(rollInterval);
+
+    const grid = document.getElementById('groupsGrid');
+    grid.innerHTML = '';
+    for (let i = 1; i <= TOTAL; i++) {
+      const chip = document.createElement('div');
+      chip.className = `group-chip chip-${i}`;
+      chip.id = `chip-${i}`;
+      chip.textContent = `Grupo ${i}`;
+      grid.appendChild(chip);
+    }
+
+    const ol = document.getElementById('orderList');
+    ol.innerHTML = '';
+    for (let i = 1; i <= TOTAL; i++) {
+      const item = document.createElement('div');
+      item.className = 'order-item';
+      item.id = `order-${i}`;
+      item.innerHTML = `<span class="pos">${i}°</span><div class="order-dot"></div><span class="order-text">—</span>`;
+      ol.appendChild(item);
+    }
+
+    const numText = document.getElementById('numText');
+    numText.textContent = '?';
+    numText.className = 'number-text';
+    document.getElementById('display').className = 'number-display';
+    document.getElementById('groupLabel').textContent = 'Presiona para sortear';
+    document.getElementById('groupLabel').className = 'group-label';
+    document.getElementById('btnSortear').disabled = false;
+    document.getElementById('btnSortear').querySelector('.btn-text').textContent = 'Sortear grupo';
+    document.getElementById('finalMsg').style.display = 'none';
+  }
+
+  function sortear() {
+    if (rolling || remaining.length === 0) return;
+
+    rolling = true;
+    document.getElementById('btnSortear').disabled = true;
+
+    const numText = document.getElementById('numText');
+    const display = document.getElementById('display');
+    const label = document.getElementById('groupLabel');
+
+    numText.className = 'number-text rolling';
+    display.className = 'number-display active';
+    label.textContent = 'Sorteando...';
+    label.className = 'group-label';
+
+    let ticks = 0;
+    const maxTicks = 28 + Math.floor(Math.random() * 16);
+
+    rollInterval = setInterval(() => {
+      const rnd = remaining[Math.floor(Math.random() * remaining.length)];
+      numText.textContent = rnd;
+      numText.className = `number-text rolling n-${rnd}`;
+      ticks++;
+
+      if (ticks >= maxTicks) {
+        clearInterval(rollInterval);
+
+        const chosen = remaining[Math.floor(Math.random() * remaining.length)];
+        remaining = remaining.filter(n => n !== chosen);
+        order.push(chosen);
+        const pos = order.length;
+
+        numText.textContent = chosen;
+        numText.className = `number-text reveal n-${chosen}`;
+        display.className = 'number-display active';
+
+        label.textContent = `¡Grupo ${chosen} presenta primero!`;
+        label.className = 'group-label active';
+
+        document.querySelectorAll('.group-chip').forEach(c => c.classList.remove('current'));
+        const chip = document.getElementById(`chip-${chosen}`);
+        chip.classList.add('current');
+
+        setTimeout(() => {
+          chip.classList.remove('current');
+          chip.classList.add('used');
+
+          const orderItem = document.getElementById(`order-${pos}`);
+          orderItem.classList.add('filled');
+          orderItem.querySelector('.order-text').textContent = `Grupo ${chosen}`;
+          orderItem.querySelector('.order-dot').style.background = neonColors[chosen - 1];
+          orderItem.querySelector('.order-dot').style.boxShadow = `0 0 8px ${neonColors[chosen - 1]}`;
+
+          rolling = false;
+
+          if (remaining.length === 0) {
+            document.getElementById('btnSortear').disabled = true;
+            document.getElementById('btnSortear').querySelector('.btn-text').textContent = 'Completado';
+            document.getElementById('finalMsg').style.display = 'block';
+            label.textContent = '¡Todos los grupos han sido sorteados!';
+          } else {
+            document.getElementById('btnSortear').disabled = false;
+            document.getElementById('btnSortear').querySelector('.btn-text').textContent = `Sortear grupo (${remaining.length} restantes)`;
+          }
+        }, 1800);
+      }
+    }, 80);
+  }
+
+  function reset() {
+    clearInterval(rollInterval);
+    rolling = false;
+    init();
+  }
+
+  init();
+</script>
+</body>
+</html>
