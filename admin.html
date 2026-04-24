@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Admin | Mercadeo Relacional - UAO</title>
+    <title>Admin | Data Marketing - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -130,7 +130,7 @@
             height: 3px;
             border-radius: 16px 16px 0 0;
         }
-        .kpi-card.purple::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+        .kpi-card.purple::before { background: linear-gradient(90deg, #C8102E, #9B0C23); }
         .kpi-card.blue::before { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
         .kpi-card.green::before { background: linear-gradient(90deg, #10b981, #34d399); }
         .kpi-card.amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
@@ -317,7 +317,7 @@
     <div id="loginGate" class="fixed inset-0 z-[100] bg-[#0a0e1a] flex items-center justify-center p-4">
         <div class="w-full max-w-sm">
             <div class="text-center mb-8">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center mx-auto mb-4">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
@@ -327,10 +327,10 @@
             </div>
             <div>
                 <input type="password" id="loginPassword" placeholder="Clave de acceso"
-                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all mb-3"
+                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 focus:bg-white/8 transition-all mb-3"
                     onkeydown="if(event.key==='Enter')attemptLogin()">
                 <button onclick="attemptLogin()"
-                    class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
                     Entrar
                 </button>
                 <p id="loginError" class="text-red-400/80 text-xs text-center mt-3 hidden">Clave incorrecta</p>
@@ -345,14 +345,14 @@
     <aside class="sidebar flex flex-col" id="sidebar">
         <div class="p-5 border-b border-white/5">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                 </div>
                 <div>
                     <h2 class="text-white text-sm font-bold">CRM Panel</h2>
-                    <p class="text-white/40 text-xs">Mercadeo Relacional</p>
+                    <p class="text-white/40 text-xs">Data Marketing</p>
                 </div>
             </div>
         </div>
@@ -375,7 +375,7 @@
             </div>
             <div class="nav-item" data-section="insights" onclick="showSection('insights')">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                Canvas Insights
+                Insights
             </div>
             <div class="nav-item" data-section="clases" onclick="showSection('clases')">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -612,14 +612,14 @@
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div class="sm:col-span-2">
                             <input type="text" id="claseTitle" placeholder="Titulo de la clase"
-                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                         </div>
                         <div>
                             <input type="time" id="claseHoraInicio" value="14:00"
-                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                         </div>
                         <div>
-                            <button onclick="crearClase()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                            <button onclick="crearClase()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
                                 + Crear Clase
                             </button>
                         </div>
@@ -643,7 +643,7 @@
                         </div>
                         <div class="text-center py-6">
                             <p class="text-white text-7xl sm:text-8xl font-black tracking-[0.3em] font-mono" id="codigoDisplay">------</p>
-                            <p class="text-white/30 text-xs mt-3">Los estudiantes ingresan este codigo en el portal</p>
+                            <p class="text-[#ef4356] text-xs mt-3 font-medium">Codigo rotativo - cambia cada minuto</p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
@@ -716,8 +716,8 @@
                             <p class="text-red-400 text-xl font-bold" id="cfgTolerancia">15</p>
                             <p class="text-white/40 text-[10px] mt-1">min tolerancia tarde</p>
                         </div>
-                        <div class="bg-indigo-500/10 rounded-xl p-3 text-center">
-                            <p class="text-indigo-400 text-xl font-bold" id="cfgCodigo">30</p>
+                        <div class="bg-[#C8102E]/10 rounded-xl p-3 text-center">
+                            <p class="text-[#ef4356] text-xl font-bold" id="cfgCodigo">30</p>
                             <p class="text-white/40 text-[10px] mt-1">min vigencia codigo</p>
                         </div>
                     </div>
@@ -740,7 +740,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-white/80 text-sm font-semibold">Ranking de Estudiantes</h3>
                         <div class="flex items-center gap-2">
-                            <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 text-xs font-medium hover:bg-indigo-500/25 transition-colors">
+                            <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-[#C8102E]/15 text-[#ef4356] text-xs font-medium hover:bg-[#C8102E]/25 transition-colors">
                                 + Dar Puntos
                             </button>
                             <button id="recalcularBtn" onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
@@ -857,19 +857,19 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-white/50 text-xs font-medium mb-1 block">Estudiante</label>
-                    <select id="puntosEstudiante" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all [&>option]:text-black [&>option]:bg-white">
+                    <select id="puntosEstudiante" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all [&>option]:text-black [&>option]:bg-white">
                         <option value="">Seleccionar estudiante...</option>
                     </select>
                 </div>
                 <div>
                     <label class="text-white/50 text-xs font-medium mb-1 block">Puntos</label>
                     <input type="number" id="puntosCantidad" min="1" max="100" value="5" placeholder="Cantidad de puntos"
-                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                 </div>
                 <div>
                     <label class="text-white/50 text-xs font-medium mb-1 block">Motivo</label>
                     <select id="puntosMotivo" onchange="if(this.value==='otro')document.getElementById('puntosMotivoOtro').classList.remove('hidden');else document.getElementById('puntosMotivoOtro').classList.add('hidden');"
-                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                         <option value="Participacion en clase">Participacion en clase</option>
                         <option value="Quiz / Taller">Quiz / Taller</option>
                         <option value="Exposicion">Exposicion</option>
@@ -878,7 +878,7 @@
                         <option value="otro">Otro...</option>
                     </select>
                     <input type="text" id="puntosMotivoOtro" placeholder="Escribe el motivo"
-                        class="hidden w-full mt-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                        class="hidden w-full mt-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                 </div>
                 <div id="puntosResult" class="hidden rounded-xl p-3 text-sm"></div>
                 <button onclick="enviarPuntos()" id="enviarPuntosBtn"
@@ -901,7 +901,7 @@
         <div class="modal-content" style="max-width:620px;">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </div>
                     <div>
@@ -919,25 +919,25 @@
                 <div class="flex items-center justify-between mb-2">
                     <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Destinatarios</p>
                     <div class="flex gap-2">
-                        <button onclick="emailSelectAll()" class="text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors">Todos</button>
+                        <button onclick="emailSelectAll()" class="text-[10px] text-[#ef4356] hover:text-white transition-colors">Todos</button>
                         <span class="text-white/10 text-[10px]">|</span>
-                        <button onclick="emailDeselectAll()" class="text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors">Ninguno</button>
+                        <button onclick="emailDeselectAll()" class="text-[10px] text-[#ef4356] hover:text-white transition-colors">Ninguno</button>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1" id="emailRecipientsList" style="max-height:120px;overflow-y:auto;"></div>
                 <!-- Add manual email -->
                 <div class="flex gap-2 mt-2">
                     <input type="email" id="emailManualInput" placeholder="Agregar correo manualmente..."
-                        class="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-indigo-500/50 transition-all"
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-[#C8102E]/70 transition-all"
                         onkeydown="if(event.key==='Enter')addManualEmail()">
-                    <button onclick="addManualEmail()" class="px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 text-[11px] hover:bg-indigo-500/30 transition-colors">+ Agregar</button>
+                    <button onclick="addManualEmail()" class="px-3 py-1.5 rounded-lg bg-[#C8102E]/20 text-[#ef4356] text-[11px] hover:bg-[#C8102E]/30 transition-colors">+ Agregar</button>
                 </div>
             </div>
 
             <!-- Clase asociada -->
             <div class="mb-4">
                 <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Clase asociada (tracking)</label>
-                <select id="emailClaseId" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all [&>option]:text-black [&>option]:bg-white">
+                <select id="emailClaseId" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all [&>option]:text-black [&>option]:bg-white">
                     <option value="">Sin clase asociada</option>
                 </select>
             </div>
@@ -945,22 +945,22 @@
             <!-- Subject -->
             <div class="mb-4">
                 <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Asunto</label>
-                <input type="text" id="emailSubject" placeholder="Resumen Clase - Mercadeo Relacional y CRM"
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all">
+                <input type="text" id="emailSubject" placeholder="Resumen Clase - Data Marketing"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
             </div>
 
             <!-- Message -->
             <div class="mb-4">
                 <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Mensaje</label>
                 <textarea id="emailMessage" rows="3" placeholder="Adjunto encontraras el resumen de la clase de hoy..."
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-all resize-none"></textarea>
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all resize-none"></textarea>
             </div>
 
             <!-- PDF Upload -->
             <div class="mb-5">
                 <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Archivos PDF <span class="text-white/20">(max 3)</span></label>
                 <div id="emailDropZone" onclick="document.getElementById('emailFileInput').click()"
-                    class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center cursor-pointer hover:border-indigo-500/30 hover:bg-white/3 transition-all">
+                    class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center cursor-pointer hover:border-[#C8102E]/40 hover:bg-white/3 transition-all">
                     <input type="file" id="emailFileInput" accept=".pdf" multiple class="hidden" onchange="handlePdfSelect(event)">
                     <div id="emailDropContent">
                         <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
@@ -981,7 +981,7 @@
                     <span class="text-white/40 text-xs" id="emailProgressCount">0/0</span>
                 </div>
                 <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" id="emailProgressBar" style="width:0%"></div>
+                    <div class="h-full bg-gradient-to-r from-[#C8102E] to-[#9B0C23] rounded-full transition-all duration-500" id="emailProgressBar" style="width:0%"></div>
                 </div>
             </div>
 
@@ -990,7 +990,7 @@
 
             <!-- Send button -->
             <button id="emailSendBtn" onclick="sendPdfEmail()"
-                class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 <span id="emailSendBtnText">Enviar a 0 estudiantes</span>
             </button>
@@ -1001,7 +1001,7 @@
         // ========================================
         // CONFIG
         // ========================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoXGumlP6y4tQ-vHxRK18BzqZqvZ2Lhg3eDWG_LP8j6sF-kol1bLGv0LM5NbZIBohABg/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9KagILIMaPi3uHwbVP_5RYJadUdbuBLKrw21Hti_E5b2KUghG_kW5uG335dscvl5Efg/exec';
         const AUTO_REFRESH_MS = 30000;
         const ADMIN_HASH = 'e4c7689e756c1f14c8a85dbc883fbabd734a685464fd4940d8447a6715ea016f';
         const AUTH_KEY = 'crm_admin_auth';
@@ -1378,12 +1378,15 @@
                 const initials = getInitials(d.nombre);
                 const colorClass = AVATAR_COLORS[i % AVATAR_COLORS.length];
                 const date = d.timestamp ? new Date(d.timestamp).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '--';
+                const avatar = d.fotoUrl
+                    ? `<img src="${d.fotoUrl}" alt="${initials}" style="width:40px;height:40px;border-radius:10px;object-fit:cover;border:2px solid rgba(200,16,46,0.3);" onerror="this.outerHTML='<div class=\\'avatar ${colorClass}\\'>${initials}</div>'">`
+                    : `<div class="avatar ${colorClass}">${initials}</div>`;
 
                 return `
                 <tr onclick="openContact(${allData.indexOf(d)})">
                     <td>
                         <div class="flex items-center gap-3">
-                            <div class="avatar ${colorClass}">${initials}</div>
+                            ${avatar}
                             <div>
                                 <p class="text-white text-sm font-medium">${d.nombre}</p>
                                 <p class="text-white/40 text-xs">${d.email}</p>
@@ -1547,7 +1550,7 @@
                         <div class="bg-white/3 rounded-xl p-3">
                             <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Canales de Captacion</p>
                             <div class="flex flex-wrap gap-1 mt-1">
-                                ${(d.canalesCaptacion || '').split(', ').map(c => `<span class="inline-block px-2 py-0.5 rounded-md text-xs bg-indigo-500/15 text-indigo-300">${c}</span>`).join('')}
+                                ${(d.canalesCaptacion || '').split(', ').map(c => `<span class="inline-block px-2 py-0.5 rounded-md text-xs bg-[#C8102E]/15 text-[#ef4356]">${c}</span>`).join('')}
                             </div>
                         </div>
                         <div class="bg-white/3 rounded-xl p-3">
@@ -1597,7 +1600,7 @@
             const total = filteredData.length || 1;
 
             const segmentConfigs = [
-                { title: 'Por Genero', field: 'genero', color: 'from-indigo-500 to-purple-500' },
+                { title: 'Por Genero', field: 'genero', color: 'from-[#C8102E] to-[#9B0C23]' },
                 { title: 'Por Rango de Edad', field: '_ageRange', color: 'from-cyan-500 to-blue-500' },
                 { title: 'Por Sector', field: 'sector', color: 'from-emerald-500 to-teal-500' },
                 { title: 'Por Tamano de Empresa', field: 'tamano', color: 'from-amber-500 to-orange-500' },
@@ -1781,8 +1784,8 @@
                 <div class="drilldown-panel">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="text-indigo-400 text-xs font-semibold uppercase tracking-wider">Coincidencias para</span>
-                            <span class="px-2 py-0.5 rounded-md text-xs bg-indigo-500/20 text-indigo-300 font-medium">"${keyword}"</span>
+                            <span class="text-[#ef4356] text-xs font-semibold uppercase tracking-wider">Coincidencias para</span>
+                            <span class="px-2 py-0.5 rounded-md text-xs bg-[#C8102E]/20 text-[#ef4356] font-medium">"${keyword}"</span>
                         </div>
                         <span class="text-white/40 text-xs">${matches.length} alumno${matches.length !== 1 ? 's' : ''}</span>
                     </div>
@@ -1826,7 +1829,7 @@
                 overview: ['Overview', 'Resumen general del CRM'],
                 contacts: ['Contactos', 'Todos los estudiantes registrados'],
                 segments: ['Segmentos', 'Segmentacion automatica del grupo'],
-                insights: ['Canvas Insights', 'Inteligencia colectiva del grupo'],
+                insights: ['Data Marketing Insights', 'Estado digital del grupo'],
                 clases: ['Clases', 'Gestion de sesiones y asistencia'],
                 calificaciones: ['Calificaciones', 'Ranking y puntos de estudiantes'],
                 quiz: ['Quiz', 'Crear y gestionar quizzes']
@@ -1969,7 +1972,7 @@
 
             // Default subject
             const today = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('emailSubject').value = `Resumen de Clase ${today} - Mercadeo Relacional y CRM`;
+            document.getElementById('emailSubject').value = `Resumen de Clase ${today} - Data Marketing`;
             document.getElementById('emailMessage').value = '';
 
             // Show modal
@@ -1983,7 +1986,7 @@
             list.innerHTML = allEmails.map(e => {
                 const active = emailSelectedRecipients.has(e);
                 const isManual = emailManualRecipients.has(e);
-                return `<span onclick="toggleEmailRecipient('${e}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] cursor-pointer transition-all ${active ? (isManual ? 'bg-emerald-500/20 text-emerald-300' : 'bg-indigo-500/20 text-indigo-300') : 'bg-white/5 text-white/20 line-through'}">${e}<svg class="w-3 h-3 ${active ? (isManual ? 'text-emerald-400' : 'text-indigo-400') : 'text-white/10'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${active ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}"/></svg></span>`;
+                return `<span onclick="toggleEmailRecipient('${e}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] cursor-pointer transition-all ${active ? (isManual ? 'bg-emerald-500/20 text-emerald-300' : 'bg-[#C8102E]/20 text-[#ef4356]') : 'bg-white/5 text-white/20 line-through'}">${e}<svg class="w-3 h-3 ${active ? (isManual ? 'text-emerald-400' : 'text-indigo-400') : 'text-white/10'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${active ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}"/></svg></span>`;
             }).join('');
             updateEmailCount();
         }
@@ -2175,7 +2178,7 @@
                         attachments: selectedPdfFiles.map(f => ({ base64: f.base64, name: f.file.name })),
                         subject,
                         htmlBody,
-                        senderName: 'Mercadeo Relacional y CRM - UAO',
+                        senderName: 'Data Marketing - UAO',
                         claseId: document.getElementById('emailClaseId').value || undefined
                     })
                 });
@@ -2267,23 +2270,51 @@
         async function activarAsistencia(claseId) {
             try {
                 await postAppsScript({ action: 'activarAsistencia', claseId: claseId });
-                // Wait for GAS, then reload clases to get the generated code
                 setTimeout(async () => {
                     await loadClases();
-                    // Find the active class and show its code
                     const activa = clasesData.find(c => c.ClaseId === claseId && c.Estado === 'activa');
-                    if (activa && activa.CodigoAsistencia) {
+                    if (activa) {
+                        // Pedimos el codigo ROTATIVO actual al backend (la semilla no se muestra)
+                        const codigoActual = await fetchCodigoActual(claseId);
                         claseActiva = {
                             claseId: claseId,
-                            codigo: activa.CodigoAsistencia,
+                            codigo: codigoActual.codigo || '------',
+                            windowSec: codigoActual.windowSec || 60,
                             expira: new Date(activa.CodigoExpira),
                             titulo: activa.Titulo || claseId
                         };
                         mostrarCodigoActivo();
                         iniciarRefreshAsistencia();
+                        iniciarRefreshCodigo();
                     }
                 }, 2500);
             } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function fetchCodigoActual(claseId) {
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getCodigoActual&claseId=' + encodeURIComponent(claseId));
+                return await res.json();
+            } catch (e) { return {}; }
+        }
+
+        let codigoRotateTimer = null;
+        function iniciarRefreshCodigo() {
+            if (codigoRotateTimer) clearInterval(codigoRotateTimer);
+            codigoRotateTimer = setInterval(async () => {
+                if (!claseActiva) { clearInterval(codigoRotateTimer); return; }
+                const r = await fetchCodigoActual(claseActiva.claseId);
+                if (r && r.codigo && r.codigo !== claseActiva.codigo) {
+                    claseActiva.codigo = r.codigo;
+                    const el = document.getElementById('codigoDisplay');
+                    if (el) {
+                        el.textContent = r.codigo;
+                        el.style.transition = 'transform 0.3s ease';
+                        el.style.transform = 'scale(1.08)';
+                        setTimeout(() => el.style.transform = 'scale(1)', 300);
+                    }
+                }
+            }, 4000);
         }
 
         async function cerrarAsistencia() {
@@ -2294,6 +2325,7 @@
             claseActiva = null;
             document.getElementById('codigoActivoPanel').classList.add('hidden');
             if (codigoTimer) { clearInterval(codigoTimer); codigoTimer = null; }
+            if (codigoRotateTimer) { clearInterval(codigoRotateTimer); codigoRotateTimer = null; }
             setTimeout(() => { loadClases(); loadPuntos(); }, 2000);
         }
 
@@ -2340,14 +2372,19 @@
             // Check if there's an active class
             const activa = clasesData.find(c => c.Estado === 'activa');
             if (activa && !claseActiva) {
-                claseActiva = {
-                    claseId: activa.ClaseId,
-                    codigo: activa.CodigoAsistencia,
-                    expira: new Date(activa.CodigoExpira),
-                    titulo: activa.Titulo
-                };
-                mostrarCodigoActivo();
-                iniciarRefreshAsistencia();
+                // Pedir codigo rotativo actual (no usar la semilla)
+                fetchCodigoActual(activa.ClaseId).then(r => {
+                    claseActiva = {
+                        claseId: activa.ClaseId,
+                        codigo: (r && r.codigo) ? r.codigo : '------',
+                        windowSec: (r && r.windowSec) ? r.windowSec : 60,
+                        expira: new Date(activa.CodigoExpira),
+                        titulo: activa.Titulo
+                    };
+                    mostrarCodigoActivo();
+                    iniciarRefreshAsistencia();
+                    iniciarRefreshCodigo();
+                });
             }
 
             grid.innerHTML = clasesData.sort((a, b) => (Number(b.Numero) || 0) - (Number(a.Numero) || 0)).map(c => {
@@ -2355,7 +2392,7 @@
                 const estadoColors = {
                     programada: 'bg-white/10 text-white/50',
                     activa: 'bg-emerald-500/20 text-emerald-300',
-                    finalizada: 'bg-indigo-500/15 text-indigo-300'
+                    finalizada: 'bg-[#C8102E]/15 text-[#ef4356]'
                 };
                 const fecha = c.Fecha ? new Date(c.Fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '--';
 
@@ -2413,7 +2450,7 @@
                             <p class="text-white text-sm font-medium">${a.Nombre || a.Email}</p>
                             <p class="${puntualColor} text-xs">${puntualLabel}</p>
                         </div>
-                        <span class="text-indigo-300 text-sm font-bold">${pts} pts</span>
+                        <span class="text-[#ef4356] text-sm font-bold">${pts} pts</span>
                     </div>`;
                 });
                 html += '</div>';
@@ -2467,20 +2504,26 @@
                 const rankClass = i < 3 ? `font-bold ${medalColors[i]}` : 'text-white/40';
                 const initials = getInitials(s.Nombre);
                 const colorClass = AVATAR_COLORS[i % AVATAR_COLORS.length];
+                // Buscar fotoUrl en allData
+                const reg = allData.find(d => d.email && s.Email && d.email.toLowerCase() === s.Email.toLowerCase());
+                const fotoUrl = reg ? (reg.fotoUrl || '') : '';
+                const avatar = fotoUrl
+                    ? `<img src="${fotoUrl}" alt="${initials}" style="width:32px;height:32px;border-radius:8px;object-fit:cover;border:2px solid rgba(200,16,46,0.3);" onerror="this.outerHTML='<div class=\\'avatar ${colorClass}\\' style=\\'width:32px;height:32px;font-size:11px;border-radius:8px;\\'>${initials}</div>'">`
+                    : `<div class="avatar ${colorClass}" style="width:32px;height:32px;font-size:11px;border-radius:8px;">${initials}</div>`;
 
                 return `
                 <tr>
                     <td class="${rankClass}">${rank}</td>
                     <td>
                         <div class="flex items-center gap-3">
-                            <div class="avatar ${colorClass}" style="width:32px;height:32px;font-size:11px;border-radius:8px;">${initials}</div>
+                            ${avatar}
                             <div>
                                 <p class="text-white text-sm font-medium">${s.Nombre || s.Email}</p>
                                 <p class="text-white/40 text-xs">${s.Email}</p>
                             </div>
                         </div>
                     </td>
-                    <td><span class="text-indigo-300 font-bold">${Number(s.TotalPuntos) || 0}</span></td>
+                    <td><span class="text-[#ef4356] font-bold">${Number(s.TotalPuntos) || 0}</span></td>
                     <td class="hidden sm:table-cell text-white/60">${Number(s.PuntosAsistencia) || 0}</td>
                     <td class="hidden md:table-cell text-white/60">${Number(s.PuntosPuntualidad) || 0}</td>
                     <td class="hidden lg:table-cell text-white/60">${Number(s.PuntosEmail) || 0}</td>
@@ -2582,8 +2625,8 @@
         function buildEmailTemplate(customMessage) {
             return `
             <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
-                <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px 24px;border-radius:8px 8px 0 0;">
-                    <h1 style="color:white;margin:0;font-size:22px;font-weight:700;">Mercadeo Relacional y CRM</h1>
+                <div style="background:linear-gradient(135deg,#C8102E,#9B0C23);padding:32px 24px;border-radius:8px 8px 0 0;">
+                    <h1 style="color:white;margin:0;font-size:22px;font-weight:700;">Data Marketing</h1>
                     <p style="color:rgba(255,255,255,0.8);margin:8px 0 0;font-size:14px;">Universidad Autonoma de Occidente</p>
                 </div>
                 <div style="padding:32px 24px;background:#ffffff;">
@@ -2593,7 +2636,7 @@
                     <p style="color:#4b5563;font-size:15px;line-height:1.6;margin:0;">Saludos!</p>
                 </div>
                 <div style="padding:20px 24px;background:#f9fafb;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;">
-                    <p style="color:#9ca3af;font-size:12px;margin:0;">Este correo fue enviado desde el CRM del curso Mercadeo Relacional y CRM - UAO.</p>
+                    <p style="color:#9ca3af;font-size:12px;margin:0;">Este correo fue enviado desde el CRM del curso Data Marketing - UAO.</p>
                 </div>
             </div>`;
         }

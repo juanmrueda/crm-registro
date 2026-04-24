@@ -1,23 +1,25 @@
 /**
  * ====================================================
- * GOOGLE APPS SCRIPT — Backend CRM Mercadeo Relacional
+ * GOOGLE APPS SCRIPT — Backend Data Marketing (UAO)
  * ====================================================
  *
  * HOJAS REQUERIDAS EN GOOGLE SHEETS:
  *
- * 1. "Registros" (existente) — Columnas A-U:
- *    Timestamp, Nombre, Email, Celular, Ciudad, Genero,
- *    FechaNacimiento, Empresa, Cargo, Sector, TamanoEmpresa,
- *    Web, EmpresaPropia, QueVende, ClienteIdeal, CanalesCaptacion,
- *    UsaCRM, CualCRM, Expectativas, RetosClientes, PrefiereTrabajar
+ * 1. "Registros" — Columnas A-AC:
+ *    A-U legacy: Timestamp, Nombre, Email, Celular, Ciudad, Genero,
+ *      FechaNacimiento, Empresa, Cargo, Sector, TamanoEmpresa,
+ *      Web, EmpresaPropia, QueVende, ClienteIdeal, CanalesCaptacion,
+ *      UsaCRM, CualCRM, Expectativas, RetosClientes, PrefiereTrabajar
+ *    V-AC Data Marketing: HerramientasAnalitica, DatosClientes, KPIs,
+ *      Segmentacion, DecisionesBasadas, RetoDatos, MadurezDigital, FotoUrl
  *
  * 2. "Clases" — Columnas A-I:
  *    ClaseId, Numero, Titulo, Fecha, HoraInicio, HoraFin,
- *    CodigoAsistencia, CodigoExpira, Estado
+ *    CodigoAsistencia (semilla rotativa), CodigoExpira, Estado
  *
- * 3. "Asistencia" — Columnas A-G:
+ * 3. "Asistencia" — Columnas A-H:
  *    Timestamp, Email, Nombre, ClaseId, ClaseNumero,
- *    MinutosAntes, PuntosPuntualidad
+ *    MinutosAntes, PuntosPuntualidad, DeviceFingerprint
  *
  * 4. "EventosTracking" — Columnas A-E:
  *    Timestamp, Email, ClaseId, TipoEvento, PuntosOtorgados
@@ -31,7 +33,15 @@
  *    Clave, Valor
  *    Filas: puntosAsistencia=10, puntosPuntualidadMax=5,
  *    ventanaPuntualidad=15, puntosEmailOpen=3,
- *    toleranciaLlegadaTarde=15, codigoVigenciaMin=30
+ *    toleranciaLlegadaTarde=15, codigoVigenciaMin=30,
+ *    codigoRotativoSec=60 (opcional, default 60)
+ *
+ * ANTI-FRAUDE:
+ * - Codigo rotativo: CodigoAsistencia es la SEMILLA; el estudiante
+ *   escribe el codigo derivado(seed, minuto actual). Se acepta la
+ *   ventana actual y la anterior.
+ * - DeviceFingerprint: mismo hash no puede hacer checkin con 2 emails
+ *   distintos en la misma clase.
  *
  * NOTA: Cada vez que modifiques este codigo, debes
  * crear una NUEVA implementacion para que tome efecto.
@@ -111,6 +121,51 @@ function generarCodigo() {
   return code;
 }
 
+/**
+ * Codigo rotativo derivado de (semilla, ventana de tiempo).
+ * La misma seed produce codigos distintos cada N segundos.
+ */
+function codigoRotativo(seed, windowSec, offset) {
+  windowSec = windowSec || 60;
+  offset = offset || 0;
+  const now = Math.floor(Date.now() / 1000 / windowSec) + offset;
+  const raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, seed + ':' + now, Utilities.Charset.UTF_8);
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    const b = raw[i] < 0 ? raw[i] + 256 : raw[i];
+    code += chars.charAt(b % chars.length);
+  }
+  return code;
+}
+
+/**
+ * Sube una foto base64 (dataURL) a Drive en la carpeta CRM_Fotos y
+ * devuelve el URL publico.
+ */
+function subirFotoDrive(base64DataUrl, nombreArchivo) {
+  if (!base64DataUrl || base64DataUrl.indexOf('base64,') === -1) return '';
+  try {
+    const matches = base64DataUrl.match(/^data:(.+);base64,(.+)$/);
+    if (!matches) return '';
+    const mimeType = matches[1];
+    const data = Utilities.base64Decode(matches[2]);
+    const blob = Utilities.newBlob(data, mimeType, nombreArchivo || 'foto.jpg');
+
+    // Carpeta CRM_Fotos (crear si no existe)
+    const folderName = 'CRM_Fotos_DataMarketing';
+    const folders = DriveApp.getFoldersByName(folderName);
+    let folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
+
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    // URL embed directo tipo thumbnail (mejor que viewer)
+    return 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w400';
+  } catch (e) {
+    return '';
+  }
+}
+
 // ============ doGet ROUTER ============
 
 function doGet(e) {
@@ -124,6 +179,7 @@ function doGet(e) {
       case 'getPuntos': return handleGetPuntos();
       case 'getPortal': return handleGetPortal(e.parameter);
       case 'getConfig': return jsonResponse({ status: 'ok', config: getConfig() });
+      case 'getCodigoActual': return handleGetCodigoActual(e.parameter);
       case 'getQuizActivo': return handleGetQuizActivo(e.parameter);
       case 'getQuizResultados': return handleGetQuizResultados(e.parameter);
       case 'getQuizzes': return handleGetQuizzes();
@@ -176,7 +232,16 @@ function handleGetRegistros() {
     'QueVende': 'queVende', 'ClienteIdeal': 'clienteIdeal',
     'CanalesCaptacion': 'canalesCaptacion', 'UsaCRM': 'usaCRM',
     'CualCRM': 'cualCRM', 'Expectativas': 'expectativas',
-    'RetosClientes': 'retosClientes', 'PrefiereTrabajar': 'prefiereTrabajar'
+    'RetosClientes': 'retosClientes', 'PrefiereTrabajar': 'prefiereTrabajar',
+    // Data Marketing (V-AC)
+    'HerramientasAnalitica': 'herramientasAnalitica',
+    'DatosClientes': 'datosClientes',
+    'KPIs': 'kpis',
+    'Segmentacion': 'segmentacion',
+    'DecisionesBasadas': 'decisionesBasadas',
+    'RetoDatos': 'retoDatos',
+    'MadurezDigital': 'madurezDigital',
+    'FotoUrl': 'fotoUrl'
   };
 
   const data = sheetToObjects(sheet, fieldMap).filter(r => r.nombre || r.email);
@@ -220,10 +285,16 @@ function handleGetPortal(params) {
 
   const regData = regSheet.getDataRange().getValues();
   let estudiante = null;
+  // Mapa email -> fotoUrl para enriquecer el ranking
+  const fotosPorEmail = {};
   for (let i = 1; i < regData.length; i++) {
-    if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
-      estudiante = { nombre: regData[i][1], email: regData[i][2] };
-      break;
+    if (regData[i][2]) {
+      const em = regData[i][2].toString().toLowerCase().trim();
+      const foto = regData[i][28] || ''; // col AC (index 28)
+      fotosPorEmail[em] = foto;
+      if (em === email) {
+        estudiante = { nombre: regData[i][1], email: regData[i][2], fotoUrl: foto };
+      }
     }
   }
 
@@ -254,17 +325,25 @@ function handleGetPortal(params) {
   // Obtener ranking
   let rank = 0;
   let totalEstudiantes = 0;
+  let topRanking = [];
   if (puntosSheet) {
     const allPuntos = puntosSheet.getDataRange().getValues();
     const scores = [];
     for (let i = 1; i < allPuntos.length; i++) {
       if (allPuntos[i][0]) {
-        scores.push({ email: allPuntos[i][0].toString().toLowerCase().trim(), total: Number(allPuntos[i][2]) || 0 });
+        const em = allPuntos[i][0].toString().toLowerCase().trim();
+        scores.push({
+          email: em,
+          nombre: allPuntos[i][1] || '',
+          total: Number(allPuntos[i][2]) || 0,
+          fotoUrl: fotosPorEmail[em] || ''
+        });
       }
     }
     scores.sort((a, b) => b.total - a.total);
     totalEstudiantes = scores.length;
     rank = scores.findIndex(s => s.email === email) + 1;
+    topRanking = scores.slice(0, 10);
   }
 
   // Obtener historial de asistencia
@@ -325,6 +404,7 @@ function handleGetPortal(params) {
     puntos: puntos || { totalPuntos: 0, puntosAsistencia: 0, puntosPuntualidad: 0, puntosEmail: 0, clasesAsistidas: 0, porcentajeAsistencia: '0%' },
     rank: rank,
     totalEstudiantes: totalEstudiantes,
+    topRanking: topRanking,
     asistencias: asistencias,
     clases: clases,
     tracking: tracking
@@ -337,20 +417,38 @@ function handleRegistro(data) {
   const sheet = getSheet('Registros');
   if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja Registros no encontrada' });
 
+  // Subir foto a Drive si viene
+  let fotoUrl = '';
+  if (data.fotoBase64) {
+    const slug = (data.email || 'anon').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    fotoUrl = subirFotoDrive(data.fotoBase64, slug + '_' + Date.now() + '.jpg');
+  }
+
   const row = [
     data.timestamp || nowColombia(),
     data.nombre || '', data.email || '', data.celular || '',
     data.ciudad || '', data.genero || '', data.fechaNacimiento || '',
     data.empresa || '', data.cargo || '', data.sector || '',
     data.tamano || '', data.web || '', data.empresaPropia || '',
+    // A-U legacy: se dejan vacios en registros nuevos (queVende, clienteIdeal,
+    // canalesCaptacion, usaCRM, cualCRM, retosClientes, prefiereTrabajar)
     data.queVende || '', data.clienteIdeal || '',
     data.canalesCaptacion || '', data.usaCRM || '', data.cualCRM || '',
     data.expectativas || '', data.retosClientes || '',
-    data.prefiereTrabajar || ''
+    data.prefiereTrabajar || '',
+    // V-AC Data Marketing
+    data.herramientasAnalitica || '',
+    data.datosClientes || '',
+    data.kpis || '',
+    data.segmentacion || '',
+    data.decisionesBasadas || '',
+    data.retoDatos || '',
+    data.madurezDigital || '',
+    fotoUrl
   ];
 
   sheet.appendRow(row);
-  return jsonResponse({ status: 'ok', message: 'Registro guardado' });
+  return jsonResponse({ status: 'ok', message: 'Registro guardado', fotoUrl: fotoUrl });
 }
 
 function handleCrearClase(data) {
@@ -396,7 +494,7 @@ function handleActivarAsistencia(data) {
 
     for (let i = 1; i < values.length; i++) {
       if (values[i][0] === data.claseId) {
-        rowIndex = i + 1; // 1-based for sheet
+        rowIndex = i + 1;
         break;
       }
     }
@@ -407,20 +505,62 @@ function handleActivarAsistencia(data) {
     }
 
     const config = getConfig();
-    const codigo = generarCodigo();
+    // Semilla aleatoria (nunca se muestra al alumno). El codigo rotativo
+    // visible se deriva de (seed, minuto actual).
+    const seed = Utilities.getUuid();
     const vigencia = (config.codigoVigenciaMin || 30) * 60 * 1000;
     const expira = Utilities.formatDate(new Date(Date.now() + vigencia), 'America/Bogota', "yyyy-MM-dd'T'HH:mm:ss");
 
-    sheet.getRange(rowIndex, 7).setValue(codigo); // G: CodigoAsistencia
-    sheet.getRange(rowIndex, 8).setValue(expira); // H: CodigoExpira
-    sheet.getRange(rowIndex, 9).setValue('activa'); // I: Estado
+    sheet.getRange(rowIndex, 7).setValue(seed);
+    sheet.getRange(rowIndex, 8).setValue(expira);
+    sheet.getRange(rowIndex, 9).setValue('activa');
+
+    const windowSec = Number(config.codigoRotativoSec) || 60;
+    const codigoActual = codigoRotativo(seed, windowSec, 0);
 
     lock.releaseLock();
-    return jsonResponse({ status: 'ok', codigo: codigo, expira: expira, claseId: data.claseId });
+    return jsonResponse({
+      status: 'ok',
+      codigo: codigoActual,
+      expira: expira,
+      claseId: data.claseId,
+      windowSec: windowSec
+    });
   } catch (err) {
     lock.releaseLock();
     throw err;
   }
+}
+
+function handleGetCodigoActual(params) {
+  if (!params || !params.claseId) {
+    return jsonResponse({ status: 'error', message: 'claseId requerido' });
+  }
+  const sheet = getSheet('Clases');
+  if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja Clases no encontrada' });
+
+  const values = sheet.getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][0] === params.claseId) {
+      const seed = values[i][6];
+      const estado = values[i][8];
+      if (!seed || estado !== 'activa') {
+        return jsonResponse({ status: 'error', message: 'Clase no activa' });
+      }
+      const config = getConfig();
+      const windowSec = Number(config.codigoRotativoSec) || 60;
+      const now = Math.floor(Date.now() / 1000);
+      const secsRestantes = windowSec - (now % windowSec);
+      return jsonResponse({
+        status: 'ok',
+        codigo: codigoRotativo(seed, windowSec, 0),
+        windowSec: windowSec,
+        secsRestantes: secsRestantes,
+        expira: values[i][7] instanceof Date ? values[i][7].toISOString() : values[i][7]
+      });
+    }
+  }
+  return jsonResponse({ status: 'error', message: 'Clase no encontrada' });
 }
 
 function handleCerrarAsistencia(data) {
@@ -445,6 +585,7 @@ function handleCheckin(data) {
 
   const email = data.email.toLowerCase().trim();
   const codigo = data.codigo.toUpperCase().trim();
+  const fingerprint = (data.fingerprint || '').toString().trim();
 
   // Verificar que el estudiante existe
   const regSheet = getSheet('Registros');
@@ -460,19 +601,25 @@ function handleCheckin(data) {
   }
 
   if (!nombreEstudiante) {
-    return jsonResponse({ status: 'error', message: 'Email no registrado en el CRM' });
+    return jsonResponse({ status: 'error', message: 'Email no registrado' });
   }
 
-  // Buscar clase activa con ese codigo
+  // Buscar clase activa cuya SEMILLA (col G) produzca el codigo actual o el anterior
   const clasesSheet = getSheet('Clases');
   if (!clasesSheet) return jsonResponse({ status: 'error', message: 'No hay clases configuradas' });
 
+  const config = getConfig();
+  const windowSec = Number(config.codigoRotativoSec) || 60;
   const clasesData = clasesSheet.getDataRange().getValues();
   let claseEncontrada = null;
 
   let codigoExpirado = false;
   for (let i = 1; i < clasesData.length; i++) {
-    if (clasesData[i][6] === codigo && clasesData[i][8] === 'activa') {
+    const seed = clasesData[i][6];
+    if (!seed || clasesData[i][8] !== 'activa') continue;
+    const codigoAhora = codigoRotativo(seed, windowSec, 0);
+    const codigoPrev = codigoRotativo(seed, windowSec, -1);
+    if (codigo === codigoAhora || codigo === codigoPrev) {
       const expira = new Date(clasesData[i][7]);
       codigoExpirado = new Date() > expira;
       claseEncontrada = {
@@ -486,7 +633,7 @@ function handleCheckin(data) {
   }
 
   if (!claseEncontrada) {
-    return jsonResponse({ status: 'error', message: 'Codigo invalido o clase no activa' });
+    return jsonResponse({ status: 'error', message: 'Codigo invalido o expirado. Pide el codigo actual al profe.' });
   }
 
   // Verificar que no haya duplicado
@@ -507,10 +654,16 @@ function handleCheckin(data) {
         lock.releaseLock();
         return jsonResponse({ status: 'error', message: 'Ya registraste asistencia para esta clase' });
       }
+      // Anti-fraude: mismo device con email distinto en la misma clase
+      if (fingerprint && asistData[i][7] && asistData[i][7].toString().trim() === fingerprint
+          && asistData[i][3] === claseEncontrada.claseId
+          && asistData[i][1].toString().toLowerCase().trim() !== email) {
+        lock.releaseLock();
+        return jsonResponse({ status: 'error', message: 'Este dispositivo ya registro asistencia para otro estudiante en esta clase.' });
+      }
     }
 
     // Calcular puntualidad (todo en hora Colombia)
-    const config = getConfig();
     const ahoraCOL = Utilities.formatDate(new Date(), 'America/Bogota', 'yyyy-MM-dd HH:mm');
 
     // Construir datetime de inicio de clase en hora Colombia
@@ -563,7 +716,7 @@ function handleCheckin(data) {
       puntosTotal = puntosBase + puntosPuntualidad;
     }
 
-    // Registrar asistencia
+    // Registrar asistencia (col H: fingerprint)
     const row = [
       nowColombia(),
       email,
@@ -571,7 +724,8 @@ function handleCheckin(data) {
       claseEncontrada.claseId,
       claseEncontrada.numero,
       minutosAntes,
-      puntosTotal
+      puntosTotal,
+      fingerprint
     ];
 
     asistSheet.appendRow(row);

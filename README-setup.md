@@ -1,8 +1,8 @@
-# CRM Registro — Guia de Configuracion
+# Data Marketing — Guia de Configuracion
 
 ## Que es esto?
 
-Sistema CRM para el curso **Mercadeo Relacional y CRM** de la UAO con cuatro componentes principales:
+Sistema CRM para el curso **Data Marketing** de la UAO con cuatro componentes principales:
 
 | Archivo | Descripcion | URL |
 |---------|-------------|-----|
@@ -33,12 +33,12 @@ portal.html                    |
 ```
 
 **Google Sheets** (6 hojas):
-- `Registros` — datos de estudiantes (A-U)
-- `Clases` — sesiones del curso (A-I)
-- `Asistencia` — check-ins de estudiantes (A-G)
+- `Registros` — datos de estudiantes (A-AC: A-U legacy + V-AC Data Marketing)
+- `Clases` — sesiones del curso (A-I) (columna G = SEMILLA del codigo rotativo)
+- `Asistencia` — check-ins de estudiantes (A-H, H = DeviceFingerprint)
 - `EventosTracking` — apertura de emails, puntos manuales (A-E)
 - `Puntos` — leaderboard calculado (A-I)
-- `Config` — configuracion de puntos (A-B)
+- `Config` — configuracion de puntos (A-B, opc. `codigoRotativoSec`)
 
 **AWS**:
 - Lambda: `crm-send-pdf-email` (Node.js 20.x)
@@ -49,19 +49,21 @@ portal.html                    |
 
 ## Hojas de Google Sheets
 
-### Registros (A-U)
+### Registros (A-AC)
 ```
-Timestamp | Nombre | Email | Celular | Ciudad | Genero | FechaNacimiento | Empresa | Cargo | Sector | TamanoEmpresa | Web | EmpresaPropia | QueVende | ClienteIdeal | CanalesCaptacion | UsaCRM | CualCRM | Expectativas | RetosClientes | PrefiereTrabajar
+A-U legacy: Timestamp | Nombre | Email | Celular | Ciudad | Genero | FechaNacimiento | Empresa | Cargo | Sector | TamanoEmpresa | Web | EmpresaPropia | QueVende | ClienteIdeal | CanalesCaptacion | UsaCRM | CualCRM | Expectativas | RetosClientes | PrefiereTrabajar
+V-AC Data Marketing: HerramientasAnalitica | DatosClientes | KPIs | Segmentacion | DecisionesBasadas | RetoDatos | MadurezDigital | FotoUrl
 ```
 
 ### Clases (A-I)
 ```
-ClaseId | Numero | Titulo | Fecha | HoraInicio | HoraFin | CodigoAsistencia | CodigoExpira | Estado
+ClaseId | Numero | Titulo | Fecha | HoraInicio | HoraFin | CodigoAsistencia(seed) | CodigoExpira | Estado
 ```
+> Col G guarda la SEMILLA aleatoria; el codigo visible se deriva cada N segundos.
 
-### Asistencia (A-G)
+### Asistencia (A-H)
 ```
-Timestamp | Email | Nombre | ClaseId | ClaseNumero | MinutosAntes | PuntosPuntualidad
+Timestamp | Email | Nombre | ClaseId | ClaseNumero | MinutosAntes | PuntosPuntualidad | DeviceFingerprint
 ```
 
 ### EventosTracking (A-E)
@@ -76,14 +78,34 @@ Email | Nombre | TotalPuntos | PuntosAsistencia | PuntosPuntualidad | PuntosEmai
 
 ### Config (A-B)
 ```
-Clave              | Valor
-puntosAsistencia   | 10
-puntosPuntualidadMax | 5
-ventanaPuntualidad | 15
-puntosEmailOpen    | 3
+Clave                  | Valor
+puntosAsistencia       | 10
+puntosPuntualidadMax   | 5
+ventanaPuntualidad     | 15
+puntosEmailOpen        | 3
 toleranciaLlegadaTarde | 15
-codigoVigenciaMin  | 30
+codigoVigenciaMin      | 30
+codigoRotativoSec      | 60    (opcional - default 60)
 ```
+
+## Anti-fraude en check-in
+
+- **Codigo rotativo**: la columna `CodigoAsistencia` guarda una SEMILLA aleatoria.
+  Cada `codigoRotativoSec` segundos (60 por default) se deriva un codigo de 6
+  caracteres a partir de (seed, minuto). El admin hace polling cada 4s y lo muestra
+  grande en pantalla. El backend acepta el codigo actual y el anterior (ventana
+  efectiva 60-120s).
+- **Device fingerprint**: el portal calcula un hash del navegador+pantalla+canvas
+  y lo manda en el checkin. El backend lo guarda en `Asistencia[H]`. Si otro
+  email intenta hacer checkin con el mismo fingerprint en la misma clase → se
+  rechaza.
+
+## Foto de perfil (avatar)
+
+El registro pide foto (captura o galeria). Se sube a Drive en la carpeta
+`CRM_Fotos_DataMarketing` (se crea automaticamente) con permiso "cualquiera con
+link". La URL queda en `Registros[AC]` y se muestra en el portal (ranking) y
+en el admin (contactos + leaderboard).
 
 ---
 
@@ -136,7 +158,7 @@ Variables de entorno en Lambda:
 | Variable | Valor |
 |----------|-------|
 | `FROM_EMAIL` | Email verificado en SES (ej: hola@juanmrueda.com) |
-| `API_KEY` | Clave para autenticar requests (ej: crm-uao-2026-ses) |
+| `API_KEY` | Clave para autenticar requests (ej: dm-uao-2026-ses) |
 | `APPS_SCRIPT_URL` | URL del Apps Script (para tracking pixel) |
 | `API_BASE_URL` | URL base del API Gateway (ej: https://xxx.execute-api.us-east-1.amazonaws.com) |
 

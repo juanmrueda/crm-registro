@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registro CRM | Mercadeo Relacional y CRM - UAO</title>
+    <title>Registro | Data Marketing - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,7 +11,8 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: { uao: { DEFAULT: '#C8102E', dark: '#9B0C23', darker: '#7a0919' } }
                 }
             }
         }
@@ -23,9 +24,9 @@
             font-family: 'Inter', system-ui, sans-serif;
             min-height: 100vh;
             min-height: 100dvh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #6B8DD6 50%, #8E37D7 75%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a0608 0%, #2a0a10 25%, #C8102E 50%, #2a0a10 75%, #1a0608 100%);
             background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            animation: gradientShift 18s ease infinite;
             overflow-x: hidden;
         }
 
@@ -35,55 +36,52 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Floating orbs */
         .orb {
             position: fixed;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.4;
+            opacity: 0.35;
             pointer-events: none;
             z-index: 0;
         }
-        .orb-1 { width: 300px; height: 300px; background: #a855f7; top: -100px; left: -100px; animation: float1 8s ease-in-out infinite; }
-        .orb-2 { width: 400px; height: 400px; background: #3b82f6; bottom: -150px; right: -150px; animation: float2 10s ease-in-out infinite; }
-        .orb-3 { width: 250px; height: 250px; background: #06b6d4; top: 50%; left: 50%; animation: float3 12s ease-in-out infinite; }
+        .orb-1 { width: 300px; height: 300px; background: #C8102E; top: -100px; left: -100px; animation: float1 8s ease-in-out infinite; }
+        .orb-2 { width: 400px; height: 400px; background: #9B0C23; bottom: -150px; right: -150px; animation: float2 10s ease-in-out infinite; }
+        .orb-3 { width: 250px; height: 250px; background: #C8102E; top: 50%; left: 50%; animation: float3 12s ease-in-out infinite; }
 
         @keyframes float1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(50px, 50px); } }
         @keyframes float2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-60px, -40px); } }
         @keyframes float3 { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-40%, -60%); } }
 
-        /* Glass card */
         .glass {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
         }
 
         .glass-input {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 14px;
             color: white;
             transition: all 0.3s ease;
         }
 
         .glass-input:focus {
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(200, 16, 46, 0.7);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.2);
         }
 
-        .glass-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+        .glass-input::placeholder { color: rgba(255, 255, 255, 0.45); }
 
-        .glass-input option { background: #1e293b; color: white; }
+        .glass-input option { background: #1a1a1a; color: white; }
 
-        /* Custom select arrow */
         select.glass-input {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -92,7 +90,6 @@
             padding-right: 40px;
         }
 
-        /* Toggle switch */
         .toggle-switch {
             width: 52px; height: 28px;
             background: rgba(255, 255, 255, 0.15);
@@ -103,7 +100,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             flex-shrink: 0;
         }
-        .toggle-switch.active { background: rgba(99, 102, 241, 0.7); }
+        .toggle-switch.active { background: rgba(200, 16, 46, 0.85); }
         .toggle-switch::after {
             content: '';
             width: 22px; height: 22px;
@@ -112,14 +109,13 @@
             position: absolute;
             top: 2px; left: 2px;
             transition: transform 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .toggle-switch.active::after { transform: translateX(24px); }
 
-        /* Checkbox custom */
         .custom-checkbox {
             width: 22px; height: 22px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border: 1.5px solid rgba(255, 255, 255, 0.3);
             border-radius: 6px;
             cursor: pointer;
@@ -130,8 +126,8 @@
             flex-shrink: 0;
         }
         .custom-checkbox.checked {
-            background: rgba(99, 102, 241, 0.7);
-            border-color: rgba(129, 140, 248, 0.8);
+            background: rgba(200, 16, 46, 0.85);
+            border-color: rgba(200, 16, 46, 1);
         }
         .custom-checkbox.checked::after {
             content: '';
@@ -142,7 +138,6 @@
             margin-top: -2px;
         }
 
-        /* Steps */
         .step-container {
             display: none;
             animation: slideIn 0.4s ease;
@@ -154,12 +149,6 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        @keyframes slideOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(-30px); }
-        }
-
-        /* Progress dots */
         .progress-dot {
             width: 12px; height: 12px;
             border-radius: 50%;
@@ -172,7 +161,7 @@
             transform: scale(1.2);
         }
         .progress-dot.completed {
-            background: rgba(134, 239, 172, 0.8);
+            background: rgba(200, 16, 46, 1);
         }
         .progress-line {
             height: 2px;
@@ -182,15 +171,14 @@
         }
         .progress-line .fill {
             height: 100%;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(200, 16, 46, 0.8);
             transition: width 0.5s ease;
             width: 0;
         }
         .progress-line.completed .fill { width: 100%; }
 
-        /* Button */
         .btn-primary {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #C8102E, #9B0C23);
             color: white;
             border: none;
             border-radius: 14px;
@@ -199,11 +187,11 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.45);
         }
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.6);
         }
         .btn-primary:active { transform: translateY(0); }
         .btn-primary:disabled {
@@ -213,7 +201,7 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 14px;
@@ -223,11 +211,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.18); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
 
-        /* Validation */
         .field-error .glass-input {
-            border-color: rgba(239, 68, 68, 0.7) !important;
+            border-color: rgba(239, 68, 68, 0.8) !important;
             animation: shake 0.4s ease;
         }
         .error-msg {
@@ -246,7 +233,6 @@
             80% { transform: translateX(4px); }
         }
 
-        /* Success screen */
         .confetti-piece {
             position: fixed;
             width: 10px;
@@ -261,7 +247,6 @@
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
 
-        /* Loading spinner */
         .spinner {
             width: 24px; height: 24px;
             border: 3px solid rgba(255,255,255,0.3);
@@ -272,9 +257,8 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Label */
         .field-label {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 13px;
             font-weight: 500;
             margin-bottom: 6px;
@@ -282,31 +266,72 @@
             letter-spacing: 0.02em;
         }
 
-        /* Textarea */
         textarea.glass-input {
             resize: vertical;
             min-height: 80px;
         }
 
-        /* Hide native date icon on some browsers */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             opacity: 0.6;
         }
 
-        /* Scrollbar */
+        /* Photo upload */
+        .photo-drop {
+            border: 2px dashed rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .photo-drop:hover { border-color: rgba(200, 16, 46, 0.7); background: rgba(200, 16, 46, 0.06); }
+        .photo-preview {
+            width: 96px; height: 96px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(200, 16, 46, 0.6);
+            box-shadow: 0 4px 20px rgba(200, 16, 46, 0.3);
+        }
+
+        /* Range slider */
+        input[type="range"].madurez-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.12);
+            outline: none;
+        }
+        input[type="range"].madurez-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #C8102E;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(200, 16, 46, 0.5);
+        }
+        input[type="range"].madurez-slider::-moz-range-thumb {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #C8102E;
+            cursor: pointer;
+            border: 3px solid white;
+        }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
-    <!-- Background orbs -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <!-- Main container -->
     <div class="w-full max-w-lg relative z-10" id="app">
 
         <!-- Header -->
@@ -314,7 +339,7 @@
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-3">
                 <span class="text-white/80 text-xs font-medium tracking-wider uppercase">UAO &middot; Especializacion</span>
             </div>
-            <h1 class="text-white text-2xl font-bold mb-1">Mercadeo Relacional y CRM</h1>
+            <h1 class="text-white text-2xl font-bold mb-1">Data Marketing</h1>
             <p class="text-white/60 text-sm">Completa tu registro para el curso</p>
         </div>
 
@@ -329,7 +354,6 @@
             <div class="progress-dot" data-step="4"></div>
         </div>
 
-        <!-- Step indicator -->
         <div class="text-center mb-4">
             <span class="text-white/50 text-xs font-medium" id="stepLabel">Paso 1 de 4 &mdash; Datos Personales</span>
         </div>
@@ -337,12 +361,30 @@
         <!-- Card -->
         <div class="glass p-6 sm:p-8">
 
-            <!-- STEP 1: Datos Personales -->
+            <!-- STEP 1: Datos Personales + Foto -->
             <div class="step-container active" data-step="1">
                 <h2 class="text-white text-lg font-semibold mb-1">Datos Personales</h2>
                 <p class="text-white/50 text-sm mb-6">Cuentanos sobre ti</p>
 
                 <div class="space-y-4">
+                    <!-- Foto de perfil -->
+                    <div class="field-group" data-field="foto">
+                        <label class="field-label">Foto para el ranking *</label>
+                        <div class="photo-drop" id="photoDrop" onclick="document.getElementById('fotoInput').click()">
+                            <div id="photoPlaceholder">
+                                <svg class="w-10 h-10 text-white/40 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <p class="text-white/70 text-sm font-medium">Toca para subir o tomar foto</p>
+                                <p class="text-white/40 text-xs mt-1">JPG o PNG &middot; Max 3MB</p>
+                            </div>
+                            <div id="photoPreviewWrap" class="hidden flex flex-col items-center gap-2">
+                                <img id="photoPreview" class="photo-preview" alt="preview">
+                                <button type="button" onclick="event.stopPropagation(); removeFoto();" class="text-white/60 text-xs hover:text-white underline">Cambiar</button>
+                            </div>
+                        </div>
+                        <input type="file" id="fotoInput" accept="image/*" capture="user" class="hidden" onchange="handleFoto(this)">
+                        <p class="error-msg">Sube una foto para el ranking</p>
+                    </div>
+
                     <div class="field-group" data-field="nombre">
                         <label class="field-label">Nombre completo *</label>
                         <input type="text" class="glass-input w-full px-4 py-3 text-sm" placeholder="Ej: Maria Lopez Rodriguez" id="nombre" autocomplete="name">
@@ -453,114 +495,201 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Canvas de Negocio -->
+            <!-- STEP 3: Tu estado en Data Marketing -->
             <div class="step-container" data-step="3">
-                <h2 class="text-white text-lg font-semibold mb-1">Canvas de Negocio Express</h2>
-                <p class="text-white/50 text-sm mb-6">Diagnostico rapido de tu negocio</p>
+                <h2 class="text-white text-lg font-semibold mb-1">Tu estado en Data Marketing</h2>
+                <p class="text-white/50 text-sm mb-6">Que haces hoy con tus datos</p>
 
                 <div class="space-y-4">
-                    <div class="field-group" data-field="queVende">
-                        <label class="field-label">Que vendes? (producto o servicio) *</label>
-                        <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Describe brevemente tu producto o servicio principal..." id="queVende" rows="3"></textarea>
-                        <p class="error-msg">Describe que vendes</p>
-                    </div>
-
-                    <div class="field-group" data-field="clienteIdeal">
-                        <label class="field-label">A quien le vendes? (cliente ideal) *</label>
-                        <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Describe tu cliente ideal: edad, ubicacion, necesidades..." id="clienteIdeal" rows="3"></textarea>
-                        <p class="error-msg">Describe tu cliente ideal</p>
-                    </div>
-
-                    <div class="field-group" data-field="canales">
-                        <label class="field-label">Como consigues clientes hoy? *</label>
-                        <p class="text-white/40 text-xs mb-2">Selecciona todos los que apliquen</p>
-                        <div class="grid grid-cols-2 gap-2" id="canalesContainer">
+                    <div class="field-group" data-field="herramientas">
+                        <label class="field-label">Herramientas de analitica / marketing digital *</label>
+                        <p class="text-white/40 text-xs mb-2">Marca todas las que usas hoy</p>
+                        <div class="grid grid-cols-2 gap-2" id="herramientasContainer">
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
-                                <div class="custom-checkbox" data-canal="Redes sociales" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Redes sociales</span>
+                                <div class="custom-checkbox" data-val="Google Analytics 4" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">GA4</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
-                                <div class="custom-checkbox" data-canal="Referidos" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Referidos</span>
+                                <div class="custom-checkbox" data-val="Meta Ads / Pixel" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Meta Ads</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
-                                <div class="custom-checkbox" data-canal="Publicidad paga" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Publicidad paga</span>
+                                <div class="custom-checkbox" data-val="Google Ads" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Google Ads</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
-                                <div class="custom-checkbox" data-canal="Email marketing" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Email marketing</span>
+                                <div class="custom-checkbox" data-val="TikTok Ads" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">TikTok Ads</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
-                                <div class="custom-checkbox" data-canal="Llamadas / Ventas directas" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Llamadas</span>
+                                <div class="custom-checkbox" data-val="Mailchimp / Email tool" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Email tool</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
-                                <div class="custom-checkbox" data-canal="Eventos / Ferias" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Eventos / Ferias</span>
+                                <div class="custom-checkbox" data-val="HubSpot" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">HubSpot</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Hotjar / Heatmap" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Hotjar</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Looker Studio / BI" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Looker / BI</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors col-span-2">
-                                <div class="custom-checkbox" data-canal="SEO / Contenido organico" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">SEO / Contenido organico</span>
+                                <div class="custom-checkbox" data-val="Ninguna" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">No uso ninguna</span>
                             </label>
                         </div>
-                        <p class="error-msg">Selecciona al menos un canal</p>
+                        <p class="error-msg">Selecciona al menos una opcion</p>
                     </div>
 
-                    <div class="field-group" data-field="usaCRM">
-                        <label class="field-label">Usas algun CRM actualmente? *</label>
-                        <select class="glass-input w-full px-4 py-3 text-sm" id="usaCRM" onchange="toggleCRMField()">
+                    <div class="field-group" data-field="datosClientes">
+                        <label class="field-label">Que datos recoges de tus clientes hoy? *</label>
+                        <p class="text-white/40 text-xs mb-2">Marca todos los que apliquen</p>
+                        <div class="grid grid-cols-2 gap-2" id="datosContainer">
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Email" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Email</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Telefono" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Telefono</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Historial de compras" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Compras</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Comportamiento web" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Web behavior</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Ubicacion" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Ubicacion</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Preferencias / intereses" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Preferencias</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors col-span-2">
+                                <div class="custom-checkbox" data-val="Ninguno / No se" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Ninguno / No se</span>
+                            </label>
+                        </div>
+                        <p class="error-msg">Selecciona al menos una opcion</p>
+                    </div>
+
+                    <div class="field-group" data-field="kpis">
+                        <label class="field-label">Que KPIs mides hoy? *</label>
+                        <p class="text-white/40 text-xs mb-2">Marca todos los que sigues</p>
+                        <div class="grid grid-cols-2 gap-2" id="kpisContainer">
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="CAC" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">CAC</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="LTV" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">LTV</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Conversion rate" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Conversion rate</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="ROAS" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">ROAS</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Open rate / Email" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Open rate</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Tasa de recompra" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Recompra</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="NPS / Satisfaccion" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">NPS</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                                <div class="custom-checkbox" data-val="Ninguno" onclick="toggleCheckbox(this)"></div>
+                                <span class="text-white/80 text-sm">Ninguno</span>
+                            </label>
+                        </div>
+                        <p class="error-msg">Selecciona al menos una opcion</p>
+                    </div>
+
+                    <div class="field-group" data-field="segmentacion">
+                        <label class="field-label">Segmentas tu base de clientes? *</label>
+                        <select class="glass-input w-full px-4 py-3 text-sm" id="segmentacion">
                             <option value="">Selecciona</option>
-                            <option value="No">No, ninguno</option>
-                            <option value="Excel/Sheets">Si, Excel o Google Sheets</option>
-                            <option value="HubSpot">Si, HubSpot</option>
-                            <option value="Zoho">Si, Zoho CRM</option>
-                            <option value="Otro">Si, otro</option>
+                            <option value="No, no segmentamos">No, no segmentamos</option>
+                            <option value="Si, por demografia">Si, por demografia (edad, ubicacion)</option>
+                            <option value="Si, por comportamiento">Si, por comportamiento (compras, uso)</option>
+                            <option value="Si, por RFM">Si, RFM (Recencia, Frecuencia, Monto)</option>
+                            <option value="Si, modelos avanzados">Si, modelos avanzados / ML</option>
                         </select>
                         <p class="error-msg">Selecciona una opcion</p>
-                    </div>
-
-                    <div class="field-group hidden" id="cualCRMContainer" data-field="cualCRM">
-                        <label class="field-label">Cual CRM usas?</label>
-                        <input type="text" class="glass-input w-full px-4 py-3 text-sm" placeholder="Nombre del CRM" id="cualCRM">
                     </div>
                 </div>
             </div>
 
-            <!-- STEP 4: Expectativas -->
+            <!-- STEP 4: Madurez + Expectativas -->
             <div class="step-container" data-step="4">
-                <h2 class="text-white text-lg font-semibold mb-1">Expectativas del Curso</h2>
-                <p class="text-white/50 text-sm mb-6">Ultimo paso! Cuentanos que esperas</p>
+                <h2 class="text-white text-lg font-semibold mb-1">Madurez y Expectativas</h2>
+                <p class="text-white/50 text-sm mb-6">Ultimo paso!</p>
 
-                <div class="space-y-4">
-                    <div class="field-group" data-field="expectativas">
-                        <label class="field-label">Que esperas aprender en este curso? *</label>
-                        <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Que habilidades o conocimientos te gustaria obtener..." id="expectativas" rows="3"></textarea>
-                        <p class="error-msg">Cuentanos tus expectativas</p>
-                    </div>
-
-                    <div class="field-group" data-field="retos">
-                        <label class="field-label">Cual es tu mayor reto con clientes? *</label>
-                        <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Que es lo que mas te cuesta en la relacion con tus clientes..." id="retos" rows="3"></textarea>
-                        <p class="error-msg">Cuentanos tu mayor reto</p>
-                    </div>
-
-                    <div class="field-group" data-field="prefiereTrabajar">
-                        <label class="field-label">Como prefieres trabajar? *</label>
-                        <select class="glass-input w-full px-4 py-3 text-sm" id="prefiereTrabajar">
+                <div class="space-y-5">
+                    <div class="field-group" data-field="decisiones">
+                        <label class="field-label">Como tomas decisiones de marketing hoy? *</label>
+                        <select class="glass-input w-full px-4 py-3 text-sm" id="decisiones">
                             <option value="">Selecciona</option>
-                            <option value="Solo">Solo / Individual</option>
-                            <option value="En equipo">En equipo</option>
-                            <option value="Ambos">Ambos, me adapto</option>
+                            <option value="Intuicion">Principalmente intuicion / experiencia</option>
+                            <option value="Mix">Mix de intuicion y datos</option>
+                            <option value="Datos">Principalmente datos</option>
                         </select>
                         <p class="error-msg">Selecciona una opcion</p>
+                    </div>
+
+                    <div class="field-group" data-field="retoDatos">
+                        <label class="field-label">Tu mayor reto con datos *</label>
+                        <select class="glass-input w-full px-4 py-3 text-sm" id="retoDatos">
+                            <option value="">Selecciona</option>
+                            <option value="Calidad de datos">Calidad de datos (sucios, incompletos)</option>
+                            <option value="Integracion entre fuentes">Integrar datos de varias fuentes</option>
+                            <option value="No sabemos analizarlos">No sabemos analizarlos</option>
+                            <option value="Privacidad / legal">Privacidad / habeas data</option>
+                            <option value="No tenemos datos">Casi no tenemos datos</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                        <p class="error-msg">Selecciona una opcion</p>
+                    </div>
+
+                    <div class="field-group" data-field="madurez">
+                        <label class="field-label">Madurez digital percibida: <span id="madurezValor" class="text-uao font-bold">3</span> / 5 *</label>
+                        <input type="range" id="madurez" min="1" max="5" value="3" class="madurez-slider w-full">
+                        <div class="flex justify-between text-white/40 text-[10px] mt-1">
+                            <span>1 Inicial</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5 Avanzado</span>
+                        </div>
+                    </div>
+
+                    <div class="field-group" data-field="expectativas">
+                        <label class="field-label">Que esperas aprender en Data Marketing? *</label>
+                        <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Que habilidades, herramientas o resultados quieres lograr..." id="expectativas" rows="3"></textarea>
+                        <p class="error-msg">Cuentanos tus expectativas</p>
                     </div>
 
                     <div class="field-group mt-6" data-field="aceptaDatos">
                         <label class="flex items-start gap-3 cursor-pointer" onclick="toggleCheckbox(document.getElementById('aceptaDatosCheck'))">
                             <div class="custom-checkbox mt-0.5" id="aceptaDatosCheck"></div>
                             <span class="text-white/70 text-xs leading-relaxed">
-                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de Mercadeo Relacional y CRM de la Universidad Autonoma de Occidente. *
+                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de Data Marketing de la Universidad Autonoma de Occidente. *
                             </span>
                         </label>
                         <p class="error-msg">Debes aceptar el tratamiento de datos</p>
@@ -571,13 +700,13 @@
             <!-- SUCCESS Screen -->
             <div class="step-container" data-step="success" style="display:none;">
                 <div class="text-center py-6">
-                    <div class="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-20 h-20 rounded-full bg-uao/20 flex items-center justify-center mx-auto mb-4" style="background:rgba(200,16,46,0.2);">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                         </svg>
                     </div>
                     <h2 class="text-white text-xl font-bold mb-2">Registro Exitoso!</h2>
-                    <p class="text-white/60 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Mercadeo Relacional y CRM. Nos vemos en clase!</p>
+                    <p class="text-white/60 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Data Marketing. Nos vemos en clase!</p>
                     <div class="glass p-4 rounded-2xl text-left">
                         <p class="text-white/40 text-xs uppercase tracking-wider mb-2 font-medium">Tu resumen</p>
                         <p class="text-white text-sm font-medium" id="summaryName"></p>
@@ -612,30 +741,32 @@
 
     <script>
         // ========================================
-        // CONFIG - Pon aqui tu URL de Google Apps Script
+        // CONFIG
         // ========================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoXGumlP6y4tQ-vHxRK18BzqZqvZ2Lhg3eDWG_LP8j6sF-kol1bLGv0LM5NbZIBohABg/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9KagILIMaPi3uHwbVP_5RYJadUdbuBLKrw21Hti_E5b2KUghG_kW5uG335dscvl5Efg/exec';
 
         // ========================================
         // STATE
         // ========================================
         let currentStep = 1;
         const totalSteps = 4;
-        const STORAGE_KEY = 'crm_registro_data';
+        const STORAGE_KEY = 'dm_registro_data';
+        let fotoBase64 = '';
 
         const stepLabels = {
             1: 'Datos Personales',
             2: 'Tu Empresa',
-            3: 'Canvas de Negocio',
-            4: 'Expectativas'
+            3: 'Data Marketing',
+            4: 'Madurez y Expectativas'
         };
 
-        // ========================================
-        // INIT
-        // ========================================
         document.addEventListener('DOMContentLoaded', () => {
             loadFromStorage();
             updateProgress();
+            const madurez = document.getElementById('madurez');
+            if (madurez) madurez.addEventListener('input', () => {
+                document.getElementById('madurezValor').textContent = madurez.value;
+            });
         });
 
         // ========================================
@@ -671,7 +802,6 @@
             const target = document.querySelector(`.step-container[data-step="${step}"]`);
             if (target) {
                 target.style.display = 'block';
-                // Re-trigger animation
                 target.classList.remove('active');
                 void target.offsetWidth;
                 target.classList.add('active');
@@ -679,7 +809,6 @@
         }
 
         function updateProgress() {
-            // Update dots
             document.querySelectorAll('.progress-dot').forEach(dot => {
                 const s = parseInt(dot.dataset.step);
                 dot.classList.remove('active', 'completed');
@@ -687,17 +816,14 @@
                 else if (s < currentStep) dot.classList.add('completed');
             });
 
-            // Update lines
             document.querySelectorAll('.progress-line').forEach(line => {
                 const l = parseInt(line.dataset.line);
                 line.classList.toggle('completed', l < currentStep);
             });
 
-            // Update label
             document.getElementById('stepLabel').innerHTML =
                 `Paso ${currentStep} de ${totalSteps} &mdash; ${stepLabels[currentStep]}`;
 
-            // Update buttons
             document.getElementById('btnBack').classList.toggle('hidden', currentStep === 1);
 
             const btnNextText = document.getElementById('btnNextText');
@@ -722,10 +848,10 @@
         function validateStep(step) {
             let valid = true;
             const rules = {
-                1: ['nombre', 'email', 'celular', 'ciudad', 'genero', 'fechaNacimiento'],
+                1: ['foto', 'nombre', 'email', 'celular', 'ciudad', 'genero', 'fechaNacimiento'],
                 2: ['empresa', 'cargo', 'sector', 'tamano'],
-                3: ['queVende', 'clienteIdeal', 'canales', 'usaCRM'],
-                4: ['expectativas', 'retos', 'prefiereTrabajar', 'aceptaDatos']
+                3: ['herramientas', 'datosClientes', 'kpis', 'segmentacion'],
+                4: ['decisiones', 'retoDatos', 'expectativas', 'aceptaDatos']
             };
 
             (rules[step] || []).forEach(field => {
@@ -734,9 +860,14 @@
 
                 let fieldValid = true;
 
-                if (field === 'canales') {
-                    const checked = document.querySelectorAll('#canalesContainer .custom-checkbox.checked');
-                    fieldValid = checked.length > 0;
+                if (field === 'foto') {
+                    fieldValid = !!fotoBase64;
+                } else if (field === 'herramientas') {
+                    fieldValid = document.querySelectorAll('#herramientasContainer .custom-checkbox.checked').length > 0;
+                } else if (field === 'datosClientes') {
+                    fieldValid = document.querySelectorAll('#datosContainer .custom-checkbox.checked').length > 0;
+                } else if (field === 'kpis') {
+                    fieldValid = document.querySelectorAll('#kpisContainer .custom-checkbox.checked').length > 0;
                 } else if (field === 'aceptaDatos') {
                     fieldValid = document.getElementById('aceptaDatosCheck').classList.contains('checked');
                 } else if (field === 'email') {
@@ -754,11 +885,55 @@
             return valid;
         }
 
-        // Clear error on input
         document.addEventListener('input', (e) => {
             const group = e.target.closest('.field-group');
             if (group) group.classList.remove('field-error');
         });
+
+        // ========================================
+        // PHOTO
+        // ========================================
+        function handleFoto(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > 3 * 1024 * 1024) {
+                alert('La foto no puede pesar mas de 3MB');
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Resize to max 512x512 to keep payload small
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 512;
+                    let w = img.width, h = img.height;
+                    if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+                    else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    fotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    document.getElementById('photoPreview').src = fotoBase64;
+                    document.getElementById('photoPlaceholder').classList.add('hidden');
+                    document.getElementById('photoPreviewWrap').classList.remove('hidden');
+                    document.getElementById('photoPreviewWrap').classList.add('flex');
+                    const group = document.querySelector('.field-group[data-field="foto"]');
+                    if (group) group.classList.remove('field-error');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeFoto() {
+            fotoBase64 = '';
+            document.getElementById('fotoInput').value = '';
+            document.getElementById('photoPlaceholder').classList.remove('hidden');
+            document.getElementById('photoPreviewWrap').classList.add('hidden');
+            document.getElementById('photoPreviewWrap').classList.remove('flex');
+        }
 
         // ========================================
         // TOGGLES
@@ -770,26 +945,22 @@
 
         function toggleCheckbox(el) {
             el.classList.toggle('checked');
-            // Clear canales error
-            const canalesGroup = el.closest('.field-group');
-            if (canalesGroup) canalesGroup.classList.remove('field-error');
-        }
-
-        function toggleCRMField() {
-            const val = document.getElementById('usaCRM').value;
-            const container = document.getElementById('cualCRMContainer');
-            container.classList.toggle('hidden', val !== 'Otro');
+            const group = el.closest('.field-group');
+            if (group) group.classList.remove('field-error');
         }
 
         // ========================================
         // LOCAL STORAGE PERSISTENCE
         // ========================================
-        function getFormData() {
-            const canales = [];
-            document.querySelectorAll('#canalesContainer .custom-checkbox.checked').forEach(cb => {
-                canales.push(cb.dataset.canal);
+        function collectChecks(containerId) {
+            const vals = [];
+            document.querySelectorAll('#' + containerId + ' .custom-checkbox.checked').forEach(cb => {
+                vals.push(cb.dataset.val);
             });
+            return vals.join(', ');
+        }
 
+        function getFormData() {
             return {
                 nombre: document.getElementById('nombre')?.value || '',
                 email: document.getElementById('email')?.value || '',
@@ -803,20 +974,22 @@
                 tamano: document.getElementById('tamano')?.value || '',
                 web: document.getElementById('web')?.value || '',
                 empresaPropia: document.getElementById('empresaPropia')?.dataset.value || 'no',
-                queVende: document.getElementById('queVende')?.value || '',
-                clienteIdeal: document.getElementById('clienteIdeal')?.value || '',
-                canalesCaptacion: canales.join(', '),
-                usaCRM: document.getElementById('usaCRM')?.value || '',
-                cualCRM: document.getElementById('cualCRM')?.value || '',
-                expectativas: document.getElementById('expectativas')?.value || '',
-                retosClientes: document.getElementById('retos')?.value || '',
-                prefiereTrabajar: document.getElementById('prefiereTrabajar')?.value || ''
+                // Data Marketing nuevo
+                herramientasAnalitica: collectChecks('herramientasContainer'),
+                datosClientes: collectChecks('datosContainer'),
+                kpis: collectChecks('kpisContainer'),
+                segmentacion: document.getElementById('segmentacion')?.value || '',
+                decisionesBasadas: document.getElementById('decisiones')?.value || '',
+                retoDatos: document.getElementById('retoDatos')?.value || '',
+                madurezDigital: document.getElementById('madurez')?.value || '',
+                expectativas: document.getElementById('expectativas')?.value || ''
             };
         }
 
         function saveToStorage() {
             const data = getFormData();
             data._step = currentStep;
+            data._foto = fotoBase64;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
@@ -826,37 +999,46 @@
                 if (!raw) return;
                 const data = JSON.parse(raw);
 
-                // Restore text/select fields
                 const simpleFields = ['nombre','email','celular','ciudad','genero','fechaNacimiento',
-                    'empresa','cargo','sector','tamano','web','queVende','clienteIdeal',
-                    'usaCRM','cualCRM','expectativas','retos','prefiereTrabajar'];
+                    'empresa','cargo','sector','tamano','web',
+                    'segmentacion','decisiones','retoDatos','madurez','expectativas'];
 
                 simpleFields.forEach(id => {
                     const el = document.getElementById(id);
+                    if (el && data[id === 'decisiones' ? 'decisionesBasadas' : id === 'madurez' ? 'madurezDigital' : id === 'retoDatos' ? 'retoDatos' : id]) {
+                        el.value = data[id === 'decisiones' ? 'decisionesBasadas' : id === 'madurez' ? 'madurezDigital' : id];
+                    }
+                });
+                // Nombre/email/etc direct
+                ['nombre','email','celular','ciudad','genero','fechaNacimiento','empresa','cargo','sector','tamano','web','segmentacion','expectativas'].forEach(id => {
+                    const el = document.getElementById(id);
                     if (el && data[id]) el.value = data[id];
                 });
+                if (data.decisionesBasadas) document.getElementById('decisiones').value = data.decisionesBasadas;
+                if (data.retoDatos) document.getElementById('retoDatos').value = data.retoDatos;
+                if (data.madurezDigital) {
+                    document.getElementById('madurez').value = data.madurezDigital;
+                    document.getElementById('madurezValor').textContent = data.madurezDigital;
+                }
 
-                // Restore toggle
                 if (data.empresaPropia === 'si') {
                     const toggle = document.getElementById('empresaPropia');
                     toggle.classList.add('active');
                     toggle.dataset.value = 'si';
                 }
 
-                // Restore canales
-                if (data.canalesCaptacion) {
-                    const canales = data.canalesCaptacion.split(', ');
-                    document.querySelectorAll('#canalesContainer .custom-checkbox').forEach(cb => {
-                        if (canales.includes(cb.dataset.canal)) {
-                            cb.classList.add('checked');
-                        }
-                    });
+                restoreChecks('herramientasContainer', data.herramientasAnalitica);
+                restoreChecks('datosContainer', data.datosClientes);
+                restoreChecks('kpisContainer', data.kpis);
+
+                if (data._foto) {
+                    fotoBase64 = data._foto;
+                    document.getElementById('photoPreview').src = fotoBase64;
+                    document.getElementById('photoPlaceholder').classList.add('hidden');
+                    document.getElementById('photoPreviewWrap').classList.remove('hidden');
+                    document.getElementById('photoPreviewWrap').classList.add('flex');
                 }
 
-                // Restore CRM field visibility
-                toggleCRMField();
-
-                // Restore step
                 if (data._step && data._step > 1) {
                     currentStep = data._step;
                     showStep(currentStep);
@@ -865,6 +1047,14 @@
             } catch (e) {
                 console.warn('Could not load saved data:', e);
             }
+        }
+
+        function restoreChecks(containerId, str) {
+            if (!str) return;
+            const vals = str.split(', ');
+            document.querySelectorAll('#' + containerId + ' .custom-checkbox').forEach(cb => {
+                if (vals.includes(cb.dataset.val)) cb.classList.add('checked');
+            });
         }
 
         // ========================================
@@ -878,30 +1068,27 @@
 
             const data = getFormData();
             data.timestamp = new Date().toISOString();
+            data.fotoBase64 = fotoBase64;
+            data.action = 'registro';
 
             try {
-                if (APPS_SCRIPT_URL !== 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                }
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(data)
+                });
 
-                // Success
                 localStorage.removeItem(STORAGE_KEY);
                 showSuccess(data);
 
             } catch (error) {
                 console.error('Error:', error);
-                // Save locally as fallback
-                const pending = JSON.parse(localStorage.getItem('crm_pending') || '[]');
+                const pending = JSON.parse(localStorage.getItem('dm_pending') || '[]');
                 pending.push(data);
-                localStorage.setItem('crm_pending', JSON.stringify(pending));
+                localStorage.setItem('dm_pending', JSON.stringify(pending));
 
                 showSuccess(data);
-                // Show offline notice
                 setTimeout(() => {
                     const notice = document.createElement('div');
                     notice.className = 'glass p-3 mt-4 text-center';
@@ -912,12 +1099,10 @@
         }
 
         function showSuccess(data) {
-            // Hide nav
             document.getElementById('navButtons').style.display = 'none';
             document.getElementById('progressBar').style.display = 'none';
             document.getElementById('stepLabel').style.display = 'none';
 
-            // Show success
             document.querySelectorAll('.step-container').forEach(el => {
                 el.classList.remove('active');
                 el.style.display = 'none';
@@ -927,16 +1112,13 @@
             successEl.style.display = 'block';
             successEl.classList.add('active');
 
-            // Welcome message based on gender
             const bienvenida = data.genero === 'Femenino' ? 'Bienvenida' : 'Bienvenido';
-            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Mercadeo Relacional y CRM. Nos vemos en clase!`;
+            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Data Marketing. Nos vemos en clase!`;
 
-            // Fill summary
             document.getElementById('summaryName').textContent = data.nombre;
             document.getElementById('summaryEmail').textContent = data.email;
             document.getElementById('summaryEmpresa').textContent = `${data.cargo} en ${data.empresa}`;
 
-            // Confetti!
             launchConfetti();
         }
 
@@ -944,7 +1126,7 @@
         // CONFETTI
         // ========================================
         function launchConfetti() {
-            const colors = ['#6366f1', '#8b5cf6', '#a855f7', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
+            const colors = ['#C8102E', '#9B0C23', '#ffffff', '#1a1a1a', '#7a0919', '#f59e0b'];
             for (let i = 0; i < 60; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
