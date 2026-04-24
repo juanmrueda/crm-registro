@@ -148,7 +148,7 @@ en el admin (contactos + leaderboard).
 En `index.html`, `admin.html` y `portal.html`, buscar y reemplazar:
 
 ```javascript
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_ID/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTaU5zHXzLnuweQW3WdSxu_NL1PmrYJAUCQeDMqpctIbPwMF4Q2_0kRjizgK-1Jqm2Wg/exec';
 ```
 
 ### 3. AWS Lambda + SES
@@ -159,7 +159,7 @@ Variables de entorno en Lambda:
 |----------|-------|
 | `FROM_EMAIL` | Email verificado en SES (ej: hola@juanmrueda.com) |
 | `API_KEY` | Clave para autenticar requests (ej: dm-uao-2026-ses) |
-| `APPS_SCRIPT_URL` | URL del Apps Script (para tracking pixel) |
+| `APPS_SCRIPT_URL` | URL del Apps Script (para tracking pixel, ej: `https://script.google.com/macros/s/AKfycbwTaU5zHXzLnuweQW3WdSxu_NL1PmrYJAUCQeDMqpctIbPwMF4Q2_0kRjizgK-1Jqm2Wg/exec`) |
 | `API_BASE_URL` | URL base del API Gateway (ej: https://xxx.execute-api.us-east-1.amazonaws.com) |
 
 Rutas API Gateway:
