@@ -23,6 +23,8 @@
  *
  * 4. "EventosTracking" — Columnas A-E:
  *    Timestamp, Email, ClaseId, TipoEvento, PuntosOtorgados
+ *    NOTA: cuando TipoEvento='manual' la columna C guarda el MOTIVO
+ *    del ajuste, no un ClaseId (ver handleDarPuntos).
  *
  * 5. "Puntos" — Columnas A-H:
  *    Email, Nombre, TotalPuntos, PuntosAsistencia,
@@ -34,7 +36,42 @@
  *    Filas: puntosAsistencia=10, puntosPuntualidadMax=5,
  *    ventanaPuntualidad=15, puntosEmailOpen=3,
  *    toleranciaLlegadaTarde=15, codigoVigenciaMin=30,
- *    codigoRotativoSec=60 (opcional, default 60)
+ *    codigoRotativoSec=60 (opcional, default 60),
+ *    puntosLlegadaTarde=5 (opcional, default 5)
+ *
+ * 7. "Quizzes" — Columnas A-D:
+ *    QuizId, Titulo, Estado (borrador|activo|cerrado), PreguntasJSON
+ *
+ * 8. "QuizRespuestas" — Columnas A-F:
+ *    Timestamp, Email, Nombre, QuizId, RespuestasJSON, Puntaje
+ *
+ * ====================================================
+ * SEGURIDAD — Script Properties (OBLIGATORIO)
+ * ====================================================
+ * Configurar en: Apps Script > Configuracion del proyecto >
+ * Propiedades de la secuencia de comandos. NUNCA en este archivo.
+ *
+ *   ADMIN_TOKEN     Token de administrador (hex de 64 chars).
+ *                   Se genera desde tools/generar-token.html a partir
+ *                   de la clave del profesor. Mismo valor debe ir en la
+ *                   variable de entorno API_KEY de la Lambda.
+ *   TRACKING_TOKEN  Token que usa la Lambda para reportar aperturas de
+ *                   email. Cadena aleatoria larga. Mismo valor debe ir
+ *                   en la variable TRACKING_TOKEN de la Lambda.
+ *
+ * Sin ADMIN_TOKEN configurado, todas las acciones de administracion
+ * quedan bloqueadas (fail-closed).
+ *
+ * ACCIONES PUBLICAS (sin token, las usa el estudiante):
+ *   GET  getPortal, getQuizActivo
+ *   POST registro, checkin, enviarQuiz
+ * ACCIONES DE ADMIN (requieren token=ADMIN_TOKEN):
+ *   GET  getRegistros, getClases, getAsistencia, getPuntos, getConfig,
+ *        getCodigoActual, getQuizzes, getQuizResultados, verificarAdmin
+ *   POST crearClase, activarAsistencia, cerrarAsistencia, darPuntos,
+ *        recalcularPuntos, crearQuiz, activarQuiz, cerrarQuiz
+ * ACCIONES DE SERVICIO (requieren token=TRACKING_TOKEN):
+ *   POST logTracking
  *
  * ANTI-FRAUDE:
  * - Codigo rotativo: CodigoAsistencia es la SEMILLA; el estudiante
@@ -62,6 +99,50 @@ function jsonResponse(obj) {
 
 function getSheet(name) {
   return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+}
+
+// ============ AUTORIZACION ============
+
+/** Lee un secreto de Script Properties. Nunca se guardan en el codigo. */
+function getSecret(name) {
+  try {
+    return PropertiesService.getScriptProperties().getProperty(name) || '';
+  } catch (e) {
+    return '';
+  }
+}
+
+/**
+ * Comparacion en tiempo constante: evita filtrar cuantos caracteres
+ * coinciden midiendo el tiempo de respuesta.
+ */
+function tokensIguales(a, b) {
+  a = (a || '').toString();
+  b = (b || '').toString();
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
+/**
+ * Valida el token recibido contra el secreto guardado.
+ * Fail-closed: si el secreto no esta configurado, nadie pasa.
+ */
+function autorizado(tokenRecibido, nombreSecreto) {
+  const esperado = getSecret(nombreSecreto);
+  if (!esperado) return false;
+  return tokensIguales(tokenRecibido, esperado);
+}
+
+function respuestaNoAutorizado() {
+  return jsonResponse({
+    status: 'error',
+    code: 'unauthorized',
+    message: 'No autorizado. Token invalido o ausente.'
+  });
 }
 
 function getConfig() {
@@ -110,6 +191,24 @@ function sheetToObjects(sheet, fieldMap) {
     data.push(obj);
   }
   return data;
+}
+
+/**
+ * Convierte 'yyyy-MM-dd' + 'HH:mm' a minutos absolutos desde epoch (UTC),
+ * de forma que restar dos valores da la diferencia real aunque cambie el dia.
+ */
+function minutosAbsolutos(fecha, hora) {
+  const f = (fecha || '').split('-');
+  const h = (hora || '00:00').split(':');
+  if (f.length < 3) return 0;
+  const ms = Date.UTC(
+    parseInt(f[0], 10),
+    parseInt(f[1], 10) - 1,
+    parseInt(f[2], 10),
+    parseInt(h[0], 10) || 0,
+    parseInt(h[1], 10) || 0
+  );
+  return Math.round(ms / 60000);
 }
 
 function generarCodigo() {
@@ -168,22 +267,43 @@ function subirFotoDrive(base64DataUrl, nombreArchivo) {
 
 // ============ doGet ROUTER ============
 
+// Acciones GET que exigen token de administrador.
+const GET_ADMIN = [
+  'getRegistros', 'getClases', 'getAsistencia', 'getPuntos', 'getConfig',
+  'getCodigoActual', 'getQuizzes', 'getQuizResultados', 'verificarAdmin'
+];
+
 function doGet(e) {
   try {
-    const action = (e && e.parameter && e.parameter.action) ? e.parameter.action : 'getRegistros';
+    const params = (e && e.parameter) ? e.parameter : {};
+    const action = params.action || '';
+
+    // Sin accion explicita ya no se vuelca la base: hay que pedirla.
+    if (!action) {
+      return jsonResponse({ status: 'error', message: 'Accion requerida' });
+    }
+
+    // Puerta de administracion
+    if (GET_ADMIN.indexOf(action) !== -1 && !autorizado(params.token, 'ADMIN_TOKEN')) {
+      return respuestaNoAutorizado();
+    }
 
     switch (action) {
+      // --- admin ---
+      case 'verificarAdmin': return jsonResponse({ status: 'ok', valid: true });
       case 'getRegistros': return handleGetRegistros();
       case 'getClases': return handleGetClases();
-      case 'getAsistencia': return handleGetAsistencia(e.parameter);
+      case 'getAsistencia': return handleGetAsistencia(params);
       case 'getPuntos': return handleGetPuntos();
-      case 'getPortal': return handleGetPortal(e.parameter);
       case 'getConfig': return jsonResponse({ status: 'ok', config: getConfig() });
-      case 'getCodigoActual': return handleGetCodigoActual(e.parameter);
-      case 'getQuizActivo': return handleGetQuizActivo(e.parameter);
-      case 'getQuizResultados': return handleGetQuizResultados(e.parameter);
+      case 'getCodigoActual': return handleGetCodigoActual(params);
       case 'getQuizzes': return handleGetQuizzes();
-      default: return handleGetRegistros();
+      case 'getQuizResultados': return handleGetQuizResultados(params);
+      // --- publicas (estudiante) ---
+      case 'getPortal': return handleGetPortal(params);
+      case 'getQuizActivo': return handleGetQuizActivo(params);
+      default:
+        return jsonResponse({ status: 'error', message: 'Accion no reconocida' });
     }
   } catch (error) {
     return jsonResponse({ status: 'error', message: error.toString(), data: [] });
@@ -192,25 +312,49 @@ function doGet(e) {
 
 // ============ doPost ROUTER ============
 
+// Acciones POST que exigen token de administrador.
+const POST_ADMIN = [
+  'crearClase', 'activarAsistencia', 'cerrarAsistencia', 'darPuntos',
+  'recalcularPuntos', 'crearQuiz', 'activarQuiz', 'cerrarQuiz'
+];
+
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
-    const action = body.action || 'registro';
+    const action = body.action || '';
+
+    if (!action) {
+      return jsonResponse({ status: 'error', message: 'Accion requerida' });
+    }
+
+    // Puerta de administracion
+    if (POST_ADMIN.indexOf(action) !== -1 && !autorizado(body.token, 'ADMIN_TOKEN')) {
+      return respuestaNoAutorizado();
+    }
+
+    // Puerta de servicio: solo la Lambda reporta aperturas de email
+    if (action === 'logTracking' && !autorizado(body.token, 'TRACKING_TOKEN')) {
+      return respuestaNoAutorizado();
+    }
 
     switch (action) {
-      case 'registro': return handleRegistro(body);
+      // --- admin ---
       case 'crearClase': return handleCrearClase(body);
       case 'activarAsistencia': return handleActivarAsistencia(body);
       case 'cerrarAsistencia': return handleCerrarAsistencia(body);
-      case 'checkin': return handleCheckin(body);
-      case 'logTracking': return handleLogTracking(body);
       case 'recalcularPuntos': return handleRecalcularPuntos();
       case 'darPuntos': return handleDarPuntos(body);
       case 'crearQuiz': return handleCrearQuiz(body);
       case 'activarQuiz': return handleActivarQuiz(body);
       case 'cerrarQuiz': return handleCerrarQuiz(body);
+      // --- servicio ---
+      case 'logTracking': return handleLogTracking(body);
+      // --- publicas (estudiante) ---
+      case 'registro': return handleRegistro(body);
+      case 'checkin': return handleCheckin(body);
       case 'enviarQuiz': return handleEnviarQuiz(body);
-      default: return handleRegistro(body);
+      default:
+        return jsonResponse({ status: 'error', message: 'Accion no reconocida' });
     }
   } catch (error) {
     return jsonResponse({ status: 'error', message: error.toString() });
@@ -663,23 +807,28 @@ function handleCheckin(data) {
       }
     }
 
-    // Calcular puntualidad (todo en hora Colombia)
+    // Calcular puntualidad (todo en hora Colombia).
+    // Se comparan fecha + hora completas: comparar solo minutos desde
+    // medianoche daba puntos correctos a un check-in hecho otro dia.
     const ahoraCOL = Utilities.formatDate(new Date(), 'America/Bogota', 'yyyy-MM-dd HH:mm');
 
     // Construir datetime de inicio de clase en hora Colombia
     let fechaClase = claseEncontrada.fecha;
     if (fechaClase instanceof Date) {
       fechaClase = Utilities.formatDate(fechaClase, 'America/Bogota', 'yyyy-MM-dd');
+    } else {
+      fechaClase = (fechaClase || '').toString().split('T')[0].trim();
     }
     const horaInicio = claseEncontrada.horaInicio instanceof Date
       ? Utilities.formatDate(claseEncontrada.horaInicio, 'America/Bogota', 'HH:mm')
       : (claseEncontrada.horaInicio || '00:00');
-    // Parsear ambos como minutos desde medianoche para comparar
-    const aHora = ahoraCOL.split(' ')[1];
-    const aMin = parseInt(aHora.split(':')[0]) * 60 + parseInt(aHora.split(':')[1]);
-    const iMin = parseInt(horaInicio.split(':')[0]) * 60 + parseInt(horaInicio.split(':')[1]);
-    const diffMs = (iMin - aMin) * 60000;
-    const minutosAntes = Math.round(diffMs / 60000);
+
+    // Minutos absolutos desde epoch para ambos instantes, en hora Colombia
+    const minutosAntes = Math.round(
+      (minutosAbsolutos(fechaClase, horaInicio) - minutosAbsolutos(
+        ahoraCOL.split(' ')[0], ahoraCOL.split(' ')[1]
+      ))
+    );
 
     // Calcular puntos de puntualidad
     let puntosPuntualidad = 0;
@@ -691,9 +840,10 @@ function handleCheckin(data) {
     let puntosTotal;
 
     if (codigoExpirado) {
-      // Llegó tarde (después de expirar código): solo 5 puntos, sin puntualidad
+      // Llego tarde (despues de expirar el codigo): puntos reducidos,
+      // sin puntualidad. Configurable en la hoja Config.
       puntosPuntualidad = 0;
-      puntosTotal = 5;
+      puntosTotal = Number(config.puntosLlegadaTarde) || 5;
     } else {
       const gracia = 5; // minutos después de inicio donde aún se dan puntos
       if (minutosAntes < -tolerancia) {
@@ -819,7 +969,8 @@ function handleDarPuntos(data) {
   }
   if (!nombre) return jsonResponse({ status: 'error', message: 'Email no registrado' });
 
-  // Registrar en EventosTracking con tipo "manual"
+  // Registrar en EventosTracking con tipo "manual".
+  // OJO: la columna C (ClaseId) se reutiliza aqui para guardar el motivo.
   const sheet = getSheet('EventosTracking');
   if (!sheet) return jsonResponse({ status: 'error', message: 'Hoja EventosTracking no encontrada' });
 

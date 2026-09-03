@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Secretos y configuracion local
+.env
+.env.*
+*.local
+
+# Artefactos de despliegue
+lambda/*.zip
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
