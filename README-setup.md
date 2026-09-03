@@ -222,7 +222,7 @@ en el admin (contactos + leaderboard).
 En `index.html`, `admin.html` y `portal.html`, buscar y reemplazar:
 
 ```javascript
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTaU5zHXzLnuweQW3WdSxu_NL1PmrYJAUCQeDMqpctIbPwMF4Q2_0kRjizgK-1Jqm2Wg/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVJ62tLWRMjdfim09cjSz8krYXFxdyNpQnsUBeTzsug3RZpsUcUrxBjd3W2MgfCqOgAw/exec';
 ```
 
 ### 3. AWS Lambda + SES
