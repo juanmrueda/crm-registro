@@ -145,7 +145,18 @@ function respuestaNoAutorizado() {
   });
 }
 
+// Cache de config por ejecucion: getConfig se llama varias veces en una
+// misma peticion (checkin, codigo rotativo) y cada lectura cuesta una llamada
+// al servicio de Sheets.
+var _configCache = null;
+
 function getConfig() {
+  if (_configCache) return _configCache;
+  _configCache = _leerConfig();
+  return _configCache;
+}
+
+function _leerConfig() {
   const sheet = getSheet('Config');
   if (!sheet) {
     return {
@@ -270,7 +281,8 @@ function subirFotoDrive(base64DataUrl, nombreArchivo) {
 // Acciones GET que exigen token de administrador.
 const GET_ADMIN = [
   'getRegistros', 'getClases', 'getAsistencia', 'getPuntos', 'getConfig',
-  'getCodigoActual', 'getQuizzes', 'getQuizResultados', 'verificarAdmin'
+  'getCodigoActual', 'getQuizzes', 'getQuizResultados', 'verificarAdmin',
+  'getBootstrap'
 ];
 
 function doGet(e) {
@@ -291,6 +303,7 @@ function doGet(e) {
     switch (action) {
       // --- admin ---
       case 'verificarAdmin': return jsonResponse({ status: 'ok', valid: true });
+      case 'getBootstrap': return handleGetBootstrap();
       case 'getRegistros': return handleGetRegistros();
       case 'getClases': return handleGetClases();
       case 'getAsistencia': return handleGetAsistencia(params);
@@ -364,8 +377,12 @@ function doPost(e) {
 // ============ GET HANDLERS ============
 
 function handleGetRegistros() {
+  return jsonResponse({ status: 'ok', data: datosRegistros() });
+}
+
+function datosRegistros() {
   const sheet = getSheet('Registros');
-  if (!sheet) return jsonResponse({ status: 'ok', data: [] });
+  if (!sheet) return [];
 
   const fieldMap = {
     'Timestamp': 'timestamp', 'Nombre': 'nombre', 'Email': 'email',
@@ -388,15 +405,17 @@ function handleGetRegistros() {
     'FotoUrl': 'fotoUrl'
   };
 
-  const data = sheetToObjects(sheet, fieldMap).filter(r => r.nombre || r.email);
-  return jsonResponse({ status: 'ok', data: data });
+  return sheetToObjects(sheet, fieldMap).filter(r => r.nombre || r.email);
 }
 
 function handleGetClases() {
+  return jsonResponse({ status: 'ok', data: datosClases() });
+}
+
+function datosClases() {
   const sheet = getSheet('Clases');
-  if (!sheet) return jsonResponse({ status: 'ok', data: [] });
-  const data = sheetToObjects(sheet, null);
-  return jsonResponse({ status: 'ok', data: data });
+  if (!sheet) return [];
+  return sheetToObjects(sheet, null);
 }
 
 function handleGetAsistencia(params) {
@@ -410,10 +429,13 @@ function handleGetAsistencia(params) {
 }
 
 function handleGetPuntos() {
+  return jsonResponse({ status: 'ok', data: datosPuntos() });
+}
+
+function datosPuntos() {
   const sheet = getSheet('Puntos');
-  if (!sheet) return jsonResponse({ status: 'ok', data: [] });
-  const data = sheetToObjects(sheet, null).filter(r => r.Email && r.Email.trim() !== '');
-  return jsonResponse({ status: 'ok', data: data });
+  if (!sheet) return [];
+  return sheetToObjects(sheet, null).filter(r => r.Email && r.Email.trim() !== '');
 }
 
 function handleGetPortal(params) {
@@ -695,11 +717,24 @@ function handleGetCodigoActual(params) {
       const windowSec = Number(config.codigoRotativoSec) || 60;
       const now = Math.floor(Date.now() / 1000);
       const secsRestantes = windowSec - (now % windowSec);
+
+      // El conteo de asistentes viaja aqui para ahorrar una peticion aparte
+      // que el panel hacia cada 5 segundos.
+      let asistentes = 0;
+      const asistSheet = getSheet('Asistencia');
+      if (asistSheet) {
+        const av = asistSheet.getDataRange().getValues();
+        for (let k = 1; k < av.length; k++) {
+          if (av[k][3] === params.claseId) asistentes++;
+        }
+      }
+
       return jsonResponse({
         status: 'ok',
         codigo: codigoRotativo(seed, windowSec, 0),
         windowSec: windowSec,
         secsRestantes: secsRestantes,
+        asistentes: asistentes,
         expira: values[i][7] instanceof Date ? values[i][7].toISOString() : values[i][7]
       });
     }
@@ -1173,12 +1208,32 @@ function recalcularTodosPuntos() {
 // ============ QUIZ HANDLERS ============
 
 function handleGetQuizzes() {
+  return jsonResponse({ status: 'ok', data: datosQuizzes() });
+}
+
+function datosQuizzes() {
   const sheet = getSheet('Quizzes');
-  if (!sheet) return jsonResponse({ status: 'ok', data: [] });
+  if (!sheet) return [];
   const data = sheetToObjects(sheet, null);
   // No enviar PreguntasJSON completo en listado
   data.forEach(q => { delete q.PreguntasJSON; });
-  return jsonResponse({ status: 'ok', data: data });
+  return data;
+}
+
+/**
+ * Todo lo que el panel necesita para pintarse, en UNA sola peticion.
+ * Apps Script tarda 1.5-2s por peticion pase lo que pase, asi que el coste
+ * dominante es el numero de round-trips, no el trabajo de cada uno.
+ */
+function handleGetBootstrap() {
+  return jsonResponse({
+    status: 'ok',
+    registros: datosRegistros(),
+    clases: datosClases(),
+    puntos: datosPuntos(),
+    quizzes: datosQuizzes(),
+    config: getConfig()
+  });
 }
 
 function handleGetQuizActivo(params) {

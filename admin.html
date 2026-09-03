@@ -1006,7 +1006,7 @@
         // CONFIG
         // ========================================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVJ62tLWRMjdfim09cjSz8krYXFxdyNpQnsUBeTzsug3RZpsUcUrxBjd3W2MgfCqOgAw/exec';
-        const AUTO_REFRESH_MS = 30000;
+        const AUTO_REFRESH_MS = 60000;
         const AUTH_KEY = 'mda_admin_token';
 
         // Lambda de correo. La clave YA NO va aqui: se usa el token de admin,
@@ -1218,11 +1218,40 @@
         async function loadData() {
             try {
                 if (APPS_SCRIPT_URL !== 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
-                    const json = await adminGet('getRegistros');
-                    allData = json.data || [];
-                } else {
-                    allData = DEMO_DATA;
+                    // Una sola peticion trae registros, clases, puntos, quizzes
+                    // y config. Apps Script tarda 1.5-2s por peticion haga lo
+                    // que haga, asi que lo caro es el numero de round-trips.
+                    const json = await adminGet('getBootstrap');
+
+                    // Si el Apps Script todavia no tiene getBootstrap, decirlo
+                    // en vez de pintar un panel vacio sin explicacion.
+                    if (!json || json.status !== 'ok' || !json.registros) {
+                        console.warn('getBootstrap no disponible, usando carga por partes');
+                        const j2 = await adminGet('getRegistros');
+                        allData = j2.data || [];
+                        filteredData = [...allData];
+                        updateAll();
+                        loadClases(); loadPuntos(); loadConfig(); loadQuizzes();
+                        document.getElementById('lastUpdate').textContent =
+                            'Ahora (backend desactualizado: actualiza el Apps Script para ir mas rapido)';
+                        return;
+                    }
+
+                    allData = json.registros || [];
+                    clasesData = json.clases || [];
+                    puntosData = json.puntos || [];
+                    quizzesData = json.quizzes || [];
+
+                    filteredData = [...allData];
+                    updateAll();
+                    updateClasesView();
+                    updateCalificaciones();
+                    renderQuizzes();
+                    aplicarConfig(json.config || {});
+                    document.getElementById('lastUpdate').textContent = 'Ahora';
+                    return;
                 }
+                allData = DEMO_DATA;
             } catch (e) {
                 console.warn('Error loading data, using demo:', e);
                 allData = DEMO_DATA;
@@ -1231,18 +1260,17 @@
             filteredData = [...allData];
             updateAll();
             document.getElementById('lastUpdate').textContent = 'Ahora';
-
-            // Cargar clases, puntos y config
-            loadClases();
-            loadPuntos();
-            loadConfig();
-            loadQuizzes();
         }
 
         async function loadConfig() {
             try {
                 const json = await adminGet('getConfig');
-                const cfg = json.config || {};
+                aplicarConfig(json.config || {});
+            } catch (e) { console.warn('Error loading config:', e); }
+        }
+
+        function aplicarConfig(cfg) {
+            try {
                 document.getElementById('cfgAsistencia').textContent = cfg.puntosAsistencia ?? 10;
                 document.getElementById('cfgPuntualidad').textContent = cfg.puntosPuntualidadMax ?? 5;
                 document.getElementById('cfgEmailOpen').textContent = cfg.puntosEmailOpen ?? 3;
@@ -1251,7 +1279,7 @@
                 document.getElementById('cfgCodigo').textContent = cfg.codigoVigenciaMin ?? 30;
                 document.getElementById('cfgMaxClase').textContent = (cfg.puntosAsistencia ?? 10) + (cfg.puntosPuntualidadMax ?? 5);
                 document.getElementById('cfgVentana2').textContent = cfg.ventanaPuntualidad ?? 15;
-            } catch (e) { console.warn('Error loading config:', e); }
+            } catch (e) { console.warn('Error aplicando config:', e); }
         }
 
         async function loadClases() {
@@ -2377,6 +2405,8 @@
                             claseId: claseId,
                             codigo: codigoActual.codigo || '------',
                             windowSec: codigoActual.windowSec || 60,
+                            secsRestantes: codigoActual.secsRestantes,
+                            asistentes: codigoActual.asistentes || 0,
                             expira: new Date(activa.CodigoExpira),
                             titulo: activa.Titulo || claseId
                         };
@@ -2395,22 +2425,49 @@
         }
 
         let codigoRotateTimer = null;
+        /**
+         * Antes preguntaba el codigo cada 4 segundos: 15 peticiones por minuto
+         * para un valor que solo cambia una vez por minuto. Ahora se programa
+         * la siguiente consulta justo para cuando expire la ventana, usando el
+         * secsRestantes que devuelve el backend.
+         */
         function iniciarRefreshCodigo() {
-            if (codigoRotateTimer) clearInterval(codigoRotateTimer);
-            codigoRotateTimer = setInterval(async () => {
-                if (!claseActiva) { clearInterval(codigoRotateTimer); return; }
+            if (codigoRotateTimer) clearTimeout(codigoRotateTimer);
+
+            const programar = (segundos) => {
+                // Medio segundo de colchon para no pedirlo justo en el borde
+                codigoRotateTimer = setTimeout(refrescar, Math.max(2, segundos) * 1000 + 500);
+            };
+
+            const refrescar = async () => {
+                if (!claseActiva) { clearTimeout(codigoRotateTimer); return; }
                 const r = await fetchCodigoActual(claseActiva.claseId);
-                if (r && r.codigo && r.codigo !== claseActiva.codigo) {
-                    claseActiva.codigo = r.codigo;
-                    const el = document.getElementById('codigoDisplay');
-                    if (el) {
-                        el.textContent = r.codigo;
-                        el.style.transition = 'transform 0.3s ease';
-                        el.style.transform = 'scale(1.08)';
-                        setTimeout(() => el.style.transform = 'scale(1)', 300);
+
+                if (r && r.codigo) {
+                    if (r.codigo !== claseActiva.codigo) {
+                        claseActiva.codigo = r.codigo;
+                        const el = document.getElementById('codigoDisplay');
+                        if (el) {
+                            el.textContent = r.codigo;
+                            el.style.transition = 'transform 0.3s ease';
+                            el.style.transform = 'scale(1.08)';
+                            setTimeout(() => el.style.transform = 'scale(1)', 300);
+                        }
                     }
+                    // El conteo de asistentes viaja en la misma respuesta
+                    if (typeof r.asistentes === 'number') {
+                        const a = document.getElementById('codigoAsistentes');
+                        const t = document.getElementById('codigoTotal');
+                        if (a) a.textContent = `${r.asistentes} presentes`;
+                        if (t) t.textContent = `de ${allData.length} registrados`;
+                    }
+                    programar(r.secsRestantes || r.windowSec || 60);
+                } else {
+                    programar(30);
                 }
-            }, 4000);
+            };
+
+            programar(claseActiva && claseActiva.secsRestantes ? claseActiva.secsRestantes : 60);
         }
 
         async function cerrarAsistencia() {
@@ -2448,14 +2505,17 @@
             }, 1000);
         }
 
+        /**
+         * El conteo de asistentes ya llega dentro de la respuesta del codigo
+         * rotativo, asi que esto solo pinta el estado inicial. Antes era un
+         * sondeo propio cada 5 segundos.
+         */
         function iniciarRefreshAsistencia() {
-            // Refresh attendance count every 5 seconds while active
-            const interval = setInterval(async () => {
-                if (!claseActiva) { clearInterval(interval); return; }
-                const asist = await loadAsistenciaClase(claseActiva.claseId);
-                document.getElementById('codigoAsistentes').textContent = `${asist.length} presentes`;
-                document.getElementById('codigoTotal').textContent = `de ${allData.length} registrados`;
-            }, 5000);
+            if (!claseActiva) return;
+            const a = document.getElementById('codigoAsistentes');
+            const t = document.getElementById('codigoTotal');
+            if (a) a.textContent = `${claseActiva.asistentes || 0} presentes`;
+            if (t) t.textContent = `de ${allData.length} registrados`;
         }
 
         function updateClasesView() {
@@ -2474,6 +2534,8 @@
                         claseId: activa.ClaseId,
                         codigo: (r && r.codigo) ? r.codigo : '------',
                         windowSec: (r && r.windowSec) ? r.windowSec : 60,
+                        secsRestantes: (r && r.secsRestantes) ? r.secsRestantes : undefined,
+                        asistentes: (r && r.asistentes) ? r.asistentes : 0,
                         expira: new Date(activa.CodigoExpira),
                         titulo: activa.Titulo
                     };
@@ -2809,7 +2871,7 @@
         function iniciarRefreshQuiz() {
             clearInterval(quizRefreshInterval);
             refreshQuizCount();
-            quizRefreshInterval = setInterval(refreshQuizCount, 5000);
+            quizRefreshInterval = setInterval(refreshQuizCount, 20000);
         }
 
         async function refreshQuizCount() {
