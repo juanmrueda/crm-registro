@@ -193,7 +193,7 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVJ62tLWRMjdfim09cjSz8krYXFxdyNpQnsUBeTzsug3RZpsUcUrxBjd3W2MgfCqOgAw/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwljWbVfNeXIQZAoRRWv6DebZJHsbZlH3FvR5hdz7z76DUu80Vy6ZZMTraHcaxd25gXng/exec';
         let portalEmail = '';
         let portalData = null;
 
@@ -253,6 +253,31 @@
             }
         });
 
+        /**
+         * Apps Script devuelve a veces HTML en vez de JSON bajo carga.
+         * Reintentar evita que el portal falle al azar delante del estudiante.
+         */
+        async function fetchJson(url, intentos = 3) {
+            let ultimoError;
+            for (let i = 0; i < intentos; i++) {
+                try {
+                    const res = await fetch(url);
+                    const texto = await res.text();
+                    try {
+                        return JSON.parse(texto);
+                    } catch (e) {
+                        ultimoError = new Error('Respuesta no es JSON');
+                    }
+                } catch (e) {
+                    ultimoError = e;
+                }
+                if (i < intentos - 1) {
+                    await new Promise(r => setTimeout(r, 600 * (i + 1)));
+                }
+            }
+            throw ultimoError || new Error('Sin respuesta');
+        }
+
         async function loginPortal() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if (!email) return;
@@ -265,8 +290,7 @@
             btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Cargando...</span>';
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL + '?action=getPortal&email=' + encodeURIComponent(email));
-                const json = await res.json();
+                const json = await fetchJson(APPS_SCRIPT_URL + '?action=getPortal&email=' + encodeURIComponent(email));
 
                 if (json.status === 'ok') {
                     portalEmail = email;
@@ -451,8 +475,7 @@
 
         async function checkQuizActivo() {
             try {
-                const res = await fetch(APPS_SCRIPT_URL + '?action=getQuizActivo&email=' + encodeURIComponent(portalEmail));
-                const json = await res.json();
+                const json = await fetchJson(APPS_SCRIPT_URL + '?action=getQuizActivo&email=' + encodeURIComponent(portalEmail));
                 const section = document.getElementById('quizSection');
                 const available = document.getElementById('quizAvailable');
                 const yaResp = document.getElementById('quizYaRespondido');

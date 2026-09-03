@@ -1005,7 +1005,7 @@
         // ========================================
         // CONFIG
         // ========================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVJ62tLWRMjdfim09cjSz8krYXFxdyNpQnsUBeTzsug3RZpsUcUrxBjd3W2MgfCqOgAw/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwljWbVfNeXIQZAoRRWv6DebZJHsbZlH3FvR5hdz7z76DUu80Vy6ZZMTraHcaxd25gXng/exec';
         const AUTO_REFRESH_MS = 60000;
         const AUTH_KEY = 'mda_admin_token';
 
@@ -1125,6 +1125,33 @@
             img.replaceWith(div);
         }
 
+        /**
+         * Apps Script devuelve de forma intermitente una pagina HTML en vez
+         * del JSON (se ha observado en ~1 de cada 3 peticiones bajo carga).
+         * Reintenta en ese caso en vez de dejar caer el panel.
+         */
+        async function fetchJson(url, intentos = 3) {
+            let ultimoError;
+            for (let i = 0; i < intentos; i++) {
+                try {
+                    const res = await fetch(url);
+                    const texto = await res.text();
+                    try {
+                        return JSON.parse(texto);
+                    } catch (e) {
+                        ultimoError = new Error('Respuesta no es JSON');
+                        console.warn(`Respuesta no-JSON (intento ${i + 1}/${intentos})`);
+                    }
+                } catch (e) {
+                    ultimoError = e;
+                }
+                if (i < intentos - 1) {
+                    await new Promise(r => setTimeout(r, 600 * (i + 1)));
+                }
+            }
+            throw ultimoError || new Error('Sin respuesta');
+        }
+
         /** GET autenticado al Apps Script. Devuelve el JSON ya parseado. */
         async function adminGet(action, params) {
             let url = APPS_SCRIPT_URL + '?action=' + encodeURIComponent(action)
@@ -1136,8 +1163,7 @@
                     }
                 }
             }
-            const res = await fetch(url);
-            const json = await res.json();
+            const json = await fetchJson(url);
             if (json && json.code === 'unauthorized') {
                 sessionStorage.removeItem(AUTH_KEY);
                 alert('Tu sesion no es valida. Vuelve a iniciar sesion.');
