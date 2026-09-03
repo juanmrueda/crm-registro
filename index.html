@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registro | Data Marketing - UAO</title>
+    <title>Registro | Marketing Digital Avanzado - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -339,7 +339,7 @@
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-3">
                 <span class="text-white/80 text-xs font-medium tracking-wider uppercase">UAO &middot; Especializacion</span>
             </div>
-            <h1 class="text-white text-2xl font-bold mb-1">Data Marketing</h1>
+            <h1 class="text-white text-xl font-bold mb-1">Marketing Digital Avanzado</h1>
             <p class="text-white/60 text-sm">Completa tu registro para el curso</p>
         </div>
 
@@ -495,9 +495,9 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Tu estado en Data Marketing -->
+            <!-- STEP 3: Tu estado en Marketing Digital Avanzado -->
             <div class="step-container" data-step="3">
-                <h2 class="text-white text-lg font-semibold mb-1">Tu estado en Data Marketing</h2>
+                <h2 class="text-white text-lg font-semibold mb-1">Tu estado en Marketing Digital</h2>
                 <p class="text-white/50 text-sm mb-6">Que haces hoy con tus datos</p>
 
                 <div class="space-y-4">
@@ -680,7 +680,7 @@
                     </div>
 
                     <div class="field-group" data-field="expectativas">
-                        <label class="field-label">Que esperas aprender en Data Marketing? *</label>
+                        <label class="field-label">Que esperas aprender en Marketing Digital Avanzado? *</label>
                         <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Que habilidades, herramientas o resultados quieres lograr..." id="expectativas" rows="3"></textarea>
                         <p class="error-msg">Cuentanos tus expectativas</p>
                     </div>
@@ -689,7 +689,7 @@
                         <label class="flex items-start gap-3 cursor-pointer" onclick="toggleCheckbox(document.getElementById('aceptaDatosCheck'))">
                             <div class="custom-checkbox mt-0.5" id="aceptaDatosCheck"></div>
                             <span class="text-white/70 text-xs leading-relaxed">
-                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de Data Marketing de la Universidad Autonoma de Occidente. *
+                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de Marketing Digital Avanzado de la Universidad Autonoma de Occidente. *
                             </span>
                         </label>
                         <p class="error-msg">Debes aceptar el tratamiento de datos</p>
@@ -706,7 +706,7 @@
                         </svg>
                     </div>
                     <h2 class="text-white text-xl font-bold mb-2">Registro Exitoso!</h2>
-                    <p class="text-white/60 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Data Marketing. Nos vemos en clase!</p>
+                    <p class="text-white/60 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Marketing Digital Avanzado. Nos vemos en clase!</p>
                     <div class="glass p-4 rounded-2xl text-left">
                         <p class="text-white/40 text-xs uppercase tracking-wider mb-2 font-medium">Tu resumen</p>
                         <p class="text-white text-sm font-medium" id="summaryName"></p>
@@ -756,7 +756,7 @@
         const stepLabels = {
             1: 'Datos Personales',
             2: 'Tu Empresa',
-            3: 'Data Marketing',
+            3: 'Marketing Digital Avanzado',
             4: 'Madurez y Expectativas'
         };
 
@@ -974,7 +974,7 @@
                 tamano: document.getElementById('tamano')?.value || '',
                 web: document.getElementById('web')?.value || '',
                 empresaPropia: document.getElementById('empresaPropia')?.dataset.value || 'no',
-                // Data Marketing nuevo
+                // Marketing Digital Avanzado nuevo
                 herramientasAnalitica: collectChecks('herramientasContainer'),
                 datosClientes: collectChecks('datosContainer'),
                 kpis: collectChecks('kpisContainer'),
@@ -1113,7 +1113,7 @@
             successEl.classList.add('active');
 
             const bienvenida = data.genero === 'Femenino' ? 'Bienvenida' : 'Bienvenido';
-            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Data Marketing. Nos vemos en clase!`;
+            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Marketing Digital Avanzado. Nos vemos en clase!`;
 
             document.getElementById('summaryName').textContent = data.nombre;
             document.getElementById('summaryEmail').textContent = data.email;

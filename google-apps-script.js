@@ -1,6 +1,6 @@
 /**
  * ====================================================
- * GOOGLE APPS SCRIPT — Backend Data Marketing (UAO)
+ * GOOGLE APPS SCRIPT — Backend Marketing Digital Avanzado (UAO)
  * ====================================================
  *
  * HOJAS REQUERIDAS EN GOOGLE SHEETS:
@@ -10,7 +10,7 @@
  *      FechaNacimiento, Empresa, Cargo, Sector, TamanoEmpresa,
  *      Web, EmpresaPropia, QueVende, ClienteIdeal, CanalesCaptacion,
  *      UsaCRM, CualCRM, Expectativas, RetosClientes, PrefiereTrabajar
- *    V-AC Data Marketing: HerramientasAnalitica, DatosClientes, KPIs,
+ *    V-AC Marketing Digital: HerramientasAnalitica, DatosClientes, KPIs,
  *      Segmentacion, DecisionesBasadas, RetoDatos, MadurezDigital, FotoUrl
  *
  * 2. "Clases" — Columnas A-I:
@@ -377,7 +377,7 @@ function handleGetRegistros() {
     'CanalesCaptacion': 'canalesCaptacion', 'UsaCRM': 'usaCRM',
     'CualCRM': 'cualCRM', 'Expectativas': 'expectativas',
     'RetosClientes': 'retosClientes', 'PrefiereTrabajar': 'prefiereTrabajar',
-    // Data Marketing (V-AC)
+    // Marketing Digital Avanzado (V-AC)
     'HerramientasAnalitica': 'herramientasAnalitica',
     'DatosClientes': 'datosClientes',
     'KPIs': 'kpis',
@@ -580,7 +580,7 @@ function handleRegistro(data) {
     data.canalesCaptacion || '', data.usaCRM || '', data.cualCRM || '',
     data.expectativas || '', data.retosClientes || '',
     data.prefiereTrabajar || '',
-    // V-AC Data Marketing
+    // V-AC Marketing Digital Avanzado
     data.herramientasAnalitica || '',
     data.datosClientes || '',
     data.kpis || '',
