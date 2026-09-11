@@ -2376,14 +2376,47 @@
         // ========================================
         // CLASES MANAGEMENT
         // ========================================
-        // Helper: POST autenticado al Apps Script (no-cors, luego recarga)
-        async function postAppsScript(data) {
-            await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(Object.assign({}, data, { token: adminToken }))
-            });
+        /**
+         * POST autenticado al Apps Script.
+         *
+         * Antes iba con mode:'no-cors', que impide leer la respuesta: el codigo
+         * esperaba 2-2.5s a ciegas y luego hacia OTRA peticion para ver si habia
+         * funcionado. Con Content-Type text/plain la peticion es "simple" (sin
+         * preflight) y el redirect de Apps Script devuelve CORS abierto, asi que
+         * la respuesta se puede leer directamente.
+         */
+        async function postAppsScript(data, intentos = 2) {
+            const cuerpo = JSON.stringify(Object.assign({}, data, { token: adminToken }));
+            let ultimoError;
+
+            for (let i = 0; i < intentos; i++) {
+                try {
+                    const res = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: cuerpo
+                    });
+                    const texto = await res.text();
+                    let json;
+                    try {
+                        json = JSON.parse(texto);
+                    } catch (e) {
+                        ultimoError = new Error('Respuesta no es JSON');
+                        continue;
+                    }
+                    if (json && json.code === 'unauthorized') {
+                        sessionStorage.removeItem(AUTH_KEY);
+                        alert('Tu sesion no es valida. Vuelve a iniciar sesion.');
+                        location.reload();
+                        throw new Error('unauthorized');
+                    }
+                    return json;
+                } catch (e) {
+                    if (e.message === 'unauthorized') throw e;
+                    ultimoError = e;
+                }
+            }
+            throw ultimoError || new Error('Sin respuesta');
         }
 
         function formatHora(val) {
@@ -2413,15 +2446,14 @@
                     horaFin: ''
                 });
                 document.getElementById('claseTitle').value = '';
-                // Wait for GAS to process, then reload
-                setTimeout(() => loadClases(), 2000);
+                await loadClases();
             } catch (e) { alert('Error de conexion: ' + e.message); }
         }
 
         async function activarAsistencia(claseId) {
             try {
                 await postAppsScript({ action: 'activarAsistencia', claseId: claseId });
-                setTimeout(async () => {
+                await (async () => {
                     await loadClases();
                     const activa = clasesData.find(c => c.ClaseId === claseId && c.Estado === 'activa');
                     if (activa) {
@@ -2440,7 +2472,7 @@
                         iniciarRefreshAsistencia();
                         iniciarRefreshCodigo();
                     }
-                }, 2500);
+                })();
             } catch (e) { alert('Error: ' + e.message); }
         }
 
@@ -2505,7 +2537,8 @@
             document.getElementById('codigoActivoPanel').classList.add('hidden');
             if (codigoTimer) { clearInterval(codigoTimer); codigoTimer = null; }
             if (codigoRotateTimer) { clearInterval(codigoRotateTimer); codigoRotateTimer = null; }
-            setTimeout(() => { loadClases(); loadPuntos(); }, 2000);
+            loadClases();
+            loadPuntos();
         }
 
         function mostrarCodigoActivo() {
@@ -2795,8 +2828,7 @@
                 result.style.color = '#6ee7b7';
                 result.classList.remove('hidden');
 
-                // Reload data after a delay
-                setTimeout(() => loadPuntos(), 2500);
+                loadPuntos();
             } catch (e) {
                 alert('Error de conexion: ' + e.message);
             }
@@ -2884,14 +2916,14 @@
 
         async function activarQuizAdmin(quizId) {
             await postAppsScript({ action: 'activarQuiz', quizId: quizId });
-            setTimeout(loadQuizzes, 2500);
+            await loadQuizzes();
         }
 
         async function cerrarQuizAdmin() {
             if (!quizActivoId) return;
             await postAppsScript({ action: 'cerrarQuiz', quizId: quizActivoId });
             clearInterval(quizRefreshInterval);
-            setTimeout(loadQuizzes, 2500);
+            await loadQuizzes();
         }
 
         function iniciarRefreshQuiz() {

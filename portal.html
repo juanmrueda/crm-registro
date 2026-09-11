@@ -278,6 +278,30 @@
             throw ultimoError || new Error('Sin respuesta');
         }
 
+        /** POST al Apps Script leyendo la respuesta (sin no-cors). */
+        async function postJson(data, intentos = 2) {
+            const cuerpo = JSON.stringify(data);
+            let ultimoError;
+            for (let i = 0; i < intentos; i++) {
+                try {
+                    const res = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: cuerpo
+                    });
+                    const texto = await res.text();
+                    try {
+                        return JSON.parse(texto);
+                    } catch (e) {
+                        ultimoError = new Error('Respuesta no es JSON');
+                    }
+                } catch (e) {
+                    ultimoError = e;
+                }
+            }
+            throw ultimoError || new Error('Sin respuesta');
+        }
+
         async function loginPortal() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if (!email) return;
@@ -428,35 +452,27 @@
             btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Registrando...</span>';
 
             try {
-                // POST con mode: 'no-cors' porque Google Apps Script redirige (302)
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        action: 'checkin',
-                        email: portalEmail,
-                        codigo: code,
-                        fingerprint: getDeviceFingerprint()
-                    })
+                // Se lee la respuesta directamente: antes iba con mode:'no-cors',
+                // que obligaba a esperar 2.5s a ciegas y luego recargar todo el
+                // portal para adivinar si habia funcionado. Ademas los errores
+                // reales (codigo invalido, ya registrado, otro dispositivo) no
+                // llegaban nunca al estudiante.
+                const json = await postJson({
+                    action: 'checkin',
+                    email: portalEmail,
+                    codigo: code,
+                    fingerprint: getDeviceFingerprint()
                 });
 
-                // Con no-cors no podemos leer la respuesta,
-                // mostramos mensaje de espera y recargamos datos para confirmar
-                showCheckinResult('Procesando check-in...', true);
                 document.getElementById('checkinCode').value = '';
 
-                // Esperar a que Apps Script procese, luego recargar datos del portal
-                setTimeout(async () => {
-                    const oldPuntos = portalData ? portalData.totalPuntos || 0 : 0;
-                    await loginPortal();
-                    const newPuntos = portalData ? portalData.totalPuntos || 0 : 0;
-                    if (newPuntos > oldPuntos) {
-                        showCheckinResult(`Asistencia registrada! +${newPuntos - oldPuntos} puntos`, true);
-                    } else {
-                        showCheckinResult('Check-in enviado. Si ya estabas registrado, no se duplica.', true);
-                    }
-                }, 2500);
+                if (json && json.status === 'ok') {
+                    showCheckinResult(`Asistencia registrada! +${json.puntos} puntos`, true);
+                    // Refrescar la vista con los datos nuevos, sin bloquear el mensaje
+                    loginPortal();
+                } else {
+                    showCheckinResult((json && json.message) || 'No se pudo registrar el check-in', false);
+                }
             } catch (e) {
                 showCheckinResult('Error de conexion. Intenta de nuevo.', false);
             }
@@ -596,17 +612,21 @@
             document.getElementById('quizTimer').textContent = '';
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        action: 'enviarQuiz',
-                        email: portalEmail,
-                        quizId: quizData.quizId,
-                        respuestas: quizRespuestas
-                    })
+                const json = await postJson({
+                    action: 'enviarQuiz',
+                    email: portalEmail,
+                    quizId: quizData.quizId,
+                    respuestas: quizRespuestas
                 });
+
+                // El backend puede rechazarlo (por ejemplo, quiz ya respondido)
+                if (!json || json.status !== 'ok') {
+                    document.getElementById('quizPregunta').textContent = 'No se pudo enviar';
+                    document.getElementById('quizOpciones').innerHTML =
+                        `<p class="text-red-400 text-sm text-center">${(json && json.message) || 'Intenta de nuevo'}</p>` +
+                        '<button onclick="cerrarQuiz()" class="w-full mt-4 py-3 rounded-xl bg-white/10 text-white font-semibold text-sm">Volver al Portal</button>';
+                    return;
+                }
 
                 // Show confirmation
                 document.getElementById('quizPregunta').textContent = 'Quiz enviado exitosamente';
@@ -630,8 +650,7 @@
             document.getElementById('quizFullscreen').classList.add('hidden');
             document.body.style.overflow = '';
             quizData = null;
-            // Reload portal data
-            setTimeout(() => loginPortal(), 2000);
+            loginPortal();
         }
 
         function showCheckinResult(msg, success) {

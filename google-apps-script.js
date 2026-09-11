@@ -208,6 +208,28 @@ function sheetToObjects(sheet, fieldMap) {
  * Convierte 'yyyy-MM-dd' + 'HH:mm' a minutos absolutos desde epoch (UTC),
  * de forma que restar dos valores da la diferencia real aunque cambie el dia.
  */
+/**
+ * Devuelve el nombre del estudiante, o null si el email no esta registrado.
+ * Lee solo las columnas B:C en lugar de las 29 de la hoja: en el check-in
+ * masivo esta lectura se repetia por cada alumno.
+ */
+function buscarNombrePorEmail(email) {
+  const sheet = getSheet('Registros');
+  if (!sheet) return null;
+  const ultima = sheet.getLastRow();
+  if (ultima < 2) return null;
+
+  // B = Nombre, C = Email
+  const valores = sheet.getRange(2, 2, ultima - 1, 2).getValues();
+  email = (email || '').toLowerCase().trim();
+  for (let i = 0; i < valores.length; i++) {
+    if (valores[i][1] && valores[i][1].toString().toLowerCase().trim() === email) {
+      return valores[i][0];
+    }
+  }
+  return null;
+}
+
 function minutosAbsolutos(fecha, hora) {
   const f = (fecha || '').split('-');
   const h = (hora || '00:00').split(':');
@@ -767,18 +789,7 @@ function handleCheckin(data) {
   const fingerprint = (data.fingerprint || '').toString().trim();
 
   // Verificar que el estudiante existe
-  const regSheet = getSheet('Registros');
-  if (!regSheet) return jsonResponse({ status: 'error', message: 'Sistema no configurado' });
-
-  let nombreEstudiante = null;
-  const regData = regSheet.getDataRange().getValues();
-  for (let i = 1; i < regData.length; i++) {
-    if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
-      nombreEstudiante = regData[i][1];
-      break;
-    }
-  }
-
+  const nombreEstudiante = buscarNombrePorEmail(email);
   if (!nombreEstudiante) {
     return jsonResponse({ status: 'error', message: 'Email no registrado' });
   }
@@ -916,8 +927,24 @@ function handleCheckin(data) {
     asistSheet.appendRow(row);
     lock.releaseLock();
 
-    // Recalcular puntos del estudiante (no bloquear respuesta)
-    try { recalcularPuntosEstudiante(email); } catch(e) {}
+    // Recalcular puntos del estudiante (ya fuera del lock).
+    // Se le pasa el nombre para que no vuelva a leer la hoja Registros.
+    try { recalcularPuntosEstudiante(email, nombreEstudiante); } catch(e) {}
+
+    // Total acumulado, para que el portal pueda pintarlo sin otra peticion
+    let totalAcumulado = null;
+    try {
+      const pSheet = getSheet('Puntos');
+      if (pSheet && pSheet.getLastRow() > 1) {
+        const pv = pSheet.getRange(2, 1, pSheet.getLastRow() - 1, 3).getValues();
+        for (let i = 0; i < pv.length; i++) {
+          if (pv[i][0] && pv[i][0].toString().toLowerCase().trim() === email) {
+            totalAcumulado = Number(pv[i][2]) || 0;
+            break;
+          }
+        }
+      }
+    } catch (e) {}
 
     return jsonResponse({
       status: 'ok',
@@ -926,7 +953,8 @@ function handleCheckin(data) {
       puntosBase: puntosBase,
       puntosPuntualidad: puntosPuntualidad,
       minutosAntes: minutosAntes,
-      claseNumero: claseEncontrada.numero
+      claseNumero: claseEncontrada.numero,
+      totalPuntos: totalAcumulado
     });
   } catch (err) {
     lock.releaseLock();
@@ -991,17 +1019,7 @@ function handleDarPuntos(data) {
   if (puntos <= 0) return jsonResponse({ status: 'error', message: 'Puntos debe ser mayor a 0' });
 
   // Verificar que el estudiante existe
-  const regSheet = getSheet('Registros');
-  if (!regSheet) return jsonResponse({ status: 'error', message: 'Sistema no configurado' });
-
-  let nombre = '';
-  const regData = regSheet.getDataRange().getValues();
-  for (let i = 1; i < regData.length; i++) {
-    if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
-      nombre = regData[i][1];
-      break;
-    }
-  }
+  const nombre = buscarNombrePorEmail(email);
   if (!nombre) return jsonResponse({ status: 'error', message: 'Email no registrado' });
 
   // Registrar en EventosTracking con tipo "manual".
@@ -1030,10 +1048,9 @@ function handleRecalcularPuntos() {
 
 // ============ PUNTOS CALCULATION ============
 
-function recalcularPuntosEstudiante(email) {
+function recalcularPuntosEstudiante(email, nombreConocido) {
   email = email.toLowerCase().trim();
 
-  const regSheet = getSheet('Registros');
   const asistSheet = getSheet('Asistencia');
   const trackSheet = getSheet('EventosTracking');
   const puntosSheet = getSheet('Puntos');
@@ -1041,17 +1058,8 @@ function recalcularPuntosEstudiante(email) {
 
   if (!puntosSheet) return;
 
-  // Obtener nombre
-  let nombre = '';
-  if (regSheet) {
-    const regData = regSheet.getDataRange().getValues();
-    for (let i = 1; i < regData.length; i++) {
-      if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
-        nombre = regData[i][1];
-        break;
-      }
-    }
-  }
+  // Quien ya conoce el nombre lo pasa y se ahorra releer la hoja Registros
+  const nombre = nombreConocido || buscarNombrePorEmail(email) || '';
 
   // Contar clases finalizadas o activas
   let totalClases = 0;
@@ -1406,17 +1414,7 @@ function handleEnviarQuiz(data) {
   const respuestas = data.respuestas; // array de indices [0-3]
 
   // Verificar estudiante
-  const regSheet = getSheet('Registros');
-  if (!regSheet) return jsonResponse({ status: 'error', message: 'Sistema no configurado' });
-
-  let nombre = '';
-  const regData = regSheet.getDataRange().getValues();
-  for (let i = 1; i < regData.length; i++) {
-    if (regData[i][2] && regData[i][2].toString().toLowerCase().trim() === email) {
-      nombre = regData[i][1];
-      break;
-    }
-  }
+  const nombre = buscarNombrePorEmail(email);
   if (!nombre) return jsonResponse({ status: 'error', message: 'Email no registrado' });
 
   // Verificar que no haya duplicado

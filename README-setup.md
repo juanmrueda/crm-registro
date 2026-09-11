@@ -271,14 +271,43 @@ funcionando durante todo el proceso: sus acciones son publicas.
 
 ---
 
+## Rendimiento
+
+Apps Script tarda entre 1.5s y, en picos, mas de 60s por peticion, haga lo que
+haga: es latencia de plataforma mas el redirect 302 obligatorio. No se puede
+bajar. Lo unico que se controla es CUANTAS peticiones se hacen.
+
+Medidas tomadas:
+
+| Antes | Ahora |
+|-------|-------|
+| Carga del panel: 5 peticiones | `getBootstrap`: 1 |
+| Codigo rotativo cada 4s (15/min) | al expirar la ventana (1/min) |
+| Conteo de asistentes cada 5s (12/min) | viaja dentro del codigo (0) |
+| Quiz cada 5s | cada 20s |
+| Auto-refresh 30s x 5 peticiones | 60s x 1 peticion |
+| Cada POST: espera fija de 2-2.5s + recarga | se lee la respuesta (1 peticion) |
+| Check-in: 8 lecturas de hoja completa | lecturas acotadas a las columnas usadas |
+
+Con una clase activa el panel pasa de ~49 peticiones por minuto a ~5. Importa
+mas de lo que parece: Apps Script serializa las ejecuciones del mismo script,
+asi que el exceso de peticiones se encola y ralentiza todo lo demas.
+
+**Ten solo una pestana del panel abierta.** Cada pestana genera esa carga por
+su cuenta.
+
+---
+
 ## Notas Importantes
 
 - **Timezone**: Todo usa hora Colombia (America/Bogota)
 - **Apps Script**: Cada cambio requiere NUEVA implementacion (nuevo URL)
 - **Lambda**: Actualizar codigo y hacer Deploy tras cambios
-- **CORS**: Los POST a Apps Script usan `mode: 'no-cors'` con `Content-Type: text/plain`.
-  Como consecuencia el navegador no puede leer la respuesta: los mensajes de
-  error del check-in son genericos por diseno, no por bug.
+- **CORS**: Los POST a Apps Script van con `Content-Type: text/plain`, lo que
+  los convierte en peticiones "simples" (sin preflight). El redirect 302 de
+  Apps Script devuelve CORS abierto, asi que la respuesta SI se puede leer.
+  Por eso no se usa `mode: 'no-cors'`: con el no se podia leer nada y habia que
+  esperar 2-2.5s a ciegas y recargar para adivinar el resultado.
 - **SES Sandbox**: En modo sandbox solo se puede enviar a emails verificados.
 - **Tracking pixel**: Solo se inyecta si se selecciona una clase al enviar email
 

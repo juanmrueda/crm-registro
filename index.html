@@ -1072,12 +1072,20 @@
             data.action = 'registro';
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
+                // Se lee la respuesta: con no-cors un fallo del backend pasaba
+                // por exito y el estudiante creia haberse registrado.
+                const res = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(data)
                 });
+                const texto = await res.text();
+                let json = null;
+                try { json = JSON.parse(texto); } catch (e) {}
+
+                if (json && json.status !== 'ok') {
+                    throw new Error(json.message || 'El servidor rechazo el registro');
+                }
 
                 localStorage.removeItem(STORAGE_KEY);
                 showSuccess(data);
