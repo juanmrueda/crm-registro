@@ -206,9 +206,6 @@
   .chip-3 { color: #69ff47; border-color: rgba(105, 255, 71, 0.5); background: rgba(105, 255, 71, 0.08); }
   .chip-4 { color: #ff9500; border-color: rgba(255, 149, 0, 0.5); background: rgba(255, 149, 0, 0.08); }
   .chip-5 { color: #bf5af2; border-color: rgba(191, 90, 242, 0.5); background: rgba(191, 90, 242, 0.08); }
-  .chip-6 { color: #30d158; border-color: rgba(48, 209, 88, 0.5); background: rgba(48, 209, 88, 0.08); }
-  .chip-7 { color: #ffd60a; border-color: rgba(255, 214, 10, 0.5); background: rgba(255, 214, 10, 0.08); }
-  .chip-8 { color: #ff453a; border-color: rgba(255, 69, 58, 0.5); background: rgba(255, 69, 58, 0.08); }
 
   /* Estado: ya salió */
   .group-chip.used {
@@ -229,9 +226,6 @@
   .chip-3.current { box-shadow: 0 0 20px rgba(105, 255, 71, 0.6); }
   .chip-4.current { box-shadow: 0 0 20px rgba(255, 149, 0, 0.6); }
   .chip-5.current { box-shadow: 0 0 20px rgba(191, 90, 242, 0.6); }
-  .chip-6.current { box-shadow: 0 0 20px rgba(48, 209, 88, 0.6); }
-  .chip-7.current { box-shadow: 0 0 20px rgba(255, 214, 10, 0.6); }
-  .chip-8.current { box-shadow: 0 0 20px rgba(255, 69, 58, 0.6); }
 
   @keyframes chipPulse {
     0%, 100% { opacity: 1; }
@@ -261,9 +255,6 @@
   .n-3 { color: #69ff47; text-shadow: 0 0 30px rgba(105,255,71,0.7), 0 0 80px rgba(105,255,71,0.3); }
   .n-4 { color: #ff9500; text-shadow: 0 0 30px rgba(255,149,0,0.7), 0 0 80px rgba(255,149,0,0.3); }
   .n-5 { color: #bf5af2; text-shadow: 0 0 30px rgba(191,90,242,0.7), 0 0 80px rgba(191,90,242,0.3); }
-  .n-6 { color: #30d158; text-shadow: 0 0 30px rgba(48,209,88,0.7), 0 0 80px rgba(48,209,88,0.3); }
-  .n-7 { color: #ffd60a; text-shadow: 0 0 30px rgba(255,214,10,0.7), 0 0 80px rgba(255,214,10,0.3); }
-  .n-8 { color: #ff453a; text-shadow: 0 0 30px rgba(255,69,58,0.7), 0 0 80px rgba(255,69,58,0.3); }
 
   /* Reset link */
   .reset-btn {
@@ -361,8 +352,8 @@
 <button class="reset-btn" onclick="reset()">Reiniciar</button>
 
 <script>
-  const TOTAL = 8;
-  const neonColors = ['#ff4ecd','#00e5ff','#69ff47','#ff9500','#bf5af2','#30d158','#ffd60a','#ff453a'];
+  const TOTAL = 5;
+  const neonColors = ['#ff4ecd','#00e5ff','#69ff47','#ff9500','#bf5af2'];
 
   let remaining = [];
   let order = [];
@@ -442,7 +433,9 @@
         numText.className = `number-text reveal n-${chosen}`;
         display.className = 'number-display active';
 
-        label.textContent = `¡Grupo ${chosen} presenta primero!`;
+        label.textContent = pos === 1
+          ? `¡Grupo ${chosen} presenta primero!`
+          : `¡Grupo ${chosen} presenta en el turno ${pos}!`;
         label.className = 'group-label active';
 
         document.querySelectorAll('.group-chip').forEach(c => c.classList.remove('current'));
