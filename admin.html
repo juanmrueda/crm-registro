@@ -1005,7 +1005,7 @@
         // ========================================
         // CONFIG
         // ========================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3XMVNJb2eK69Cm-HU0rUFrBp8rPLsNDzay99Rk2oo4wq85ObFVBiT4-W18CWonXS_tg/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPtQNAwP7W6yJUeQd9gmTa1-E3AFUWpHI6ypDYbKURWY7UGNUlo7zuOiRIKtvbGw2bDw/exec';
         const AUTO_REFRESH_MS = 60000;
         const AUTH_KEY = 'mda_admin_token';
 
@@ -1189,20 +1189,6 @@
         let claseActiva = null;
         let codigoTimer = null;
 
-        // DEMO DATA (will be replaced by real data when Apps Script is configured)
-        const DEMO_DATA = [
-            { timestamp: '2025-03-10T08:15:00', nombre: 'Maria Lopez', email: 'maria@email.com', celular: '300 123 4567', ciudad: 'Cali', genero: 'Femenino', fechaNacimiento: '1992-05-14', empresa: 'TechCali SAS', cargo: 'Directora Comercial', sector: 'Tecnologia', tamano: '11-50', web: '@techcali', empresaPropia: 'no', queVende: 'Software de gestion empresarial y apps moviles personalizadas', clienteIdeal: 'Empresas medianas de Cali y el Valle que necesitan digitalizar procesos', canalesCaptacion: 'Redes sociales, Referidos, Eventos / Ferias', usaCRM: 'Excel/Sheets', cualCRM: '', expectativas: 'Aprender a implementar un CRM profesional que me ayude a hacer seguimiento real a los clientes', retosClientes: 'Seguimiento post-venta deficiente, pierdo clientes por falta de contacto oportuno', prefiereTrabajar: 'En equipo' },
-            { timestamp: '2025-03-10T09:22:00', nombre: 'Carlos Ramirez', email: 'carlos@empresa.co', celular: '311 456 7890', ciudad: 'Cali', genero: 'Masculino', fechaNacimiento: '1988-11-23', empresa: 'Distribuidora del Valle', cargo: 'Gerente General', sector: 'Comercio', tamano: '51-200', web: 'www.distvalle.com', empresaPropia: 'si', queVende: 'Distribucion de productos de consumo masivo en el suroccidente colombiano', clienteIdeal: 'Tiendas, minimercados y supermercados independientes del Valle del Cauca', canalesCaptacion: 'Llamadas / Ventas directas, Referidos', usaCRM: 'No', cualCRM: '', expectativas: 'Entender como organizar mi base de datos de clientes y automatizar el seguimiento', retosClientes: 'Tengo mas de 500 clientes y no logro darle atencion personalizada a cada uno', prefiereTrabajar: 'Solo' },
-            { timestamp: '2025-03-10T10:05:00', nombre: 'Ana Gonzalez', email: 'ana.g@startup.io', celular: '315 789 0123', ciudad: 'Bogota', genero: 'Femenino', fechaNacimiento: '1995-08-30', empresa: 'Bloom Marketing', cargo: 'Fundadora y CEO', sector: 'Marketing', tamano: '1-10', web: '@bloommarketing_co', empresaPropia: 'si', queVende: 'Servicios de marketing digital: redes sociales, pauta digital, branding', clienteIdeal: 'Emprendedores y pymes que quieren crecer en redes sociales', canalesCaptacion: 'Redes sociales, SEO / Contenido organico, Referidos', usaCRM: 'HubSpot', cualCRM: '', expectativas: 'Profundizar en automatizacion de CRM y estrategias de retencion', retosClientes: 'Los clientes llegan pero cuesta mucho retenerlos mas de 3 meses', prefiereTrabajar: 'Ambos' },
-            { timestamp: '2025-03-10T11:30:00', nombre: 'Diego Torres', email: 'dtorres@inmob.com', celular: '320 111 2233', ciudad: 'Cali', genero: 'Masculino', fechaNacimiento: '1985-02-17', empresa: 'Torres Inmobiliaria', cargo: 'Director Comercial', sector: 'Inmobiliario', tamano: '11-50', web: 'www.torresinmobiliaria.co', empresaPropia: 'si', queVende: 'Venta y arriendo de inmuebles residenciales y comerciales', clienteIdeal: 'Familias de estrato 4-6 y inversionistas que buscan propiedad en Cali', canalesCaptacion: 'Publicidad paga, Redes sociales, Referidos', usaCRM: 'Excel/Sheets', cualCRM: '', expectativas: 'Migrar de Excel a un CRM real y aprender a medir la efectividad comercial', retosClientes: 'El ciclo de venta es muy largo y pierdo el contacto con prospectos frios', prefiereTrabajar: 'En equipo' },
-            { timestamp: '2025-03-10T13:45:00', nombre: 'Valentina Munoz', email: 'vale.m@salud.com', celular: '318 555 6677', ciudad: 'Medellin', genero: 'Femenino', fechaNacimiento: '1990-12-05', empresa: 'VitalCenter', cargo: 'Coordinadora de Marketing', sector: 'Salud', tamano: '51-200', web: '@vitalcenter_col', empresaPropia: 'no', queVende: 'Servicios medicos especializados: estetica, odontologia y bienestar', clienteIdeal: 'Mujeres de 25-50 anos de estratos 4-6 interesadas en salud y bienestar', canalesCaptacion: 'Redes sociales, Email marketing, Publicidad paga', usaCRM: 'Otro', cualCRM: 'Pipedrive', expectativas: 'Aprender a segmentar mejor nuestra base de pacientes y personalizar comunicaciones', retosClientes: 'Muchos pacientes vienen una vez y no regresan, necesitamos mejorar la fidelizacion', prefiereTrabajar: 'En equipo' },
-            { timestamp: '2025-03-10T14:10:00', nombre: 'Andres Mejia', email: 'amejia@agro.co', celular: '301 999 8877', ciudad: 'Palmira', genero: 'Masculino', fechaNacimiento: '1983-07-20', empresa: 'AgroValle SA', cargo: 'Jefe de Ventas', sector: 'Agro', tamano: '200+', web: 'www.agrovalle.co', empresaPropia: 'no', queVende: 'Insumos agricolas, fertilizantes y semillas para cultivos de cana y frutales', clienteIdeal: 'Agricultores y ingenios azucareros del Valle del Cauca', canalesCaptacion: 'Llamadas / Ventas directas, Eventos / Ferias', usaCRM: 'No', cualCRM: '', expectativas: 'Entender el CRM desde cero y poder proponer la implementacion en mi empresa', retosClientes: 'Nuestro equipo de ventas no registra las interacciones con clientes, todo esta en la cabeza de cada vendedor', prefiereTrabajar: 'Ambos' },
-            { timestamp: '2025-03-11T07:30:00', nombre: 'Laura Castano', email: 'laura@educa.co', celular: '316 222 3344', ciudad: 'Cali', genero: 'Femenino', fechaNacimiento: '1993-03-11', empresa: 'EduTech Colombia', cargo: 'Product Manager', sector: 'Educacion', tamano: '11-50', web: '@edutechcol', empresaPropia: 'no', queVende: 'Plataforma de cursos online y programas de formacion corporativa', clienteIdeal: 'Empresas con mas de 50 empleados que buscan capacitacion digital', canalesCaptacion: 'Redes sociales, Email marketing, SEO / Contenido organico', usaCRM: 'HubSpot', cualCRM: '', expectativas: 'Conectar mejor la analitica de nuestro CRM con las decisiones de producto', retosClientes: 'Generar leads calificados y convertir empresas que piden demo pero no compran', prefiereTrabajar: 'En equipo' },
-            { timestamp: '2025-03-11T08:50:00', nombre: 'Santiago Herrera', email: 'sherrera@finanzas.co', celular: '322 444 5566', ciudad: 'Cali', genero: 'Masculino', fechaNacimiento: '1991-09-28', empresa: 'AsesoriaSH', cargo: 'Director', sector: 'Financiero', tamano: '1-10', web: '@asesoriash', empresaPropia: 'si', queVende: 'Asesoria financiera y tributaria para pymes y personas naturales', clienteIdeal: 'Duenos de pymes en Cali que necesitan organizar su contabilidad e impuestos', canalesCaptacion: 'Referidos, Redes sociales', usaCRM: 'No', cualCRM: '', expectativas: 'Crear un sistema para hacer seguimiento a mis clientes y prospectos de forma organizada', retosClientes: 'Mi negocio depende 100% de referidos y no tengo proceso de captacion activo', prefiereTrabajar: 'Solo' },
-            { timestamp: '2025-03-11T09:15:00', nombre: 'Camila Restrepo', email: 'camila@restaurante.co', celular: '313 777 8899', ciudad: 'Cali', genero: 'Femenino', fechaNacimiento: '1997-01-15', empresa: 'Sabor Urbano', cargo: 'Gerente de Mercadeo', sector: 'Alimentos', tamano: '11-50', web: '@saborurbano', empresaPropia: 'no', queVende: 'Cadena de 4 restaurantes de comida fusion en Cali', clienteIdeal: 'Jovenes y adultos de 22-40 anos que buscan experiencias gastronomicas unicas', canalesCaptacion: 'Redes sociales, Publicidad paga, Eventos / Ferias', usaCRM: 'No', cualCRM: '', expectativas: 'Implementar un programa de fidelidad y crear una base de datos de nuestros clientes frecuentes', retosClientes: 'No conocemos a nuestros clientes, no tenemos datos de quienes nos visitan', prefiereTrabajar: 'Ambos' },
-            { timestamp: '2025-03-11T10:40:00', nombre: 'Felipe Arias', email: 'felipe@transporte.co', celular: '305 333 2211', ciudad: 'Yumbo', genero: 'Masculino', fechaNacimiento: '1987-06-09', empresa: 'LogiExpress', cargo: 'Gerente Comercial', sector: 'Transporte', tamano: '51-200', web: 'www.logiexpress.co', empresaPropia: 'no', queVende: 'Servicios de transporte de carga terrestre y logistica de ultima milla', clienteIdeal: 'Empresas manufactureras y de comercio electronico que necesitan despacho en el suroccidente', canalesCaptacion: 'Llamadas / Ventas directas, Referidos, Email marketing', usaCRM: 'Excel/Sheets', cualCRM: '', expectativas: 'Profesionalizar nuestro proceso comercial y dejar de depender de Excel para todo', retosClientes: 'Los clientes nos comparan solo por precio y cuesta diferenciarse por servicio', prefiereTrabajar: 'En equipo' }
-        ];
-
         // ========================================
         // COLORS
         // ========================================
@@ -1258,8 +1244,7 @@
                         filteredData = [...allData];
                         updateAll();
                         loadClases(); loadPuntos(); loadConfig(); loadQuizzes();
-                        document.getElementById('lastUpdate').textContent =
-                            'Ahora (backend desactualizado: actualiza el Apps Script para ir mas rapido)';
+                        marcarActualizado('Ahora (backend desactualizado: actualiza el Apps Script para ir mas rapido)');
                         return;
                     }
 
@@ -1274,18 +1259,37 @@
                     updateCalificaciones();
                     renderQuizzes();
                     aplicarConfig(json.config || {});
-                    document.getElementById('lastUpdate').textContent = 'Ahora';
+                    marcarActualizado('Ahora');
                     return;
                 }
-                allData = DEMO_DATA;
+                mostrarErrorCarga('falta configurar APPS_SCRIPT_URL en admin.html');
             } catch (e) {
-                console.warn('Error loading data, using demo:', e);
-                allData = DEMO_DATA;
+                // Aqui antes se cargaban 10 alumnos de DEMO_DATA: un token
+                // malo o un Apps Script caido se veian como datos reales.
+                console.error('Error cargando datos:', e);
+                mostrarErrorCarga(e.message || 'no se pudo contactar el Apps Script');
             }
+        }
 
-            filteredData = [...allData];
+        /** Deja el panel vacio y dice por que, en vez de inventar datos. */
+        function mostrarErrorCarga(detalle) {
+            allData = [];
+            filteredData = [];
+            clasesData = [];
+            puntosData = [];
+            quizzesData = [];
             updateAll();
-            document.getElementById('lastUpdate').textContent = 'Ahora';
+            updateCalificaciones();
+            const el = document.getElementById('lastUpdate');
+            el.textContent = 'Sin conexion con el backend — ' + detalle;
+            el.style.color = '#ef4356';
+        }
+
+        /** Marca la carga como correcta y limpia el aviso de error anterior. */
+        function marcarActualizado(texto) {
+            const el = document.getElementById('lastUpdate');
+            el.textContent = texto;
+            el.style.color = '';
         }
 
         async function loadConfig() {
