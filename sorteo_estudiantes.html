@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteo de Estudiantes — UAO</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #050510;
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 20px 40px;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 40%, rgba(120, 40, 200, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0, 200, 180, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(100, 60, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 60, 255, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(160, 120, 255, 0.7);
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  /* ---------- Panel de configuracion ---------- */
+  .setup {
+    width: min(620px, 100%);
+    background: rgba(12, 8, 30, 0.75);
+    border: 1px solid rgba(120, 60, 255, 0.25);
+    border-radius: 18px;
+    padding: 28px;
+    position: relative;
+  }
+
+  .setup h2 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 14px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 240px;
+    resize: vertical;
+    background: rgba(5, 3, 18, 0.9);
+    border: 1px solid rgba(120, 60, 255, 0.25);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.9);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  textarea:focus {
+    border-color: rgba(120, 60, 255, 0.7);
+    box-shadow: 0 0 24px rgba(120, 60, 255, 0.18);
+  }
+  textarea::placeholder { color: rgba(255,255,255,0.22); }
+
+  .setup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .field input[type=number] {
+    width: 72px;
+    background: rgba(5, 3, 18, 0.9);
+    border: 1px solid rgba(120, 60, 255, 0.3);
+    border-radius: 10px;
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    padding: 8px;
+    outline: none;
+  }
+
+  .counter {
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgba(0, 220, 180, 0.75);
+  }
+
+  /* ---------- Botones ---------- */
+  .btn {
+    padding: 16px 44px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+    background: transparent;
+    border: 1.5px solid rgba(120, 60, 255, 0.6);
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(120, 60, 255, 0.2), rgba(0, 220, 180, 0.15));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn:hover::before { opacity: 1; }
+  .btn:hover {
+    border-color: rgba(120, 60, 255, 0.9);
+    box-shadow: 0 0 30px rgba(120, 60, 255, 0.3), 0 0 60px rgba(120, 60, 255, 0.1);
+    transform: translateY(-2px);
+  }
+  .btn:active { transform: scale(0.97) translateY(0); }
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .btn span { position: relative; z-index: 1; }
+
+  .btn.ghost {
+    padding: 10px 24px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.35);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .btn.ghost:hover {
+    color: rgba(255,255,255,0.8);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: none;
+  }
+  .btn.ghost::before { display: none; }
+
+  /* ---------- Escenario del sorteo ---------- */
+  .stage { display: none; width: min(1100px, 100%); flex-direction: column; align-items: center; }
+  .stage.on { display: flex; }
+  .setup.off { display: none; }
+
+  .display {
+    width: min(560px, 100%);
+    min-height: 150px;
+    border-radius: 22px;
+    border: 2px solid rgba(120, 60, 255, 0.3);
+    background: rgba(10, 5, 30, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 28px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .display.active {
+    border-color: rgba(120, 60, 255, 0.75);
+    box-shadow: 0 0 48px rgba(120, 60, 255, 0.22);
+  }
+
+  .name-text {
+    font-size: clamp(26px, 5vw, 46px);
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: center;
+    color: white;
+    text-shadow: 0 0 20px rgba(120, 60, 255, 0.6), 0 0 60px rgba(120, 60, 255, 0.3);
+    transition: color 0.2s;
+    word-break: break-word;
+  }
+  .name-text.rolling {
+    animation: roll 0.08s linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes roll {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(0.97); opacity: 0.55; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .name-text.reveal {
+    animation: reveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes reveal {
+    0%   { transform: scale(0.6); opacity: 0; }
+    60%  { transform: scale(1.12); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .assign-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    transition: color 0.3s;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 26px 0 30px;
+  }
+
+  .progress {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 18px;
+  }
+
+  /* ---------- Columnas de grupos ---------- */
+  .groups {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+  }
+
+  .group-col {
+    background: rgba(10, 6, 26, 0.7);
+    border: 1.5px solid;
+    border-radius: 16px;
+    padding: 14px;
+    min-height: 120px;
+    transition: box-shadow 0.4s, transform 0.4s;
+  }
+  .group-col.hit { transform: translateY(-4px); }
+
+  .group-head {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .group-head .count {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 600;
+  }
+
+  .member {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.78);
+    padding: 3px 0;
+    display: flex;
+    gap: 8px;
+    animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .member .idx {
+    font-size: 10px;
+    color: rgba(255,255,255,0.22);
+    min-width: 14px;
+    padding-top: 2px;
+  }
+  @keyframes pop {
+    0%   { opacity: 0; transform: translateY(-8px) scale(0.92); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  .final-msg {
+    display: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0, 220, 180, 0.75);
+    margin-bottom: 20px;
+    animation: fadePulse 2s ease-in-out infinite;
+  }
+  .final-msg.on { display: block; }
+  @keyframes fadePulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  .hint {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.22);
+    margin-top: 26px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<p class="title">Mercadeo Relacional · UAO · Sorteo de estudiantes</p>
+
+<!-- ============ CONFIGURACION ============ -->
+<div class="setup" id="setup">
+  <h2>Lista de estudiantes</h2>
+  <textarea id="namesInput" placeholder="Pega aquí los nombres, uno por línea&#10;&#10;Ana Gómez&#10;Carlos Ruiz&#10;Daniela Pérez&#10;..."></textarea>
+  <div class="setup-row">
+    <div class="field">
+      <label for="nGroups">Grupos</label>
+      <input type="number" id="nGroups" min="2" max="12" value="5">
+    </div>
+    <span class="counter" id="counter">0 estudiantes</span>
+  </div>
+  <div class="setup-row">
+    <button class="btn ghost" id="btnDemo"><span>Lista de ejemplo</span></button>
+    <button class="btn" id="btnStart"><span>Iniciar sorteo</span></button>
+  </div>
+</div>
+
+<!-- ============ SORTEO ============ -->
+<div class="stage" id="stage">
+  <div class="display" id="display">
+    <div class="name-text" id="nameText">¿Listos?</div>
+    <div class="assign-label" id="assignLabel">Presiona para sortear</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="btnDraw"><span>Sortear estudiante</span></button>
+    <button class="btn ghost" id="btnAuto"><span>Sortear todos</span></button>
+    <button class="btn ghost" id="btnBack"><span>Editar lista</span></button>
+  </div>
+
+  <p class="progress" id="progress"></p>
+  <p class="final-msg" id="finalMsg">— Sorteo completo —</p>
+
+  <div class="groups" id="groups"></div>
+
+  <div class="controls" id="exportRow" style="display:none">
+    <button class="btn ghost" id="btnCopy"><span>Copiar resultado</span></button>
+    <button class="btn ghost" id="btnCsv"><span>Descargar CSV</span></button>
+    <button class="btn ghost" id="btnAgain"><span>Repetir sorteo</span></button>
+  </div>
+
+  <p class="hint">Espacio o Enter para sortear el siguiente</p>
+</div>
+
+<script>
+  const COLORS = ['#ff4ecd','#00e5ff','#69ff47','#ff9500','#bf5af2','#30d158','#ffd60a','#ff453a','#5ac8fa','#ff6482','#64d2ff','#a5e34a'];
+  const STORE_KEY = 'sorteo_estudiantes_uao';
+
+  const $ = id => document.getElementById(id);
+
+  let students = [];   // lista original ya parseada
+  let remaining = [];  // pendientes por sortear
+  let groups = [];     // array de arrays
+  let nGroups = 5;
+  let rolling = false;
+  let autoRun = false;
+
+  /* ---------- Parseo de la lista ---------- */
+  function parseNames(raw) {
+    const parts = raw.includes('\n') ? raw.split(/\r?\n/) : raw.split(/[,;]/);
+    const seen = new Set();
+    const out = [];
+    for (let p of parts) {
+      p = p.replace(/^\s*\d+\s*[.)\-–]\s*/, '')   // "1. Ana" -> "Ana"
+           .replace(/^\s*[-•*]\s*/, '')            // "- Ana"  -> "Ana"
+           .replace(/\s+/g, ' ')
+           .trim();
+      if (!p) continue;
+      const key = p.toLocaleLowerCase('es');
+      if (seen.has(key)) continue;                 // sin duplicados
+      seen.add(key);
+      out.push(p);
+    }
+    return out;
+  }
+
+  function refreshCounter() {
+    const n = parseNames($('namesInput').value).length;
+    const g = Math.max(2, Math.min(12, parseInt($('nGroups').value) || 5));
+    const base = Math.floor(n / g), extra = n % g;
+    let txt = n === 1 ? '1 estudiante' : n + ' estudiantes';
+    if (n >= g) {
+      txt += extra === 0 ? ` · ${g} grupos de ${base}`
+                         : ` · ${extra} de ${base + 1} y ${g - extra} de ${base}`;
+    }
+    $('counter').textContent = txt;
+  }
+
+  /* ---------- Utilidades ---------- */
+  const shuffle = a => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  // grupo con menos integrantes; empate resuelto al azar -> tamaños parejos y sin sesgo
+  function pickGroup() {
+    const min = Math.min(...groups.map(g => g.length));
+    const cands = [];
+    groups.forEach((g, i) => { if (g.length === min) cands.push(i); });
+    return cands[Math.floor(Math.random() * cands.length)];
+  }
+
+  function rgba(hex, a) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+  }
+
+  /* ---------- Render ---------- */
+  function buildGroups() {
+    const wrap = $('groups');
+    wrap.innerHTML = '';
+    groups.forEach((_, i) => {
+      const c = COLORS[i % COLORS.length];
+      const col = document.createElement('div');
+      col.className = 'group-col';
+      col.id = 'col-' + i;
+      col.style.borderColor = rgba(c, 0.45);
+      col.style.background = rgba(c, 0.05);
+      col.innerHTML = `<div class="group-head" style="color:${c}">
+          <span>Grupo ${i + 1}</span><span class="count" id="count-${i}">0</span>
+        </div><div id="list-${i}"></div>`;
+      wrap.appendChild(col);
+    });
+  }
+
+  function addMember(gi, name) {
+    const el = document.createElement('div');
+    el.className = 'member';
+    const idx = document.createElement('span');
+    idx.className = 'idx';
+    idx.textContent = groups[gi].length;
+    const txt = document.createElement('span');
+    txt.textContent = name;
+    el.append(idx, txt);
+    $('list-' + gi).appendChild(el);
+    $('count-' + gi).textContent = groups[gi].length;
+
+    const col = $('col-' + gi);
+    const c = COLORS[gi % COLORS.length];
+    col.classList.add('hit');
+    col.style.boxShadow = `0 0 28px ${rgba(c, 0.45)}`;
+    setTimeout(() => { col.classList.remove('hit'); col.style.boxShadow = 'none'; }, 700);
+  }
+
+  function updateProgress() {
+    const done = students.length - remaining.length;
+    $('progress').textContent = `${done} / ${students.length} asignados`;
+  }
+
+  /* ---------- Sorteo ---------- */
+  function draw() {
+    if (rolling || !remaining.length) return;
+    rolling = true;
+    $('btnDraw').disabled = true;
+    $('btnAuto').disabled = true;
+
+    const nameText = $('nameText'), display = $('display'), label = $('assignLabel');
+    nameText.className = 'name-text rolling';
+    nameText.style.color = 'white';
+    display.classList.add('active');
+    label.textContent = 'Sorteando...';
+    label.style.color = 'rgba(255,255,255,0.3)';
+
+    let ticks = 0;
+    const maxTicks = autoRun ? 8 : 20 + Math.floor(Math.random() * 14);
+    const iv = setInterval(() => {
+      nameText.textContent = remaining[Math.floor(Math.random() * remaining.length)];
+      if (++ticks < maxTicks) return;
+
+      clearInterval(iv);
+
+      const student = remaining.splice(Math.floor(Math.random() * remaining.length), 1)[0];
+      const gi = pickGroup();
+      const color = COLORS[gi % COLORS.length];
+      groups[gi].push(student);
+
+      nameText.className = 'name-text reveal';
+      nameText.textContent = student;
+      nameText.style.color = color;
+      nameText.style.textShadow = `0 0 30px ${rgba(color, 0.7)}, 0 0 80px ${rgba(color, 0.3)}`;
+      label.textContent = 'Grupo ' + (gi + 1);
+      label.style.color = color;
+
+      addMember(gi, student);
+      updateProgress();
+      rolling = false;
+
+      if (!remaining.length) {
+        finish();
+      } else {
+        $('btnDraw').disabled = false;
+        $('btnAuto').disabled = false;
+        if (autoRun) setTimeout(draw, 320);
+      }
+    }, autoRun ? 45 : 70);
+  }
+
+  function finish() {
+    autoRun = false;
+    $('btnDraw').disabled = true;
+    $('btnAuto').disabled = true;
+    $('finalMsg').classList.add('on');
+    $('exportRow').style.display = 'flex';
+    $('display').classList.remove('active');
+  }
+
+  function resultText() {
+    return groups.map((g, i) =>
+      `Grupo ${i + 1} (${g.length})\n` + g.map((n, j) => `  ${j + 1}. ${n}`).join('\n')
+    ).join('\n\n');
+  }
+
+  /* ---------- Arranque / reset ---------- */
+  function start() {
+    students = parseNames($('namesInput').value);
+    nGroups = Math.max(2, Math.min(12, parseInt($('nGroups').value) || 5));
+    if (students.length < nGroups) {
+      alert(`Necesitas al menos ${nGroups} estudiantes para armar ${nGroups} grupos.`);
+      return;
+    }
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ names: $('namesInput').value, n: nGroups }));
+    } catch (e) {}
+    reset();
+    $('setup').classList.add('off');
+    $('stage').classList.add('on');
+  }
+
+  function reset() {
+    remaining = shuffle(students.slice());
+    groups = Array.from({ length: nGroups }, () => []);
+    rolling = false;
+    autoRun = false;
+    buildGroups();
+    updateProgress();
+    $('finalMsg').classList.remove('on');
+    $('exportRow').style.display = 'none';
+    $('btnDraw').disabled = false;
+    $('btnAuto').disabled = false;
+    const nameText = $('nameText');
+    nameText.className = 'name-text';
+    nameText.textContent = '¿Listos?';
+    nameText.style.color = 'white';
+    nameText.style.textShadow = '0 0 20px rgba(120, 60, 255, 0.6), 0 0 60px rgba(120, 60, 255, 0.3)';
+    $('assignLabel').textContent = 'Presiona para sortear';
+    $('assignLabel').style.color = 'rgba(255,255,255,0.3)';
+  }
+
+  /* ---------- Eventos ---------- */
+  $('namesInput').addEventListener('input', refreshCounter);
+  $('nGroups').addEventListener('input', refreshCounter);
+  $('btnStart').addEventListener('click', start);
+  $('btnDraw').addEventListener('click', () => { autoRun = false; draw(); });
+  $('btnAuto').addEventListener('click', () => { autoRun = true; draw(); });
+  $('btnAgain').addEventListener('click', reset);
+  $('btnBack').addEventListener('click', () => {
+    $('stage').classList.remove('on');
+    $('setup').classList.remove('off');
+  });
+
+  $('btnCopy').addEventListener('click', async () => {
+    const label = $('btnCopy').querySelector('span');
+    try {
+      await navigator.clipboard.writeText(resultText());
+      label.textContent = '¡Copiado!';
+      setTimeout(() => { label.textContent = 'Copiar resultado'; }, 1600);
+    } catch (e) {
+      alert(resultText());
+    }
+  });
+
+  $('btnCsv').addEventListener('click', () => {
+    const rows = ['Grupo,Estudiante'];
+    groups.forEach((g, i) => g.forEach(n => rows.push(`${i + 1},"${n.replace(/"/g, '""')}"`)));
+    const url = URL.createObjectURL(new Blob(['﻿' + rows.join('\n')], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'grupos_sorteo.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  $('btnDemo').addEventListener('click', () => {
+    $('namesInput').value = ['Ana Gómez','Carlos Ruiz','Daniela Pérez','Esteban Mora','Felipe Cano',
+      'Gabriela Ortiz','Héctor Salas','Isabela Rojas','Julián Vélez','Karen Mejía',
+      'Laura Castaño','Mateo Arango','Natalia Bermúdez','Óscar Zapata','Paula Herrera',
+      'Ricardo Lozano','Sofía Marín','Tomás Quintero','Valentina Ríos','Wilmer Cáceres'].join('\n');
+    refreshCounter();
+  });
+
+  document.addEventListener('keydown', e => {
+    if ((e.code === 'Space' || e.code === 'Enter')
+        && $('stage').classList.contains('on')
+        && !$('btnDraw').disabled
+        && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      autoRun = false;
+      draw();
+    }
+  });
+
+  // Restaura la última lista usada
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (saved) { $('namesInput').value = saved.names || ''; $('nGroups').value = saved.n || 5; }
+  } catch (e) {}
+  refreshCounter();
+</script>
+</body>
+</html>
