@@ -205,6 +205,24 @@ function sheetToObjects(sheet, fieldMap) {
 }
 
 /**
+ * Normaliza el porcentaje de asistencia a texto "N%".
+ *
+ * La columna se escribe como "85%", pero si la celda no tiene formato de
+ * texto Sheets interpreta ese string como porcentaje y guarda el NUMERO
+ * 0.85 (100% -> 1). Al leer con getValues() vuelve 0.85 / 1, y el panel
+ * pintaba "1" y un promedio de 1%. Aqui se deshace esa conversion:
+ * un numero sin '%' y <= 1 es una fraccion; lo demas ya viene en escala 0-100.
+ */
+function porcentajeTexto(valor) {
+  if (valor === null || valor === undefined || valor === '') return '0%';
+  const s = valor.toString().trim();
+  const n = parseFloat(s.replace('%', '').replace(',', '.'));
+  if (!isFinite(n)) return '0%';
+  const pct = (s.indexOf('%') === -1 && n > 0 && n <= 1) ? n * 100 : n;
+  return Math.round(pct) + '%';
+}
+
+/**
  * Convierte 'yyyy-MM-dd' + 'HH:mm' a minutos absolutos desde epoch (UTC),
  * de forma que restar dos valores da la diferencia real aunque cambie el dia.
  */
@@ -457,7 +475,12 @@ function handleGetPuntos() {
 function datosPuntos() {
   const sheet = getSheet('Puntos');
   if (!sheet) return [];
-  return sheetToObjects(sheet, null).filter(r => r.Email && r.Email.trim() !== '');
+  return sheetToObjects(sheet, null)
+    .filter(r => r.Email && r.Email.trim() !== '')
+    .map(r => {
+      r.PorcentajeAsistencia = porcentajeTexto(r.PorcentajeAsistencia);
+      return r;
+    });
 }
 
 function handleGetPortal(params) {
@@ -503,7 +526,7 @@ function handleGetPortal(params) {
           puntosPuntualidad: Number(puntosData[i][4]) || 0,
           puntosEmail: Number(puntosData[i][5]) || 0,
           clasesAsistidas: Number(puntosData[i][6]) || 0,
-          porcentajeAsistencia: puntosData[i][7] || '0%'
+          porcentajeAsistencia: porcentajeTexto(puntosData[i][7])
         };
         break;
       }
@@ -1121,11 +1144,10 @@ function recalcularPuntosEstudiante(email, nombreConocido) {
 
   const rowData = [email, nombre, totalPuntos, puntosAsistencia, puntosPuntualidad, puntosEmail, clasesAsistidas, porcentaje, puntosManuales];
 
-  if (filaExistente > 0) {
-    puntosSheet.getRange(filaExistente, 1, 1, 9).setValues([rowData]);
-  } else {
-    puntosSheet.appendRow(rowData);
-  }
+  const fila = filaExistente > 0 ? filaExistente : puntosSheet.getLastRow() + 1;
+  // La columna H va como TEXTO: si no, Sheets lee "100%" y guarda el numero 1.
+  puntosSheet.getRange(fila, 8).setNumberFormat('@');
+  puntosSheet.getRange(fila, 1, 1, 9).setValues([rowData]);
 }
 
 function recalcularTodosPuntos() {
@@ -1209,6 +1231,8 @@ function recalcularTodosPuntos() {
   }
   // Escribir datos desde fila 2
   if (rows.length > 0) {
+    // La columna H va como TEXTO: si no, Sheets lee "100%" y guarda el numero 1.
+    puntosSheet.getRange(2, 8, rows.length, 1).setNumberFormat('@');
     puntosSheet.getRange(2, 1, rows.length, 9).setValues(rows);
   }
 }
