@@ -1,8 +1,8 @@
-# Marketing Digital Avanzado — Guia de Configuracion
+# E-Commerce — Guia de Configuracion
 
 ## Que es esto?
 
-Sistema de gestion academica para el curso **Marketing Digital Avanzado** de la
+Sistema de gestion academica para el curso **E-Commerce** de la
 UAO, con cinco componentes principales:
 
 | Archivo | Descripcion | URL |

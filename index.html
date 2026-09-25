@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registro | Marketing Digital Avanzado - UAO</title>
+    <title>Registro | E-Commerce - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,11 +20,14 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html { background: #ffffff; }
+
         body {
             font-family: 'Inter', system-ui, sans-serif;
             min-height: 100vh;
             min-height: 100dvh;
-            background: linear-gradient(135deg, #1a0608 0%, #2a0a10 25%, #C8102E 50%, #2a0a10 75%, #1a0608 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f6 25%, #fbdde2 50%, #fff5f6 75%, #ffffff 100%);
+            color: #0f172a;
             background-size: 400% 400%;
             animation: gradientShift 18s ease infinite;
             overflow-x: hidden;
@@ -40,7 +43,7 @@
             position: fixed;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.35;
+            opacity: 0.16;
             pointer-events: none;
             z-index: 0;
         }
@@ -53,38 +56,38 @@
         @keyframes float3 { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-40%, -60%); } }
 
         .glass {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(200, 16, 46, 0.14);
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 8px 32px rgba(200, 16, 46, 0.10);
         }
 
         .glass-input {
-            background: rgba(255, 255, 255, 0.08);
+            background: #ffffff;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(15, 23, 42, 0.16);
             border-radius: 14px;
-            color: white;
+            color: #0f172a;
             transition: all 0.3s ease;
         }
 
         .glass-input:focus {
-            background: rgba(255, 255, 255, 0.14);
+            background: #ffffff;
             border-color: rgba(200, 16, 46, 0.7);
             outline: none;
             box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.2);
         }
 
-        .glass-input::placeholder { color: rgba(255, 255, 255, 0.45); }
+        .glass-input::placeholder { color: rgba(15,23,42,0.38); }
 
-        .glass-input option { background: #1a1a1a; color: white; }
+        .glass-input option { background: #ffffff; color: #0f172a; }
 
         select.glass-input {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='rgba(15,23,42,0.55)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             padding-right: 40px;
@@ -92,12 +95,12 @@
 
         .toggle-switch {
             width: 52px; height: 28px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.14);
             border-radius: 14px;
             position: relative;
             cursor: pointer;
             transition: background 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(15, 23, 42, 0.14);
             flex-shrink: 0;
         }
         .toggle-switch.active { background: rgba(200, 16, 46, 0.85); }
@@ -109,14 +112,14 @@
             position: absolute;
             top: 2px; left: 2px;
             transition: transform 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(15,23,42,0.25);
         }
         .toggle-switch.active::after { transform: translateX(24px); }
 
         .custom-checkbox {
             width: 22px; height: 22px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            background: #ffffff;
+            border: 1.5px solid rgba(15, 23, 42, 0.25);
             border-radius: 6px;
             cursor: pointer;
             display: flex;
@@ -152,20 +155,20 @@
         .progress-dot {
             width: 12px; height: 12px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.15);
             transition: all 0.4s ease;
         }
         .progress-dot.active {
-            background: white;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+            background: #C8102E;
+            box-shadow: 0 0 12px rgba(200, 16, 46, 0.45);
             transform: scale(1.2);
         }
         .progress-dot.completed {
-            background: rgba(200, 16, 46, 1);
+            background: rgba(200, 16, 46, 0.45);
         }
         .progress-line {
             height: 2px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.12);
             flex: 1;
             position: relative;
         }
@@ -201,9 +204,9 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.04);
+            color: #0f172a;
+            border: 1px solid rgba(15, 23, 42, 0.16);
             border-radius: 14px;
             padding: 14px 28px;
             font-weight: 500;
@@ -211,14 +214,14 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+        .btn-secondary:hover { background: rgba(15, 23, 42, 0.09); }
 
         .field-error .glass-input {
             border-color: rgba(239, 68, 68, 0.8) !important;
             animation: shake 0.4s ease;
         }
         .error-msg {
-            color: rgba(252, 165, 165, 0.9);
+            color: #dc2626;
             font-size: 12px;
             margin-top: 4px;
             display: none;
@@ -258,7 +261,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .field-label {
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(15,23,42,0.78);
             font-size: 13px;
             font-weight: 500;
             margin-bottom: 6px;
@@ -272,19 +275,18 @@
         }
 
         input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
             opacity: 0.6;
         }
 
         /* Photo upload */
         .photo-drop {
-            border: 2px dashed rgba(255, 255, 255, 0.25);
+            border: 2px dashed rgba(15, 23, 42, 0.18);
             border-radius: 16px;
             padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(15, 23, 42, 0.02);
         }
         .photo-drop:hover { border-color: rgba(200, 16, 46, 0.7); background: rgba(200, 16, 46, 0.06); }
         .photo-preview {
@@ -301,7 +303,7 @@
             width: 100%;
             height: 8px;
             border-radius: 4px;
-            background: rgba(255,255,255,0.12);
+            background: rgba(15,23,42,0.12);
             outline: none;
         }
         input[type="range"].madurez-slider::-webkit-slider-thumb {
@@ -324,7 +326,7 @@
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.2); border-radius: 3px; }
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
@@ -336,11 +338,11 @@
 
         <!-- Header -->
         <div class="text-center mb-6">
-            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-3">
-                <span class="text-white/80 text-xs font-medium tracking-wider uppercase">UAO &middot; Especializacion</span>
+            <div class="inline-flex items-center gap-2 bg-slate-900/5 backdrop-blur-sm rounded-full px-4 py-1.5 mb-3">
+                <span class="text-slate-700 text-xs font-medium tracking-wider uppercase">UAO &middot; Especializacion</span>
             </div>
-            <h1 class="text-white text-xl font-bold mb-1">Marketing Digital Avanzado</h1>
-            <p class="text-white/60 text-sm">Completa tu registro para el curso</p>
+            <h1 class="text-slate-900 text-xl font-bold mb-1">E-Commerce</h1>
+            <p class="text-slate-500 text-sm">Completa tu registro para el curso</p>
         </div>
 
         <!-- Progress bar -->
@@ -355,7 +357,7 @@
         </div>
 
         <div class="text-center mb-4">
-            <span class="text-white/50 text-xs font-medium" id="stepLabel">Paso 1 de 4 &mdash; Datos Personales</span>
+            <span class="text-slate-500 text-xs font-medium" id="stepLabel">Paso 1 de 4 &mdash; Datos Personales</span>
         </div>
 
         <!-- Card -->
@@ -363,8 +365,8 @@
 
             <!-- STEP 1: Datos Personales + Foto -->
             <div class="step-container active" data-step="1">
-                <h2 class="text-white text-lg font-semibold mb-1">Datos Personales</h2>
-                <p class="text-white/50 text-sm mb-6">Cuentanos sobre ti</p>
+                <h2 class="text-slate-900 text-lg font-semibold mb-1">Datos Personales</h2>
+                <p class="text-slate-500 text-sm mb-6">Cuentanos sobre ti</p>
 
                 <div class="space-y-4">
                     <!-- Foto de perfil -->
@@ -372,13 +374,13 @@
                         <label class="field-label">Foto para el ranking *</label>
                         <div class="photo-drop" id="photoDrop" onclick="document.getElementById('fotoInput').click()">
                             <div id="photoPlaceholder">
-                                <svg class="w-10 h-10 text-white/40 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                <p class="text-white/70 text-sm font-medium">Toca para subir o tomar foto</p>
-                                <p class="text-white/40 text-xs mt-1">JPG o PNG &middot; Max 3MB</p>
+                                <svg class="w-10 h-10 text-slate-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <p class="text-slate-600 text-sm font-medium">Toca para subir o tomar foto</p>
+                                <p class="text-slate-500 text-xs mt-1">JPG o PNG &middot; Max 3MB</p>
                             </div>
                             <div id="photoPreviewWrap" class="hidden flex flex-col items-center gap-2">
                                 <img id="photoPreview" class="photo-preview" alt="preview">
-                                <button type="button" onclick="event.stopPropagation(); removeFoto();" class="text-white/60 text-xs hover:text-white underline">Cambiar</button>
+                                <button type="button" onclick="event.stopPropagation(); removeFoto();" class="text-slate-500 text-xs hover:text-slate-900 underline">Cambiar</button>
                             </div>
                         </div>
                         <input type="file" id="fotoInput" accept="image/*" capture="user" class="hidden" onchange="handleFoto(this)">
@@ -433,8 +435,8 @@
 
             <!-- STEP 2: Empresa -->
             <div class="step-container" data-step="2">
-                <h2 class="text-white text-lg font-semibold mb-1">Tu Empresa / Negocio</h2>
-                <p class="text-white/50 text-sm mb-6">Cuentanos sobre tu contexto profesional</p>
+                <h2 class="text-slate-900 text-lg font-semibold mb-1">Tu Empresa / Negocio</h2>
+                <p class="text-slate-500 text-sm mb-6">Cuentanos sobre tu contexto profesional</p>
 
                 <div class="space-y-4">
                     <div class="field-group" data-field="empresa">
@@ -495,51 +497,51 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Tu estado en Marketing Digital Avanzado -->
+            <!-- STEP 3: Tu estado en E-Commerce -->
             <div class="step-container" data-step="3">
-                <h2 class="text-white text-lg font-semibold mb-1">Tu estado en Marketing Digital</h2>
-                <p class="text-white/50 text-sm mb-6">Que haces hoy con tus datos</p>
+                <h2 class="text-slate-900 text-lg font-semibold mb-1">Tu estado en E-Commerce</h2>
+                <p class="text-slate-500 text-sm mb-6">Que haces hoy con tus datos</p>
 
                 <div class="space-y-4">
                     <div class="field-group" data-field="herramientas">
                         <label class="field-label">Herramientas de analitica / marketing digital *</label>
-                        <p class="text-white/40 text-xs mb-2">Marca todas las que usas hoy</p>
+                        <p class="text-slate-500 text-xs mb-2">Marca todas las que usas hoy</p>
                         <div class="grid grid-cols-2 gap-2" id="herramientasContainer">
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Google Analytics 4" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">GA4</span>
+                                <span class="text-slate-700 text-sm">GA4</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Meta Ads / Pixel" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Meta Ads</span>
+                                <span class="text-slate-700 text-sm">Meta Ads</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Google Ads" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Google Ads</span>
+                                <span class="text-slate-700 text-sm">Google Ads</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="TikTok Ads" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">TikTok Ads</span>
+                                <span class="text-slate-700 text-sm">TikTok Ads</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Mailchimp / Email tool" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Email tool</span>
+                                <span class="text-slate-700 text-sm">Email tool</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="HubSpot" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">HubSpot</span>
+                                <span class="text-slate-700 text-sm">HubSpot</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Hotjar / Heatmap" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Hotjar</span>
+                                <span class="text-slate-700 text-sm">Hotjar</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Looker Studio / BI" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Looker / BI</span>
+                                <span class="text-slate-700 text-sm">Looker / BI</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors col-span-2">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors col-span-2">
                                 <div class="custom-checkbox" data-val="Ninguna" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">No uso ninguna</span>
+                                <span class="text-slate-700 text-sm">No uso ninguna</span>
                             </label>
                         </div>
                         <p class="error-msg">Selecciona al menos una opcion</p>
@@ -547,35 +549,35 @@
 
                     <div class="field-group" data-field="datosClientes">
                         <label class="field-label">Que datos recoges de tus clientes hoy? *</label>
-                        <p class="text-white/40 text-xs mb-2">Marca todos los que apliquen</p>
+                        <p class="text-slate-500 text-xs mb-2">Marca todos los que apliquen</p>
                         <div class="grid grid-cols-2 gap-2" id="datosContainer">
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Email" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Email</span>
+                                <span class="text-slate-700 text-sm">Email</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Telefono" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Telefono</span>
+                                <span class="text-slate-700 text-sm">Telefono</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Historial de compras" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Compras</span>
+                                <span class="text-slate-700 text-sm">Compras</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Comportamiento web" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Web behavior</span>
+                                <span class="text-slate-700 text-sm">Web behavior</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Ubicacion" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Ubicacion</span>
+                                <span class="text-slate-700 text-sm">Ubicacion</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Preferencias / intereses" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Preferencias</span>
+                                <span class="text-slate-700 text-sm">Preferencias</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors col-span-2">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors col-span-2">
                                 <div class="custom-checkbox" data-val="Ninguno / No se" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Ninguno / No se</span>
+                                <span class="text-slate-700 text-sm">Ninguno / No se</span>
                             </label>
                         </div>
                         <p class="error-msg">Selecciona al menos una opcion</p>
@@ -583,39 +585,39 @@
 
                     <div class="field-group" data-field="kpis">
                         <label class="field-label">Que KPIs mides hoy? *</label>
-                        <p class="text-white/40 text-xs mb-2">Marca todos los que sigues</p>
+                        <p class="text-slate-500 text-xs mb-2">Marca todos los que sigues</p>
                         <div class="grid grid-cols-2 gap-2" id="kpisContainer">
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="CAC" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">CAC</span>
+                                <span class="text-slate-700 text-sm">CAC</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="LTV" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">LTV</span>
+                                <span class="text-slate-700 text-sm">LTV</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Conversion rate" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Conversion rate</span>
+                                <span class="text-slate-700 text-sm">Conversion rate</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="ROAS" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">ROAS</span>
+                                <span class="text-slate-700 text-sm">ROAS</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Open rate / Email" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Open rate</span>
+                                <span class="text-slate-700 text-sm">Open rate</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Tasa de recompra" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Recompra</span>
+                                <span class="text-slate-700 text-sm">Recompra</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="NPS / Satisfaccion" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">NPS</span>
+                                <span class="text-slate-700 text-sm">NPS</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white/5 rounded-xl px-3 py-2.5 hover:bg-white/10 transition-colors">
+                            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/[0.03] rounded-xl px-3 py-2.5 hover:bg-slate-900/5 transition-colors">
                                 <div class="custom-checkbox" data-val="Ninguno" onclick="toggleCheckbox(this)"></div>
-                                <span class="text-white/80 text-sm">Ninguno</span>
+                                <span class="text-slate-700 text-sm">Ninguno</span>
                             </label>
                         </div>
                         <p class="error-msg">Selecciona al menos una opcion</p>
@@ -638,8 +640,8 @@
 
             <!-- STEP 4: Madurez + Expectativas -->
             <div class="step-container" data-step="4">
-                <h2 class="text-white text-lg font-semibold mb-1">Madurez y Expectativas</h2>
-                <p class="text-white/50 text-sm mb-6">Ultimo paso!</p>
+                <h2 class="text-slate-900 text-lg font-semibold mb-1">Madurez y Expectativas</h2>
+                <p class="text-slate-500 text-sm mb-6">Ultimo paso!</p>
 
                 <div class="space-y-5">
                     <div class="field-group" data-field="decisiones">
@@ -670,7 +672,7 @@
                     <div class="field-group" data-field="madurez">
                         <label class="field-label">Madurez digital percibida: <span id="madurezValor" class="text-uao font-bold">3</span> / 5 *</label>
                         <input type="range" id="madurez" min="1" max="5" value="3" class="madurez-slider w-full">
-                        <div class="flex justify-between text-white/40 text-[10px] mt-1">
+                        <div class="flex justify-between text-slate-500 text-[10px] mt-1">
                             <span>1 Inicial</span>
                             <span>2</span>
                             <span>3</span>
@@ -680,7 +682,7 @@
                     </div>
 
                     <div class="field-group" data-field="expectativas">
-                        <label class="field-label">Que esperas aprender en Marketing Digital Avanzado? *</label>
+                        <label class="field-label">Que esperas aprender en E-Commerce? *</label>
                         <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Que habilidades, herramientas o resultados quieres lograr..." id="expectativas" rows="3"></textarea>
                         <p class="error-msg">Cuentanos tus expectativas</p>
                     </div>
@@ -688,8 +690,8 @@
                     <div class="field-group mt-6" data-field="aceptaDatos">
                         <label class="flex items-start gap-3 cursor-pointer" onclick="toggleCheckbox(document.getElementById('aceptaDatosCheck'))">
                             <div class="custom-checkbox mt-0.5" id="aceptaDatosCheck"></div>
-                            <span class="text-white/70 text-xs leading-relaxed">
-                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de Marketing Digital Avanzado de la Universidad Autonoma de Occidente. *
+                            <span class="text-slate-600 text-xs leading-relaxed">
+                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de E-Commerce de la Universidad Autonoma de Occidente. *
                             </span>
                         </label>
                         <p class="error-msg">Debes aceptar el tratamiento de datos</p>
@@ -701,17 +703,17 @@
             <div class="step-container" data-step="success" style="display:none;">
                 <div class="text-center py-6">
                     <div class="w-20 h-20 rounded-full bg-uao/20 flex items-center justify-center mx-auto mb-4" style="background:rgba(200,16,46,0.2);">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-10 h-10 text-[#C8102E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                         </svg>
                     </div>
-                    <h2 class="text-white text-xl font-bold mb-2">Registro Exitoso!</h2>
-                    <p class="text-white/60 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Marketing Digital Avanzado. Nos vemos en clase!</p>
+                    <h2 class="text-slate-900 text-xl font-bold mb-2">Registro Exitoso!</h2>
+                    <p class="text-slate-500 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de E-Commerce. Nos vemos en clase!</p>
                     <div class="glass p-4 rounded-2xl text-left">
-                        <p class="text-white/40 text-xs uppercase tracking-wider mb-2 font-medium">Tu resumen</p>
-                        <p class="text-white text-sm font-medium" id="summaryName"></p>
-                        <p class="text-white/60 text-xs" id="summaryEmail"></p>
-                        <p class="text-white/60 text-xs" id="summaryEmpresa"></p>
+                        <p class="text-slate-500 text-xs uppercase tracking-wider mb-2 font-medium">Tu resumen</p>
+                        <p class="text-slate-900 text-sm font-medium" id="summaryName"></p>
+                        <p class="text-slate-500 text-xs" id="summaryEmail"></p>
+                        <p class="text-slate-500 text-xs" id="summaryEmpresa"></p>
                     </div>
                 </div>
             </div>
@@ -734,7 +736,7 @@
         </div>
 
         <!-- Footer -->
-        <p class="text-center text-white/30 text-xs mt-6">
+        <p class="text-center text-slate-500 text-xs mt-6">
             UAO &middot; Especializacion en Gerencia de Negocios Digitales &middot; 2026
         </p>
     </div>
@@ -756,7 +758,7 @@
         const stepLabels = {
             1: 'Datos Personales',
             2: 'Tu Empresa',
-            3: 'Marketing Digital Avanzado',
+            3: 'E-Commerce',
             4: 'Madurez y Expectativas'
         };
 
@@ -974,7 +976,7 @@
                 tamano: document.getElementById('tamano')?.value || '',
                 web: document.getElementById('web')?.value || '',
                 empresaPropia: document.getElementById('empresaPropia')?.dataset.value || 'no',
-                // Marketing Digital Avanzado nuevo
+                // E-Commerce nuevo
                 herramientasAnalitica: collectChecks('herramientasContainer'),
                 datosClientes: collectChecks('datosContainer'),
                 kpis: collectChecks('kpisContainer'),
@@ -1100,7 +1102,7 @@
                 setTimeout(() => {
                     const notice = document.createElement('div');
                     notice.className = 'glass p-3 mt-4 text-center';
-                    notice.innerHTML = '<p class="text-yellow-300/80 text-xs">Guardado localmente. Se sincronizara cuando haya conexion.</p>';
+                    notice.innerHTML = '<p class="text-yellow-600/80 text-xs">Guardado localmente. Se sincronizara cuando haya conexion.</p>';
                     document.querySelector('.step-container[data-step="success"]').appendChild(notice);
                 }, 1000);
             }
@@ -1121,7 +1123,7 @@
             successEl.classList.add('active');
 
             const bienvenida = data.genero === 'Femenino' ? 'Bienvenida' : 'Bienvenido';
-            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Marketing Digital Avanzado. Nos vemos en clase!`;
+            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de E-Commerce. Nos vemos en clase!`;
 
             document.getElementById('summaryName').textContent = data.nombre;
             document.getElementById('summaryEmail').textContent = data.email;

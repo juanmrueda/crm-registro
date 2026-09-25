@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | Marketing Digital Avanzado - UAO</title>
+    <title>Admin | E-Commerce - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,28 +11,26 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-                    colors: {
-                        dark: { 900: '#0a0e1a', 800: '#0f172a', 700: '#1e293b', 600: '#334155' }
-                    }
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; }
+        html { background: #f8f9fb; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #f8f9fb; color: #e2e8f0; min-height: 100vh; }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.1); border-radius: 3px; }
 
         /* Sidebar */
         .sidebar {
             width: 260px;
-            background: #0f172a;
-            border-right: 1px solid rgba(255,255,255,0.06);
+            background: #ffffff;
+            border-right: 1px solid rgba(15,23,42,0.06);
             height: 100vh;
             position: fixed;
             top: 0; left: 0;
@@ -54,17 +52,17 @@
             left: 260px;
             z-index: 41;
             width: 24px; height: 48px;
-            background: #1e293b;
-            border: 1px solid rgba(255,255,255,0.08);
+            background: #ffffff;
+            border: 1px solid rgba(15,23,42,0.08);
             border-left: none;
             border-radius: 0 10px 10px 0;
             cursor: pointer;
             align-items: center;
             justify-content: center;
-            color: rgba(255,255,255,0.4);
+            color: rgba(15,23,42,0.62);
             transition: all 0.3s ease;
         }
-        .sidebar-toggle:hover { background: #334155; color: rgba(255,255,255,0.8); }
+        .sidebar-toggle:hover { background: #f1f5f9; color: rgba(15,23,42,0.8); }
         .sidebar-toggle.collapsed { left: 0; }
         .sidebar-toggle svg { transition: transform 0.3s ease; }
         .sidebar-toggle.collapsed svg { transform: rotate(180deg); }
@@ -76,7 +74,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(15,23,42,0.45);
             z-index: 35;
         }
         .sidebar-overlay.active { display: block; }
@@ -85,15 +83,15 @@
             display: flex; align-items: center; gap: 12px;
             padding: 10px 16px; margin: 2px 8px;
             border-radius: 10px; cursor: pointer;
-            color: rgba(255,255,255,0.5);
+            color: rgba(15,23,42,0.68);
             font-size: 14px; font-weight: 500;
             transition: all 0.2s ease;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+        .nav-item:hover { background: rgba(15,23,42,0.05); color: rgba(15,23,42,0.8); }
         .nav-item.active {
-            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15));
-            color: #a5b4fc;
-            border: 1px solid rgba(99,102,241,0.2);
+            background: linear-gradient(135deg, rgba(200,16,46,0.15), rgba(155,12,35,0.15));
+            color: #C8102E;
+            border: 1px solid rgba(200,16,46,0.2);
         }
 
         /* Main content */
@@ -107,17 +105,17 @@
 
         /* Cards */
         .card {
-            background: #0f172a;
-            border: 1px solid rgba(255,255,255,0.06);
+            background: #ffffff;
+            border: 1px solid rgba(15,23,42,0.06);
             border-radius: 16px;
             padding: 20px;
             transition: all 0.3s ease;
         }
-        .card:hover { border-color: rgba(255,255,255,0.1); }
+        .card:hover { border-color: rgba(200,16,46,0.22); }
 
         .kpi-card {
-            background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.9));
-            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, #ffffff, #fdfdff);
+            border: 1px solid rgba(15,23,42,0.08);
             border-radius: 16px;
             padding: 20px;
             position: relative;
@@ -141,29 +139,29 @@
         /* Table */
         .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
         .data-table thead th {
-            background: rgba(255,255,255,0.03);
+            background: rgba(15,23,42,0.03);
             padding: 12px 16px;
             text-align: left;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: rgba(255,255,255,0.4);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: rgba(15,23,42,0.62);
+            border-bottom: 1px solid rgba(15,23,42,0.06);
             cursor: pointer;
             user-select: none;
         }
-        .data-table thead th:hover { color: rgba(255,255,255,0.7); }
+        .data-table thead th:hover { color: rgba(15,23,42,0.7); }
         .data-table tbody tr {
             transition: background 0.15s ease;
             cursor: pointer;
         }
-        .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+        .data-table tbody tr:hover { background: rgba(200,16,46,0.04); }
         .data-table tbody td {
             padding: 12px 16px;
             font-size: 13px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            color: rgba(255,255,255,0.7);
+            border-bottom: 1px solid rgba(15,23,42,0.04);
+            color: rgba(15,23,42,0.7);
         }
 
         /* Avatar */
@@ -178,46 +176,46 @@
 
         /* Search */
         .search-input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(15,23,42,0.05);
+            border: 1px solid rgba(15,23,42,0.08);
             border-radius: 10px;
             padding: 10px 14px 10px 40px;
-            color: white;
+            color: #ffffff;
             font-size: 14px;
             width: 100%;
             transition: all 0.2s;
         }
         .search-input:focus {
             outline: none;
-            border-color: rgba(99,102,241,0.4);
-            background: rgba(255,255,255,0.08);
+            border-color: rgba(200,16,46,0.4);
+            background: rgba(15,23,42,0.08);
         }
-        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+        .search-input::placeholder { color: rgba(15,23,42,0.6); }
 
         /* Filter chips */
         .filter-chip {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 6px 14px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(15,23,42,0.05);
+            border: 1px solid rgba(15,23,42,0.08);
             border-radius: 20px;
             font-size: 12px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(15,23,42,0.6);
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .filter-chip:hover { background: rgba(255,255,255,0.1); }
+        .filter-chip:hover { background: rgba(15,23,42,0.1); }
         .filter-chip.active {
-            background: rgba(99,102,241,0.15);
-            border-color: rgba(99,102,241,0.3);
-            color: #a5b4fc;
+            background: rgba(200,16,46,0.15);
+            border-color: rgba(200,16,46,0.3);
+            color: #C8102E;
         }
 
         /* Contact modal */
         .modal-overlay {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(15,23,42,0.45);
             backdrop-filter: blur(4px);
             z-index: 50;
             display: none;
@@ -227,8 +225,8 @@
         }
         .modal-overlay.active { display: flex; }
         .modal-content {
-            background: #0f172a;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #ffffff;
+            border: 1px solid rgba(15,23,42,0.1);
             border-radius: 20px;
             width: 100%;
             max-width: 560px;
@@ -244,15 +242,15 @@
 
         /* Segment card */
         .segment-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(15,23,42,0.03);
+            border: 1px solid rgba(15,23,42,0.06);
             border-radius: 14px;
             padding: 16px;
         }
         .segment-bar {
             height: 6px;
             border-radius: 3px;
-            background: rgba(255,255,255,0.06);
+            background: rgba(15,23,42,0.06);
             overflow: hidden;
         }
         .segment-bar-fill {
@@ -273,12 +271,12 @@
             cursor: pointer;
         }
         .insight-tag:hover { opacity: 0.8; transform: scale(1.05); }
-        .insight-tag.active { ring: 2px; outline: 2px solid rgba(255,255,255,0.4); outline-offset: 1px; }
+        .insight-tag.active { ring: 2px; outline: 2px solid rgba(200,16,46,0.5); outline-offset: 1px; }
 
         /* Drill-down panel */
         .drilldown-panel {
-            background: rgba(15,23,42,0.95);
-            border: 1px solid rgba(99,102,241,0.3);
+            background: #ffffff;
+            border: 1px solid rgba(200,16,46,0.3);
             border-radius: 14px;
             padding: 16px;
             margin-top: 12px;
@@ -291,7 +289,7 @@
             transition: background 0.15s;
             cursor: pointer;
         }
-        .drilldown-student:hover { background: rgba(255,255,255,0.05); }
+        .drilldown-student:hover { background: rgba(15,23,42,0.05); }
 
         /* Sections */
         .section { display: none; }
@@ -314,26 +312,26 @@
 </head>
 <body>
     <!-- LOGIN GATE -->
-    <div id="loginGate" class="fixed inset-0 z-[100] bg-[#0a0e1a] flex items-center justify-center p-4">
+    <div id="loginGate" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-4">
         <div class="w-full max-w-sm">
             <div class="text-center mb-8">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-7 h-7 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
                 </div>
-                <h1 class="text-white text-xl font-bold">Marketing Digital Avanzado</h1>
-                <p class="text-white/40 text-sm mt-1">Ingresa la clave para acceder</p>
+                <h1 class="text-slate-900 text-xl font-bold">E-Commerce</h1>
+                <p class="text-slate-500 text-sm mt-1">Ingresa la clave para acceder</p>
             </div>
             <div>
                 <input type="password" id="loginPassword" placeholder="Clave de acceso"
-                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 focus:bg-white/8 transition-all mb-3"
+                    class="w-full px-4 py-3 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 focus:bg-slate-900/5 transition-all mb-3"
                     onkeydown="if(event.key==='Enter')attemptLogin()">
                 <button id="loginBtn" onclick="attemptLogin()"
-                    class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity">
                     Entrar
                 </button>
-                <p id="loginError" class="text-red-400/80 text-xs text-center mt-3 hidden">Clave incorrecta</p>
+                <p id="loginError" class="text-red-700 text-xs text-center mt-3 hidden">Clave incorrecta</p>
             </div>
         </div>
     </div>
@@ -343,23 +341,23 @@
 
     <!-- Sidebar -->
     <aside class="sidebar flex flex-col" id="sidebar">
-        <div class="p-5 border-b border-white/5">
+        <div class="p-5 border-b border-slate-900/[0.07]">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-white text-sm font-bold">Marketing Digital Avanzado</h2>
-                    <p class="text-white/40 text-xs">Marketing Digital Avanzado</p>
+                    <h2 class="text-slate-900 text-sm font-bold">E-Commerce</h2>
+                    <p class="text-slate-500 text-xs">E-Commerce</p>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 py-4">
             <div class="px-4 mb-2">
-                <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest">Principal</p>
+                <p class="text-slate-500 text-[10px] font-semibold uppercase tracking-widest">Principal</p>
             </div>
             <div class="nav-item active" data-section="overview" onclick="showSection('overview')">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
@@ -391,7 +389,7 @@
             </div>
 
             <div class="px-4 mt-6 mb-2">
-                <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest">Acciones</p>
+                <p class="text-slate-500 text-[10px] font-semibold uppercase tracking-widest">Acciones</p>
             </div>
             <div class="nav-item" onclick="exportCSV()">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -411,8 +409,8 @@
             </div>
         </nav>
 
-        <div class="p-4 border-t border-white/5">
-            <p class="text-white/20 text-[10px] text-center">UAO - Marketing Digital Avanzado v2.0</p>
+        <div class="p-4 border-t border-slate-900/[0.07]">
+            <p class="text-slate-500 text-[10px] text-center">UAO - E-Commerce v2.0</p>
         </div>
     </aside>
 
@@ -424,28 +422,28 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Top bar -->
-        <header class="sticky top-0 z-30 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-white/5">
+        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-900/[0.07]">
             <div class="flex items-center justify-between px-4 lg:px-8 py-4">
                 <div class="flex items-center gap-3">
-                    <button class="lg:hidden p-2 rounded-lg hover:bg-white/5" onclick="toggleSidebar()">
-                        <svg class="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button class="lg:hidden p-2 rounded-lg hover:bg-slate-900/5" onclick="toggleSidebar()">
+                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div>
-                        <h1 class="text-white text-lg font-bold" id="sectionTitle">Overview</h1>
-                        <p class="text-white/40 text-xs" id="sectionSubtitle">Resumen general del curso</p>
+                        <h1 class="text-slate-900 text-lg font-bold" id="sectionTitle">Overview</h1>
+                        <p class="text-slate-500 text-xs" id="sectionSubtitle">Resumen general del curso</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-2 text-white/40 text-xs">
+                    <div class="flex items-center gap-2 text-slate-500 text-xs">
                         <div class="refresh-badge"></div>
                         <span id="lastUpdate">--</span>
                     </div>
-                    <div class="hidden sm:flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5">
-                        <span class="text-white font-bold text-sm" id="totalBadge">0</span>
-                        <span class="text-white/40 text-xs">registros</span>
+                    <div class="hidden sm:flex items-center gap-2 bg-slate-900/[0.04] rounded-lg px-3 py-1.5">
+                        <span class="text-slate-900 font-bold text-sm" id="totalBadge">0</span>
+                        <span class="text-slate-500 text-xs">registros</span>
                     </div>
-                    <button onclick="refreshData()" class="p-2 rounded-lg hover:bg-white/5 transition-colors" title="Actualizar">
-                        <svg class="w-4 h-4 text-white/40" id="refreshIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <button onclick="refreshData()" class="p-2 rounded-lg hover:bg-slate-900/5 transition-colors" title="Actualizar">
+                        <svg class="w-4 h-4 text-slate-500" id="refreshIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </button>
                 </div>
             </div>
@@ -461,37 +459,37 @@
                 <!-- KPI Cards -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <div class="kpi-card purple">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Total Registrados</p>
-                        <p class="counter text-white" id="kpiTotal">0</p>
-                        <p class="text-white/30 text-xs mt-1">estudiantes</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Total Registrados</p>
+                        <p class="counter text-slate-900" id="kpiTotal">0</p>
+                        <p class="text-slate-500 text-xs mt-1">estudiantes</p>
                     </div>
                     <div class="kpi-card blue">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Genero</p>
-                        <p class="counter text-white" id="kpiGenero">--</p>
-                        <p class="text-white/30 text-xs mt-1" id="kpiGeneroDetail">H: 0 | M: 0</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Genero</p>
+                        <p class="counter text-slate-900" id="kpiGenero">--</p>
+                        <p class="text-slate-500 text-xs mt-1" id="kpiGeneroDetail">H: 0 | M: 0</p>
                     </div>
                     <div class="kpi-card green">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Edad Promedio</p>
-                        <p class="counter text-white" id="kpiEdad">0</p>
-                        <p class="text-white/30 text-xs mt-1">anos</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Edad Promedio</p>
+                        <p class="counter text-slate-900" id="kpiEdad">0</p>
+                        <p class="text-slate-500 text-xs mt-1">anos</p>
                     </div>
                     <div class="kpi-card amber">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Empresas</p>
-                        <p class="counter text-white" id="kpiEmpresas">0</p>
-                        <p class="text-white/30 text-xs mt-1">unicas</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Empresas</p>
+                        <p class="counter text-slate-900" id="kpiEmpresas">0</p>
+                        <p class="text-slate-500 text-xs mt-1">unicas</p>
                     </div>
                 </div>
 
                 <!-- Charts Row 1 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">Distribucion por Genero</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">Distribucion por Genero</h3>
                         <div class="flex justify-center" style="height: 220px;">
                             <canvas id="chartGenero"></canvas>
                         </div>
                     </div>
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">Sector / Industria</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">Sector / Industria</h3>
                         <div style="height: 220px;">
                             <canvas id="chartSector"></canvas>
                         </div>
@@ -501,13 +499,13 @@
                 <!-- Charts Row 2 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">Tamano de Empresa</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">Tamano de Empresa</h3>
                         <div style="height: 220px;">
                             <canvas id="chartTamano"></canvas>
                         </div>
                     </div>
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">Canales de Captacion</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">Canales de Captacion</h3>
                         <div style="height: 220px;">
                             <canvas id="chartCanales"></canvas>
                         </div>
@@ -517,13 +515,13 @@
                 <!-- Chart Row 3 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">Uso Actual de CRM</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">Uso Actual de CRM</h3>
                         <div class="flex justify-center" style="height: 220px;">
                             <canvas id="chartCRM"></canvas>
                         </div>
                     </div>
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">Preferencia de Trabajo</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">Preferencia de Trabajo</h3>
                         <div class="flex justify-center" style="height: 220px;">
                             <canvas id="chartTrabajo"></canvas>
                         </div>
@@ -538,7 +536,7 @@
                 <!-- Search & Filters -->
                 <div class="mb-4">
                     <div class="relative mb-3">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         <input type="text" class="search-input" placeholder="Buscar por nombre, empresa, email..." id="searchInput" oninput="filterContacts()">
                     </div>
                     <div class="flex flex-wrap gap-2" id="filterChips">
@@ -563,7 +561,7 @@
                             <!-- Dynamic rows -->
                         </tbody>
                     </table>
-                    <div class="text-center py-8 text-white/30 text-sm" id="emptyContacts">
+                    <div class="text-center py-8 text-slate-500 text-sm" id="emptyContacts">
                         No hay registros aun
                     </div>
                 </div>
@@ -584,23 +582,23 @@
             <div class="section" id="section-insights">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-1">Productos / Servicios</h3>
-                        <p class="text-white/30 text-xs mb-4">Que venden los estudiantes del grupo</p>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-1">Productos / Servicios</h3>
+                        <p class="text-slate-500 text-xs mb-4">Que venden los estudiantes del grupo</p>
                         <div id="insightProductos" class="space-y-2"></div>
                     </div>
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-1">Clientes Ideales</h3>
-                        <p class="text-white/30 text-xs mb-4">A quien le venden</p>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-1">Clientes Ideales</h3>
+                        <p class="text-slate-500 text-xs mb-4">A quien le venden</p>
                         <div id="insightClientes" class="space-y-2"></div>
                     </div>
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-1">Expectativas del Curso</h3>
-                        <p class="text-white/30 text-xs mb-4">Que esperan aprender</p>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-1">Expectativas del Curso</h3>
+                        <p class="text-slate-500 text-xs mb-4">Que esperan aprender</p>
                         <div id="insightExpectativas" class="space-y-2"></div>
                     </div>
                     <div class="card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-1">Mayores Retos</h3>
-                        <p class="text-white/30 text-xs mb-4">Problemas con clientes</p>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-1">Mayores Retos</h3>
+                        <p class="text-slate-500 text-xs mb-4">Problemas con clientes</p>
                         <div id="insightRetos" class="space-y-2"></div>
                     </div>
                 </div>
@@ -612,18 +610,18 @@
             <div class="section" id="section-clases">
                 <!-- Crear clase -->
                 <div class="card mb-4">
-                    <h3 class="text-white/80 text-sm font-semibold mb-4">Crear Nueva Clase</h3>
+                    <h3 class="text-slate-700 text-sm font-semibold mb-4">Crear Nueva Clase</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div class="sm:col-span-2">
                             <input type="text" id="claseTitle" placeholder="Titulo de la clase"
-                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
+                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                         </div>
                         <div>
                             <input type="time" id="claseHoraInicio" value="14:00"
-                                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
+                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                         </div>
                         <div>
-                            <button onclick="crearClase()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                            <button onclick="crearClase()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity">
                                 + Crear Clase
                             </button>
                         </div>
@@ -635,33 +633,33 @@
                     <div class="card" style="border-color:rgba(16,185,129,0.3);background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(6,182,212,0.05));">
                         <div class="flex items-center justify-between mb-4">
                             <div>
-                                <p class="text-emerald-400 text-xs font-semibold uppercase tracking-wider">Asistencia Activa</p>
-                                <p class="text-white/60 text-sm mt-1" id="codigoClaseTitulo">--</p>
+                                <p class="text-emerald-700 text-xs font-semibold uppercase tracking-wider">Asistencia Activa</p>
+                                <p class="text-slate-500 text-sm mt-1" id="codigoClaseTitulo">--</p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="text-white/40 text-xs" id="codigoCountdown">--</span>
-                                <button onclick="cerrarAsistencia()" class="px-3 py-1.5 rounded-lg bg-red-500/15 text-red-300 text-xs font-medium hover:bg-red-500/25 transition-colors">
+                                <span class="text-slate-500 text-xs" id="codigoCountdown">--</span>
+                                <button onclick="cerrarAsistencia()" class="px-3 py-1.5 rounded-lg bg-red-500/15 text-red-600 text-xs font-medium hover:bg-red-500/25 transition-colors">
                                     Cerrar
                                 </button>
                             </div>
                         </div>
                         <div class="text-center py-6">
-                            <p class="text-white text-7xl sm:text-8xl font-black tracking-[0.3em] font-mono" id="codigoDisplay">------</p>
-                            <p class="text-[#ef4356] text-xs mt-3 font-medium">Codigo rotativo - cambia cada minuto</p>
+                            <p class="text-slate-900 text-7xl sm:text-8xl font-black tracking-[0.3em] font-mono" id="codigoDisplay">------</p>
+                            <p class="text-[#C8102E] text-xs mt-3 font-medium">Codigo rotativo - cambia cada minuto</p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                                <span class="text-emerald-400/80 text-sm font-medium" id="codigoAsistentes">0 presentes</span>
+                                <span class="text-emerald-700/80 text-sm font-medium" id="codigoAsistentes">0 presentes</span>
                             </div>
-                            <span class="text-white/30 text-xs" id="codigoTotal">de 0 registrados</span>
+                            <span class="text-slate-500 text-xs" id="codigoTotal">de 0 registrados</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Lista de clases -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="clasesGrid">
-                    <div class="text-center py-8 text-white/30 text-sm col-span-full">No hay clases creadas aun</div>
+                    <div class="text-center py-8 text-slate-500 text-sm col-span-full">No hay clases creadas aun</div>
                 </div>
             </div>
 
@@ -672,68 +670,68 @@
                 <!-- KPIs -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <div class="kpi-card green">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Asistencia Promedio</p>
-                        <p class="counter text-white" id="kpiAsistencia">0%</p>
-                        <p class="text-white/30 text-xs mt-1">del grupo</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Asistencia Promedio</p>
+                        <p class="counter text-slate-900" id="kpiAsistencia">0%</p>
+                        <p class="text-slate-500 text-xs mt-1">del grupo</p>
                     </div>
                     <div class="kpi-card purple">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Mejor Estudiante</p>
-                        <p class="text-white text-lg font-bold truncate" id="kpiMejor">--</p>
-                        <p class="text-white/30 text-xs mt-1" id="kpiMejorPuntos">0 pts</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Mejor Estudiante</p>
+                        <p class="text-slate-900 text-lg font-bold truncate" id="kpiMejor">--</p>
+                        <p class="text-slate-500 text-xs mt-1" id="kpiMejorPuntos">0 pts</p>
                     </div>
                     <div class="kpi-card blue">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Promedio Puntos</p>
-                        <p class="counter text-white" id="kpiPromPuntos">0</p>
-                        <p class="text-white/30 text-xs mt-1">por estudiante</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Promedio Puntos</p>
+                        <p class="counter text-slate-900" id="kpiPromPuntos">0</p>
+                        <p class="text-slate-500 text-xs mt-1">por estudiante</p>
                     </div>
                     <div class="kpi-card amber">
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider mb-2">Clases Realizadas</p>
-                        <p class="counter text-white" id="kpiTotalClases">0</p>
-                        <p class="text-white/30 text-xs mt-1">sesiones</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2">Clases Realizadas</p>
+                        <p class="counter text-slate-900" id="kpiTotalClases">0</p>
+                        <p class="text-slate-500 text-xs mt-1">sesiones</p>
                     </div>
                 </div>
 
                 <!-- Tabla de puntos -->
                 <div class="card mb-6">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-white/80 text-sm font-semibold">Sistema de Puntos</h3>
-                        <span class="text-white/20 text-[10px] uppercase tracking-wider">Configuracion actual</span>
+                        <h3 class="text-slate-700 text-sm font-semibold">Sistema de Puntos</h3>
+                        <span class="text-slate-500 text-[10px] uppercase tracking-wider">Configuracion actual</span>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="puntosConfigGrid">
                         <div class="bg-emerald-500/10 rounded-xl p-3 text-center">
-                            <p class="text-emerald-400 text-xl font-bold" id="cfgAsistencia">10</p>
-                            <p class="text-white/40 text-[10px] mt-1">pts por asistencia</p>
+                            <p class="text-emerald-700 text-xl font-bold" id="cfgAsistencia">10</p>
+                            <p class="text-slate-500 text-[10px] mt-1">pts por asistencia</p>
                         </div>
                         <div class="bg-blue-500/10 rounded-xl p-3 text-center">
-                            <p class="text-blue-400 text-xl font-bold" id="cfgPuntualidad">5</p>
-                            <p class="text-white/40 text-[10px] mt-1">pts puntualidad max</p>
+                            <p class="text-blue-600 text-xl font-bold" id="cfgPuntualidad">5</p>
+                            <p class="text-slate-500 text-[10px] mt-1">pts puntualidad max</p>
                         </div>
                         <div class="bg-purple-500/10 rounded-xl p-3 text-center">
-                            <p class="text-purple-400 text-xl font-bold" id="cfgEmailOpen">3</p>
-                            <p class="text-white/40 text-[10px] mt-1">pts abrir email</p>
+                            <p class="text-purple-600 text-xl font-bold" id="cfgEmailOpen">3</p>
+                            <p class="text-slate-500 text-[10px] mt-1">pts abrir email</p>
                         </div>
                         <div class="bg-amber-500/10 rounded-xl p-3 text-center">
-                            <p class="text-amber-400 text-xl font-bold" id="cfgVentana">15</p>
-                            <p class="text-white/40 text-[10px] mt-1">min ventana puntual</p>
+                            <p class="text-amber-600 text-xl font-bold" id="cfgVentana">15</p>
+                            <p class="text-slate-500 text-[10px] mt-1">min ventana puntual</p>
                         </div>
                         <div class="bg-red-500/10 rounded-xl p-3 text-center">
-                            <p class="text-red-400 text-xl font-bold" id="cfgTolerancia">15</p>
-                            <p class="text-white/40 text-[10px] mt-1">min tolerancia tarde</p>
+                            <p class="text-red-600 text-xl font-bold" id="cfgTolerancia">15</p>
+                            <p class="text-slate-500 text-[10px] mt-1">min tolerancia tarde</p>
                         </div>
                         <div class="bg-[#C8102E]/10 rounded-xl p-3 text-center">
-                            <p class="text-[#ef4356] text-xl font-bold" id="cfgCodigo">30</p>
-                            <p class="text-white/40 text-[10px] mt-1">min vigencia codigo</p>
+                            <p class="text-[#C8102E] text-xl font-bold" id="cfgCodigo">30</p>
+                            <p class="text-slate-500 text-[10px] mt-1">min vigencia codigo</p>
                         </div>
                     </div>
-                    <div class="mt-3 bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[11px] leading-relaxed">
-                            <span class="text-white/50 font-medium">Maximo por clase:</span>
+                    <div class="mt-3 bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[11px] leading-relaxed">
+                            <span class="text-slate-500 font-medium">Maximo por clase:</span>
                             <span id="cfgMaxClase">15</span> pts (asistencia + puntualidad) &nbsp;|&nbsp;
-                            <span class="text-white/50 font-medium">Puntualidad:</span>
+                            <span class="text-slate-500 font-medium">Puntualidad:</span>
                             llegar <span id="cfgVentana2">15</span>+ min antes = max puntos, proporcional si llega antes pero dentro de la ventana, 0 si llega tarde &nbsp;|&nbsp;
-                            <span class="text-white/50 font-medium">Email:</span>
+                            <span class="text-slate-500 font-medium">Email:</span>
                             se otorga 1 vez por clase al abrir el correo &nbsp;|&nbsp;
-                            <span class="text-white/50 font-medium">Manual:</span>
+                            <span class="text-slate-500 font-medium">Manual:</span>
                             sin limite, asignados desde "Dar Puntos"
                         </p>
                     </div>
@@ -742,12 +740,12 @@
                 <!-- Leaderboard -->
                 <div class="card">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-white/80 text-sm font-semibold">Ranking de Estudiantes</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold">Ranking de Estudiantes</h3>
                         <div class="flex items-center gap-2">
-                            <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-[#C8102E]/15 text-[#ef4356] text-xs font-medium hover:bg-[#C8102E]/25 transition-colors">
+                            <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-[#C8102E]/15 text-[#C8102E] text-xs font-medium hover:bg-[#C8102E]/25 transition-colors">
                                 + Dar Puntos
                             </button>
-                            <button id="recalcularBtn" onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors">
+                            <button id="recalcularBtn" onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-slate-900/[0.04] text-slate-500 text-xs hover:bg-slate-900/[0.07] transition-colors">
                                 Recalcular
                             </button>
                         </div>
@@ -769,7 +767,7 @@
                             <tbody id="leaderboardTable">
                             </tbody>
                         </table>
-                        <div class="text-center py-8 text-white/30 text-sm" id="emptyLeaderboard">
+                        <div class="text-center py-8 text-slate-500 text-sm" id="emptyLeaderboard">
                             No hay datos de calificaciones aun
                         </div>
                     </div>
@@ -795,13 +793,13 @@
                                 <div style="width:8px;height:8px;border-radius:50%;background:#fbbf24;animation:pulse 2s infinite"></div>
                                 <span style="color:rgba(251,191,36,0.8);font-size:14px;font-weight:500" id="quizRespondidos">0 respondidos</span>
                             </div>
-                            <span style="color:rgba(255,255,255,0.3);font-size:12px" id="quizTotalEst">de 0 registrados</span>
+                            <span style="color:rgba(15,23,42,0.45);font-size:12px" id="quizTotalEst">de 0 registrados</span>
                         </div>
                     </div>
                 </div>
                 <div class="card">
                     <h3 style="color:#fff;font-size:18px;font-weight:700;margin-bottom:16px">Quizzes</h3>
-                    <div id="quizzesList"><p style="color:rgba(255,255,255,0.3);font-size:14px;text-align:center;padding:16px 0">Cargando...</p></div>
+                    <div id="quizzesList"><p style="color:rgba(15,23,42,0.45);font-size:14px;text-align:center;padding:16px 0">Cargando...</p></div>
                 </div>
             </div>
 
@@ -818,23 +816,23 @@
                     </div>
                     <div>
                         <h3 style="color:#fff;font-size:18px;font-weight:700">Resultados del Quiz</h3>
-                        <p style="color:rgba(255,255,255,0.4);font-size:12px" id="quizResultadosSub">--</p>
+                        <p style="color:rgba(15,23,42,0.5);font-size:12px" id="quizResultadosSub">--</p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('quizResultadosModal').style.display='none'" style="color:rgba(255,255,255,0.3);background:none;border:none;cursor:pointer;font-size:24px">&times;</button>
+                <button onclick="document.getElementById('quizResultadosModal').style.display='none'" style="color:rgba(15,23,42,0.45);background:none;border:none;cursor:pointer;font-size:24px">&times;</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
-                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;text-align:center">
+                <div style="background:rgba(15,23,42,0.04);border-radius:12px;padding:12px;text-align:center">
                     <p style="color:#fbbf24;font-size:24px;font-weight:700" id="qrPromedio">0</p>
-                    <p style="color:rgba(255,255,255,0.4);font-size:10px">Promedio</p>
+                    <p style="color:rgba(15,23,42,0.5);font-size:10px">Promedio</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;text-align:center">
+                <div style="background:rgba(15,23,42,0.04);border-radius:12px;padding:12px;text-align:center">
                     <p style="color:#34d399;font-size:24px;font-weight:700" id="qrMejor">0</p>
-                    <p style="color:rgba(255,255,255,0.4);font-size:10px">Mejor Nota</p>
+                    <p style="color:rgba(15,23,42,0.5);font-size:10px">Mejor Nota</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;text-align:center">
-                    <p style="color:rgba(255,255,255,0.6);font-size:24px;font-weight:700" id="qrRespondieron">0/0</p>
-                    <p style="color:rgba(255,255,255,0.4);font-size:10px">Respondieron</p>
+                <div style="background:rgba(15,23,42,0.04);border-radius:12px;padding:12px;text-align:center">
+                    <p style="color:rgba(15,23,42,0.7);font-size:24px;font-weight:700" id="qrRespondieron">0/0</p>
+                    <p style="color:rgba(15,23,42,0.5);font-size:10px">Respondieron</p>
                 </div>
             </div>
             <div style="max-height:384px;overflow-y:auto" id="quizLeaderboard"></div>
@@ -847,33 +845,33 @@
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        <svg class="w-5 h-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     </div>
                     <div>
-                        <h2 class="text-white text-lg font-bold">Dar Puntos</h2>
-                        <p class="text-white/40 text-xs">Asignar puntos manualmente</p>
+                        <h2 class="text-slate-900 text-lg font-bold">Dar Puntos</h2>
+                        <p class="text-slate-500 text-xs">Asignar puntos manualmente</p>
                     </div>
                 </div>
-                <button onclick="cerrarDarPuntos()" class="p-2 rounded-lg hover:bg-white/5">
-                    <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button onclick="cerrarDarPuntos()" class="p-2 rounded-lg hover:bg-slate-900/5">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="text-white/50 text-xs font-medium mb-1 block">Estudiante</label>
-                    <select id="puntosEstudiante" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all [&>option]:text-black [&>option]:bg-white">
+                    <label class="text-slate-500 text-xs font-medium mb-1 block">Estudiante</label>
+                    <select id="puntosEstudiante" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all [&>option]:text-black [&>option]:bg-white">
                         <option value="">Seleccionar estudiante...</option>
                     </select>
                 </div>
                 <div>
-                    <label class="text-white/50 text-xs font-medium mb-1 block">Puntos</label>
+                    <label class="text-slate-500 text-xs font-medium mb-1 block">Puntos</label>
                     <input type="number" id="puntosCantidad" min="1" max="100" value="5" placeholder="Cantidad de puntos"
-                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
+                        class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                 </div>
                 <div>
-                    <label class="text-white/50 text-xs font-medium mb-1 block">Motivo</label>
+                    <label class="text-slate-500 text-xs font-medium mb-1 block">Motivo</label>
                     <select id="puntosMotivo" onchange="if(this.value==='otro')document.getElementById('puntosMotivoOtro').classList.remove('hidden');else document.getElementById('puntosMotivoOtro').classList.add('hidden');"
-                        class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
+                        class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                         <option value="Participacion en clase">Participacion en clase</option>
                         <option value="Quiz / Taller">Quiz / Taller</option>
                         <option value="Exposicion">Exposicion</option>
@@ -882,11 +880,11 @@
                         <option value="otro">Otro...</option>
                     </select>
                     <input type="text" id="puntosMotivoOtro" placeholder="Escribe el motivo"
-                        class="hidden w-full mt-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
+                        class="hidden w-full mt-2 px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
                 </div>
                 <div id="puntosResult" class="hidden rounded-xl p-3 text-sm"></div>
                 <button onclick="enviarPuntos()" id="enviarPuntosBtn"
-                    class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity">
                     Asignar Puntos
                 </button>
             </div>
@@ -906,85 +904,85 @@
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        <svg class="w-5 h-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </div>
                     <div>
-                        <h2 class="text-white text-lg font-bold">Enviar PDF por Email</h2>
-                        <p class="text-white/40 text-xs" id="emailRecipientCount">0 destinatarios</p>
+                        <h2 class="text-slate-900 text-lg font-bold">Enviar PDF por Email</h2>
+                        <p class="text-slate-500 text-xs" id="emailRecipientCount">0 destinatarios</p>
                     </div>
                 </div>
-                <button onclick="closeEmailModal()" class="p-2 rounded-lg hover:bg-white/5">
-                    <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button onclick="closeEmailModal()" class="p-2 rounded-lg hover:bg-slate-900/5">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
             <!-- Recipients preview -->
-            <div class="bg-white/3 rounded-xl p-3 mb-4">
+            <div class="bg-slate-900/[0.03] rounded-xl p-3 mb-4">
                 <div class="flex items-center justify-between mb-2">
-                    <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Destinatarios</p>
+                    <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Destinatarios</p>
                     <div class="flex gap-2">
-                        <button onclick="emailSelectAll()" class="text-[10px] text-[#ef4356] hover:text-white transition-colors">Todos</button>
-                        <span class="text-white/10 text-[10px]">|</span>
-                        <button onclick="emailDeselectAll()" class="text-[10px] text-[#ef4356] hover:text-white transition-colors">Ninguno</button>
+                        <button onclick="emailSelectAll()" class="text-[10px] text-[#C8102E] hover:text-slate-900 transition-colors">Todos</button>
+                        <span class="text-slate-500 text-[10px]">|</span>
+                        <button onclick="emailDeselectAll()" class="text-[10px] text-[#C8102E] hover:text-slate-900 transition-colors">Ninguno</button>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1" id="emailRecipientsList" style="max-height:120px;overflow-y:auto;"></div>
                 <!-- Add manual email -->
                 <div class="flex gap-2 mt-2">
                     <input type="email" id="emailManualInput" placeholder="Agregar correo manualmente..."
-                        class="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-[#C8102E]/70 transition-all"
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-[11px] focus:outline-none focus:border-[#C8102E]/70 transition-all"
                         onkeydown="if(event.key==='Enter')addManualEmail()">
-                    <button onclick="addManualEmail()" class="px-3 py-1.5 rounded-lg bg-[#C8102E]/20 text-[#ef4356] text-[11px] hover:bg-[#C8102E]/30 transition-colors">+ Agregar</button>
+                    <button onclick="addManualEmail()" class="px-3 py-1.5 rounded-lg bg-[#C8102E]/20 text-[#C8102E] text-[11px] hover:bg-[#C8102E]/30 transition-colors">+ Agregar</button>
                 </div>
             </div>
 
             <!-- Clase asociada -->
             <div class="mb-4">
-                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Clase asociada (tracking)</label>
-                <select id="emailClaseId" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all [&>option]:text-black [&>option]:bg-white">
+                <label class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1 block">Clase asociada (tracking)</label>
+                <select id="emailClaseId" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all [&>option]:text-black [&>option]:bg-white">
                     <option value="">Sin clase asociada</option>
                 </select>
             </div>
 
             <!-- Subject -->
             <div class="mb-4">
-                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Asunto</label>
-                <input type="text" id="emailSubject" placeholder="Resumen Clase - Marketing Digital Avanzado"
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
+                <label class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1 block">Asunto</label>
+                <input type="text" id="emailSubject" placeholder="Resumen Clase - E-Commerce"
+                    class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all">
             </div>
 
             <!-- Message -->
             <div class="mb-4">
-                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Mensaje</label>
+                <label class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1 block">Mensaje</label>
                 <textarea id="emailMessage" rows="3" placeholder="Adjunto encontraras el resumen de la clase de hoy..."
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all resize-none"></textarea>
+                    class="w-full px-4 py-2.5 rounded-xl bg-slate-900/[0.04] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all resize-none"></textarea>
             </div>
 
             <!-- PDF Upload -->
             <div class="mb-5">
-                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Archivos PDF <span class="text-white/20">(max 3)</span></label>
+                <label class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1 block">Archivos PDF <span class="text-slate-500">(max 3)</span></label>
                 <div id="emailDropZone" onclick="document.getElementById('emailFileInput').click()"
-                    class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center cursor-pointer hover:border-[#C8102E]/40 hover:bg-white/3 transition-all">
+                    class="border-2 border-dashed border-slate-900/10 rounded-xl p-4 text-center cursor-pointer hover:border-[#C8102E]/40 hover:bg-slate-900/[0.03] transition-all">
                     <input type="file" id="emailFileInput" accept=".pdf" multiple class="hidden" onchange="handlePdfSelect(event)">
                     <div id="emailDropContent">
-                        <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                        <p class="text-white/40 text-sm">Arrastra PDFs aqui o haz click para seleccionar</p>
-                        <p class="text-white/20 text-xs mt-1">Maximo 7MB por archivo, hasta 3 archivos</p>
+                        <svg class="w-8 h-8 text-slate-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                        <p class="text-slate-500 text-sm">Arrastra PDFs aqui o haz click para seleccionar</p>
+                        <p class="text-slate-500 text-xs mt-1">Maximo 7MB por archivo, hasta 3 archivos</p>
                     </div>
                 </div>
                 <div id="emailFilesList" class="space-y-2 mt-2"></div>
             </div>
 
             <!-- Error message -->
-            <div id="emailError" class="hidden mb-4 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm"></div>
+            <div id="emailError" class="hidden mb-4 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-sm"></div>
 
             <!-- Progress -->
             <div id="emailProgress" class="hidden mb-4">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-white/60 text-xs" id="emailProgressText">Enviando...</span>
-                    <span class="text-white/40 text-xs" id="emailProgressCount">0/0</span>
+                    <span class="text-slate-500 text-xs" id="emailProgressText">Enviando...</span>
+                    <span class="text-slate-500 text-xs" id="emailProgressCount">0/0</span>
                 </div>
-                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                <div class="w-full h-2 bg-slate-900/[0.04] rounded-full overflow-hidden">
                     <div class="h-full bg-gradient-to-r from-[#C8102E] to-[#9B0C23] rounded-full transition-all duration-500" id="emailProgressBar" style="width:0%"></div>
                 </div>
             </div>
@@ -994,7 +992,7 @@
 
             <!-- Send button -->
             <button id="emailSendBtn" onclick="sendPdfEmail()"
-                class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 <span id="emailSendBtnText">Enviar a 0 estudiantes</span>
             </button>
@@ -1192,26 +1190,28 @@
         // ========================================
         // COLORS
         // ========================================
+        // Paleta del tema blanco y rojo: rampa de rojos UAO alternada con
+        // neutros, para que las categorias sigan distinguiendose sobre blanco.
         const CHART_COLORS = [
-            'rgba(99, 102, 241, 0.8)',   // indigo
-            'rgba(139, 92, 246, 0.8)',   // purple
-            'rgba(6, 182, 212, 0.8)',    // cyan
-            'rgba(16, 185, 129, 0.8)',   // green
-            'rgba(245, 158, 11, 0.8)',   // amber
-            'rgba(239, 68, 68, 0.8)',    // red
-            'rgba(236, 72, 153, 0.8)',   // pink
-            'rgba(59, 130, 246, 0.8)',   // blue
-            'rgba(168, 85, 247, 0.8)',   // violet
-            'rgba(34, 211, 238, 0.8)',   // cyan-light
-            'rgba(52, 211, 153, 0.8)',   // emerald
-            'rgba(251, 191, 36, 0.8)',   // yellow
-            'rgba(248, 113, 113, 0.8)', // red-light
-            'rgba(192, 132, 252, 0.8)', // purple-light
+            'rgba(200, 16, 46, 0.85)',   // rojo UAO
+            'rgba(71, 85, 105, 0.85)',   // pizarra
+            'rgba(226, 67, 87, 0.85)',   // rojo claro
+            'rgba(148, 163, 184, 0.85)', // gris
+            'rgba(155, 12, 35, 0.85)',   // rojo oscuro
+            'rgba(100, 116, 139, 0.85)', // pizarra media
+            'rgba(242, 122, 135, 0.85)', // rosa
+            'rgba(51, 65, 85, 0.85)',    // pizarra oscura
+            'rgba(122, 10, 28, 0.85)',   // granate
+            'rgba(203, 213, 225, 0.9)',  // gris claro
+            'rgba(217, 83, 106, 0.85)',  // rojo medio
+            'rgba(30, 41, 59, 0.85)',    // casi negro
+            'rgba(244, 184, 192, 0.9)',  // rosa palido
+            'rgba(166, 58, 72, 0.85)',   // ladrillo
         ];
 
         const AVATAR_COLORS = [
-            'bg-indigo-500', 'bg-purple-500', 'bg-cyan-500', 'bg-emerald-500',
-            'bg-amber-500', 'bg-rose-500', 'bg-pink-500', 'bg-blue-500'
+            'bg-[#C8102E]', 'bg-[#9B0C23]', 'bg-[#E24357]', 'bg-[#7A0A1C]',
+            'bg-[#A63A48]', 'bg-[#D9536A]', 'bg-[#8C1C2E]', 'bg-[#C25E6C]'
         ];
 
         // ========================================
@@ -1282,7 +1282,7 @@
             updateCalificaciones();
             const el = document.getElementById('lastUpdate');
             el.textContent = 'Sin conexion con el backend — ' + detalle;
-            el.style.color = '#ef4356';
+            el.style.color = '#C8102E';
         }
 
         /** Marca la carga como correcta y limpia el aviso de error anterior. */
@@ -1416,7 +1416,7 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11, family: 'Inter' }, padding: 12, usePointStyle: true, pointStyle: 'circle' } },
+                legend: { labels: { color: 'rgba(15,23,42,0.6)', font: { size: 11, family: 'Inter' }, padding: 12, usePointStyle: true, pointStyle: 'circle' } },
             }
         };
 
@@ -1445,7 +1445,7 @@
                     labels: Object.keys(sortedSectors),
                     datasets: [{ data: Object.values(sortedSectors), backgroundColor: CHART_COLORS, borderWidth: 0, borderRadius: 6 }]
                 },
-                options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } }, grid: { display: false } } } }
+                options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(15,23,42,0.5)', font: { size: 10 } }, grid: { color: 'rgba(15,23,42,0.04)' } }, y: { ticks: { color: 'rgba(15,23,42,0.6)', font: { size: 11 } }, grid: { display: false } } } }
             });
 
             // Tamano Bar
@@ -1459,7 +1459,7 @@
                     labels: Object.keys(orderedTamano).map(k => k + ' emp.'),
                     datasets: [{ data: Object.values(orderedTamano), backgroundColor: [CHART_COLORS[0], CHART_COLORS[2], CHART_COLORS[4], CHART_COLORS[5]], borderWidth: 0, borderRadius: 6 }]
                 },
-                options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } }, grid: { display: false } }, y: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } } } }
+                options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(15,23,42,0.6)', font: { size: 11 } }, grid: { display: false } }, y: { ticks: { color: 'rgba(15,23,42,0.5)', font: { size: 10 } }, grid: { color: 'rgba(15,23,42,0.04)' } } } }
             });
 
             // Canales horizontal bar
@@ -1479,7 +1479,7 @@
                     labels: Object.keys(sortedCanales),
                     datasets: [{ data: Object.values(sortedCanales), backgroundColor: CHART_COLORS, borderWidth: 0, borderRadius: 6 }]
                 },
-                options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } }, grid: { display: false } } } }
+                options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(15,23,42,0.5)', font: { size: 10 } }, grid: { color: 'rgba(15,23,42,0.04)' } }, y: { ticks: { color: 'rgba(15,23,42,0.6)', font: { size: 11 } }, grid: { display: false } } } }
             });
 
             // CRM Pie
@@ -1543,18 +1543,18 @@
                         <div class="flex items-center gap-3">
                             ${avatar}
                             <div>
-                                <p class="text-white text-sm font-medium">${esc(d.nombre)}</p>
-                                <p class="text-white/40 text-xs">${esc(d.email)}</p>
+                                <p class="text-slate-900 text-sm font-medium">${esc(d.nombre)}</p>
+                                <p class="text-slate-500 text-xs">${esc(d.email)}</p>
                             </div>
                         </div>
                     </td>
                     <td class="hidden sm:table-cell">${esc(d.empresa || '--')}</td>
                     <td class="hidden md:table-cell">
-                        <span class="inline-block px-2 py-0.5 rounded-md text-xs bg-white/5">${esc(d.sector || '--')}</span>
+                        <span class="inline-block px-2 py-0.5 rounded-md text-xs bg-slate-900/[0.04]">${esc(d.sector || '--')}</span>
                     </td>
                     <td class="hidden lg:table-cell">${esc(d.ciudad || '--')}</td>
                     <td class="hidden lg:table-cell">${esc(d.genero || '--')}</td>
-                    <td class="text-white/40 text-xs">${date}</td>
+                    <td class="text-slate-500 text-xs">${date}</td>
                 </tr>`;
             }).join('');
         }
@@ -1653,85 +1653,85 @@
                     <div class="flex items-center gap-4">
                         <div class="avatar ${color}" style="width:52px;height:52px;font-size:18px;border-radius:14px;">${esc(initials)}</div>
                         <div>
-                            <h2 class="text-white text-lg font-bold">${esc(d.nombre)}</h2>
-                            <p class="text-white/50 text-sm">${esc(d.cargo)} en ${esc(d.empresa)}</p>
+                            <h2 class="text-slate-900 text-lg font-bold">${esc(d.nombre)}</h2>
+                            <p class="text-slate-500 text-sm">${esc(d.cargo)} en ${esc(d.empresa)}</p>
                         </div>
                     </div>
-                    <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-white/5">
-                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-slate-900/5">
+                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
 
                 <!-- Info grid -->
                 <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Email</p>
-                        <p class="text-white/80 text-sm mt-1">${esc(d.email)}</p>
+                    <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Email</p>
+                        <p class="text-slate-700 text-sm mt-1">${esc(d.email)}</p>
                     </div>
-                    <div class="bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Celular</p>
-                        <p class="text-white/80 text-sm mt-1">${esc(d.celular)}</p>
+                    <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Celular</p>
+                        <p class="text-slate-700 text-sm mt-1">${esc(d.celular)}</p>
                     </div>
-                    <div class="bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Ciudad</p>
-                        <p class="text-white/80 text-sm mt-1">${esc(d.ciudad)}</p>
+                    <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Ciudad</p>
+                        <p class="text-slate-700 text-sm mt-1">${esc(d.ciudad)}</p>
                     </div>
-                    <div class="bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Edad</p>
-                        <p class="text-white/80 text-sm mt-1">${age}</p>
+                    <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Edad</p>
+                        <p class="text-slate-700 text-sm mt-1">${age}</p>
                     </div>
-                    <div class="bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Sector</p>
-                        <p class="text-white/80 text-sm mt-1">${esc(d.sector)}</p>
+                    <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Sector</p>
+                        <p class="text-slate-700 text-sm mt-1">${esc(d.sector)}</p>
                     </div>
-                    <div class="bg-white/3 rounded-xl p-3">
-                        <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Tamano</p>
-                        <p class="text-white/80 text-sm mt-1">${esc(d.tamano)} empleados</p>
+                    <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                        <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Tamano</p>
+                        <p class="text-slate-700 text-sm mt-1">${esc(d.tamano)} empleados</p>
                     </div>
                 </div>
 
                 <!-- Canvas de Negocio -->
                 <div class="mb-6">
-                    <h3 class="text-white/60 text-xs font-semibold uppercase tracking-wider mb-3">Canvas de Negocio</h3>
+                    <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">Canvas de Negocio</h3>
                     <div class="space-y-3">
-                        <div class="bg-white/3 rounded-xl p-3">
-                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Que Vende</p>
-                            <p class="text-white/70 text-sm mt-1">${esc(d.queVende)}</p>
+                        <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                            <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Que Vende</p>
+                            <p class="text-slate-600 text-sm mt-1">${esc(d.queVende)}</p>
                         </div>
-                        <div class="bg-white/3 rounded-xl p-3">
-                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Cliente Ideal</p>
-                            <p class="text-white/70 text-sm mt-1">${esc(d.clienteIdeal)}</p>
+                        <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                            <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Cliente Ideal</p>
+                            <p class="text-slate-600 text-sm mt-1">${esc(d.clienteIdeal)}</p>
                         </div>
-                        <div class="bg-white/3 rounded-xl p-3">
-                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Canales de Captacion</p>
+                        <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                            <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Canales de Captacion</p>
                             <div class="flex flex-wrap gap-1 mt-1">
-                                ${(d.canalesCaptacion || '').split(', ').map(c => `<span class="inline-block px-2 py-0.5 rounded-md text-xs bg-[#C8102E]/15 text-[#ef4356]">${c}</span>`).join('')}
+                                ${(d.canalesCaptacion || '').split(', ').map(c => `<span class="inline-block px-2 py-0.5 rounded-md text-xs bg-[#C8102E]/15 text-[#C8102E]">${c}</span>`).join('')}
                             </div>
                         </div>
-                        <div class="bg-white/3 rounded-xl p-3">
-                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">CRM Actual</p>
-                            <p class="text-white/70 text-sm mt-1">${esc(d.usaCRM)}${d.cualCRM ? ' - ' + esc(d.cualCRM) : ''}</p>
+                        <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                            <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">CRM Actual</p>
+                            <p class="text-slate-600 text-sm mt-1">${esc(d.usaCRM)}${d.cualCRM ? ' - ' + esc(d.cualCRM) : ''}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Expectativas -->
                 <div class="mb-6">
-                    <h3 class="text-white/60 text-xs font-semibold uppercase tracking-wider mb-3">Expectativas</h3>
+                    <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">Expectativas</h3>
                     <div class="space-y-3">
-                        <div class="bg-white/3 rounded-xl p-3">
-                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Que Espera Aprender</p>
-                            <p class="text-white/70 text-sm mt-1">${esc(d.expectativas)}</p>
+                        <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                            <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Que Espera Aprender</p>
+                            <p class="text-slate-600 text-sm mt-1">${esc(d.expectativas)}</p>
                         </div>
-                        <div class="bg-white/3 rounded-xl p-3">
-                            <p class="text-white/30 text-[10px] uppercase tracking-wider font-semibold">Mayor Reto</p>
-                            <p class="text-white/70 text-sm mt-1">${esc(d.retosClientes)}</p>
+                        <div class="bg-slate-900/[0.03] rounded-xl p-3">
+                            <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">Mayor Reto</p>
+                            <p class="text-slate-600 text-sm mt-1">${esc(d.retosClientes)}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Timeline -->
-                <div class="flex items-center gap-2 text-white/30 text-xs">
+                <div class="flex items-center gap-2 text-slate-500 text-xs">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Registrado: ${date}
                 </div>
@@ -1806,12 +1806,12 @@
                     return `
                         <div class="flex items-center justify-between mb-1">
                             <div class="flex items-center gap-2 flex-1 min-w-0">
-                                <span class="text-white/70 text-sm truncate">${label}</span>
-                                <span class="text-white/30 text-xs">(${names})</span>
+                                <span class="text-slate-600 text-sm truncate">${label}</span>
+                                <span class="text-slate-500 text-xs">(${names})</span>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                <span class="text-white/50 text-xs">${count}</span>
-                                <span class="text-white/30 text-xs">${pct}%</span>
+                                <span class="text-slate-500 text-xs">${count}</span>
+                                <span class="text-slate-500 text-xs">${pct}%</span>
                             </div>
                         </div>
                         <div class="segment-bar mb-3">
@@ -1822,7 +1822,7 @@
 
                 return `
                     <div class="segment-card">
-                        <h3 class="text-white/80 text-sm font-semibold mb-4">${config.title}</h3>
+                        <h3 class="text-slate-700 text-sm font-semibold mb-4">${config.title}</h3>
                         ${items}
                     </div>
                 `;
@@ -1878,7 +1878,7 @@
                 .slice(0, 15);
 
             if (sorted.length === 0) {
-                container.innerHTML = '<p class="text-white/20 text-sm">Sin datos aun</p>';
+                container.innerHTML = '<p class="text-slate-500 text-sm">Sin datos aun</p>';
                 return;
             }
 
@@ -1939,10 +1939,10 @@
                 <div class="drilldown-panel">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="text-[#ef4356] text-xs font-semibold uppercase tracking-wider">Coincidencias para</span>
-                            <span class="px-2 py-0.5 rounded-md text-xs bg-[#C8102E]/20 text-[#ef4356] font-medium">"${keyword}"</span>
+                            <span class="text-[#C8102E] text-xs font-semibold uppercase tracking-wider">Coincidencias para</span>
+                            <span class="px-2 py-0.5 rounded-md text-xs bg-[#C8102E]/20 text-[#C8102E] font-medium">"${keyword}"</span>
                         </div>
-                        <span class="text-white/40 text-xs">${matches.length} alumno${matches.length !== 1 ? 's' : ''}</span>
+                        <span class="text-slate-500 text-xs">${matches.length} alumno${matches.length !== 1 ? 's' : ''}</span>
                     </div>
                     <div class="space-y-1">
                         ${matches.map(d => {
@@ -1957,9 +1957,9 @@
                                 <div class="drilldown-student" onclick="openContact(${idx})">
                                     <div class="avatar ${colorClass}" style="width:32px;height:32px;font-size:11px;border-radius:8px;">${esc(initials)}</div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-white text-sm font-medium">${esc(d.nombre)}</p>
-                                        <p class="text-white/40 text-xs truncate">${esc(d.empresa)} · ${esc(d.cargo)}</p>
-                                        <p class="text-white/50 text-xs mt-1 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${highlighted}</p>
+                                        <p class="text-slate-900 text-sm font-medium">${esc(d.nombre)}</p>
+                                        <p class="text-slate-500 text-xs truncate">${esc(d.empresa)} · ${esc(d.cargo)}</p>
+                                        <p class="text-slate-500 text-xs mt-1 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${highlighted}</p>
                                     </div>
                                 </div>`;
                         }).join('')}
@@ -1984,7 +1984,7 @@
                 overview: ['Overview', 'Resumen general del curso'],
                 contacts: ['Contactos', 'Todos los estudiantes registrados'],
                 segments: ['Segmentos', 'Segmentacion automatica del grupo'],
-                insights: ['Insights de Marketing Digital', 'Estado digital del grupo'],
+                insights: ['Insights de E-Commerce', 'Estado digital del grupo'],
                 clases: ['Clases', 'Gestion de sesiones y asistencia'],
                 calificaciones: ['Calificaciones', 'Ranking y puntos de estudiantes'],
                 quiz: ['Quiz', 'Crear y gestionar quizzes']
@@ -2127,7 +2127,7 @@
 
             // Default subject
             const today = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('emailSubject').value = `Resumen de Clase ${today} - Marketing Digital Avanzado`;
+            document.getElementById('emailSubject').value = `Resumen de Clase ${today} - E-Commerce`;
             document.getElementById('emailMessage').value = '';
 
             // Show modal
@@ -2141,7 +2141,7 @@
             list.innerHTML = allEmails.map(e => {
                 const active = emailSelectedRecipients.has(e);
                 const isManual = emailManualRecipients.has(e);
-                return `<span onclick="toggleEmailRecipient('${e}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] cursor-pointer transition-all ${active ? (isManual ? 'bg-emerald-500/20 text-emerald-300' : 'bg-[#C8102E]/20 text-[#ef4356]') : 'bg-white/5 text-white/20 line-through'}">${e}<svg class="w-3 h-3 ${active ? (isManual ? 'text-emerald-400' : 'text-indigo-400') : 'text-white/10'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${active ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}"/></svg></span>`;
+                return `<span onclick="toggleEmailRecipient('${e}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] cursor-pointer transition-all ${active ? (isManual ? 'bg-emerald-500/20 text-emerald-700' : 'bg-[#C8102E]/20 text-[#C8102E]') : 'bg-slate-900/[0.04] text-slate-500 line-through'}">${e}<svg class="w-3 h-3 ${active ? (isManual ? 'text-emerald-700' : 'text-indigo-600') : 'text-slate-500'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${active ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}"/></svg></span>`;
             }).join('');
             updateEmailCount();
         }
@@ -2240,14 +2240,14 @@
             }
             document.getElementById('emailDropContent').classList.add('hidden');
             list.innerHTML = selectedPdfFiles.map((entry, i) => `
-                <div class="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2">
-                    <svg class="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <div class="flex items-center gap-3 bg-slate-900/[0.04] rounded-xl px-3 py-2">
+                    <svg class="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <div class="flex-1 min-w-0">
-                        <p class="text-white text-xs font-medium truncate">${entry.file.name}</p>
-                        <p class="text-white/40 text-[10px]">${(entry.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                        <p class="text-slate-900 text-xs font-medium truncate">${entry.file.name}</p>
+                        <p class="text-slate-500 text-[10px]">${(entry.file.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
-                    <button onclick="removePdfFile(${i})" class="p-1 rounded-lg hover:bg-white/10 flex-shrink-0">
-                        <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <button onclick="removePdfFile(${i})" class="p-1 rounded-lg hover:bg-slate-900/[0.07] flex-shrink-0">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
             `).join('');
@@ -2333,7 +2333,7 @@
                         attachments: selectedPdfFiles.map(f => ({ base64: f.base64, name: f.file.name })),
                         subject,
                         htmlBody,
-                        senderName: 'Marketing Digital Avanzado - UAO',
+                        senderName: 'E-Commerce - UAO',
                         claseId: document.getElementById('emailClaseId').value || undefined
                     })
                 });
@@ -2365,7 +2365,7 @@
                     resultEl.style.borderColor = 'rgba(245,158,11,0.2)';
                     resultEl.style.color = '#fcd34d';
                     resultEl.innerHTML = `Enviados: ${result.sent} | Fallidos: ${result.failed}<br>` +
-                        result.errors.map(e => `<span class="text-xs text-red-300">${esc(e.email)}: ${esc(e.error)}</span>`).join('<br>');
+                        result.errors.map(e => `<span class="text-xs text-red-600">${esc(e.email)}: ${esc(e.error)}</span>`).join('<br>');
                 }
 
             } catch (err) {
@@ -2584,7 +2584,7 @@
         function updateClasesView() {
             const grid = document.getElementById('clasesGrid');
             if (clasesData.length === 0) {
-                grid.innerHTML = '<div class="text-center py-8 text-white/30 text-sm col-span-full">No hay clases creadas aun</div>';
+                grid.innerHTML = '<div class="text-center py-8 text-slate-500 text-sm col-span-full">No hay clases creadas aun</div>';
                 return;
             }
 
@@ -2611,27 +2611,27 @@
             grid.innerHTML = clasesData.sort((a, b) => (Number(b.Numero) || 0) - (Number(a.Numero) || 0)).map(c => {
                 const estado = c.Estado || 'programada';
                 const estadoColors = {
-                    programada: 'bg-white/10 text-white/50',
-                    activa: 'bg-emerald-500/20 text-emerald-300',
-                    finalizada: 'bg-[#C8102E]/15 text-[#ef4356]'
+                    programada: 'bg-slate-900/5 text-slate-500',
+                    activa: 'bg-emerald-500/20 text-emerald-700',
+                    finalizada: 'bg-[#C8102E]/15 text-[#C8102E]'
                 };
                 const fecha = c.Fecha ? new Date(c.Fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '--';
 
                 let actionBtn = '';
                 if (estado === 'programada') {
-                    actionBtn = `<button onclick="activarAsistencia('${esc(c.ClaseId)}')" class="w-full mt-3 py-2 rounded-lg bg-emerald-500/15 text-emerald-300 text-xs font-medium hover:bg-emerald-500/25 transition-colors">Activar Asistencia</button>`;
+                    actionBtn = `<button onclick="activarAsistencia('${esc(c.ClaseId)}')" class="w-full mt-3 py-2 rounded-lg bg-emerald-500/15 text-emerald-700 text-xs font-medium hover:bg-emerald-500/25 transition-colors">Activar Asistencia</button>`;
                 } else if (estado === 'finalizada') {
-                    actionBtn = `<button onclick="verAsistenciaClase('${esc(c.ClaseId)}')" class="w-full mt-3 py-2 rounded-lg bg-white/5 text-white/50 text-xs font-medium hover:bg-white/10 transition-colors">Ver Asistencia</button>`;
+                    actionBtn = `<button onclick="verAsistenciaClase('${esc(c.ClaseId)}')" class="w-full mt-3 py-2 rounded-lg bg-slate-900/[0.04] text-slate-500 text-xs font-medium hover:bg-slate-900/[0.07] transition-colors">Ver Asistencia</button>`;
                 }
 
                 return `
                 <div class="card">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-white/40 text-xs font-mono">Clase ${esc(c.Numero)}</span>
+                        <span class="text-slate-500 text-xs font-mono">Clase ${esc(c.Numero)}</span>
                         <span class="px-2 py-0.5 rounded-md text-[10px] font-medium ${estadoColors[estado] || estadoColors.programada}">${estado}</span>
                     </div>
-                    <h4 class="text-white font-semibold text-sm mb-1">${esc(c.Titulo || 'Sin titulo')}</h4>
-                    <div class="flex items-center gap-3 text-white/40 text-xs">
+                    <h4 class="text-slate-900 font-semibold text-sm mb-1">${esc(c.Titulo || 'Sin titulo')}</h4>
+                    <div class="flex items-center gap-3 text-slate-500 text-xs">
                         <span>${fecha}</span>
                         ${c.HoraInicio ? `<span>${formatHora(c.HoraInicio)}</span>` : ''}
                     </div>
@@ -2648,30 +2648,30 @@
             let html = `
                 <div class="flex justify-between items-center mb-4">
                     <div>
-                        <h2 class="text-white text-lg font-bold">${titulo}</h2>
-                        <p class="text-white/40 text-sm">${asist.length} asistentes</p>
+                        <h2 class="text-slate-900 text-lg font-bold">${titulo}</h2>
+                        <p class="text-slate-500 text-sm">${asist.length} asistentes</p>
                     </div>
-                    <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-white/5">
-                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-slate-900/5">
+                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>`;
 
             if (asist.length === 0) {
-                html += '<p class="text-white/30 text-sm text-center py-8">No hay registros de asistencia</p>';
+                html += '<p class="text-slate-500 text-sm text-center py-8">No hay registros de asistencia</p>';
             } else {
                 html += '<div class="space-y-2">';
                 asist.forEach(a => {
                     const mins = Number(a.MinutosAntes) || 0;
                     const pts = Number(a.PuntosPuntualidad) || 0;
                     const puntualLabel = mins > 0 ? `${mins} min temprano` : mins < 0 ? `${Math.abs(mins)} min tarde` : 'A tiempo';
-                    const puntualColor = mins > 0 ? 'text-emerald-400' : mins < 0 ? 'text-amber-400' : 'text-white/50';
+                    const puntualColor = mins > 0 ? 'text-emerald-700' : mins < 0 ? 'text-amber-600' : 'text-slate-500';
                     html += `
-                    <div class="flex items-center justify-between bg-white/3 rounded-xl p-3">
+                    <div class="flex items-center justify-between bg-slate-900/[0.03] rounded-xl p-3">
                         <div>
-                            <p class="text-white text-sm font-medium">${esc(a.Nombre || a.Email)}</p>
+                            <p class="text-slate-900 text-sm font-medium">${esc(a.Nombre || a.Email)}</p>
                             <p class="${puntualColor} text-xs">${puntualLabel}</p>
                         </div>
-                        <span class="text-[#ef4356] text-sm font-bold">${pts} pts</span>
+                        <span class="text-[#C8102E] text-sm font-bold">${pts} pts</span>
                     </div>`;
                 });
                 html += '</div>';
@@ -2721,8 +2721,8 @@
 
             tbody.innerHTML = sorted.map((s, i) => {
                 const rank = i + 1;
-                const medalColors = ['text-yellow-400', 'text-gray-300', 'text-amber-600'];
-                const rankClass = i < 3 ? `font-bold ${medalColors[i]}` : 'text-white/40';
+                const medalColors = ['text-yellow-600', 'text-gray-600', 'text-amber-600'];
+                const rankClass = i < 3 ? `font-bold ${medalColors[i]}` : 'text-slate-500';
                 const initials = getInitials(s.Nombre);
                 const colorClass = AVATAR_COLORS[i % AVATAR_COLORS.length];
                 // Buscar fotoUrl en allData
@@ -2739,17 +2739,17 @@
                         <div class="flex items-center gap-3">
                             ${avatar}
                             <div>
-                                <p class="text-white text-sm font-medium">${esc(s.Nombre || s.Email)}</p>
-                                <p class="text-white/40 text-xs">${esc(s.Email)}</p>
+                                <p class="text-slate-900 text-sm font-medium">${esc(s.Nombre || s.Email)}</p>
+                                <p class="text-slate-500 text-xs">${esc(s.Email)}</p>
                             </div>
                         </div>
                     </td>
-                    <td><span class="text-[#ef4356] font-bold">${Number(s.TotalPuntos) || 0}</span></td>
-                    <td class="hidden sm:table-cell text-white/60">${Number(s.PuntosAsistencia) || 0}</td>
-                    <td class="hidden md:table-cell text-white/60">${Number(s.PuntosPuntualidad) || 0}</td>
-                    <td class="hidden lg:table-cell text-white/60">${Number(s.PuntosEmail) || 0}</td>
-                    <td class="hidden lg:table-cell text-amber-300/80">${Number(s.PuntosManuales) || 0}</td>
-                    <td><span class="px-2 py-0.5 rounded-md text-xs ${(parseInt(s.PorcentajeAsistencia) || 0) >= 80 ? 'bg-emerald-500/15 text-emerald-300' : (parseInt(s.PorcentajeAsistencia) || 0) >= 50 ? 'bg-amber-500/15 text-amber-300' : 'bg-red-500/15 text-red-300'}">${esc(s.PorcentajeAsistencia || '0%')}</span></td>
+                    <td><span class="text-[#C8102E] font-bold">${Number(s.TotalPuntos) || 0}</span></td>
+                    <td class="hidden sm:table-cell text-slate-500">${Number(s.PuntosAsistencia) || 0}</td>
+                    <td class="hidden md:table-cell text-slate-500">${Number(s.PuntosPuntualidad) || 0}</td>
+                    <td class="hidden lg:table-cell text-slate-500">${Number(s.PuntosEmail) || 0}</td>
+                    <td class="hidden lg:table-cell text-amber-600/80">${Number(s.PuntosManuales) || 0}</td>
+                    <td><span class="px-2 py-0.5 rounded-md text-xs ${(parseInt(s.PorcentajeAsistencia) || 0) >= 80 ? 'bg-emerald-500/15 text-emerald-700' : (parseInt(s.PorcentajeAsistencia) || 0) >= 50 ? 'bg-amber-500/15 text-amber-600' : 'bg-red-500/15 text-red-600'}">${esc(s.PorcentajeAsistencia || '0%')}</span></td>
                 </tr>`;
             }).join('');
         }
@@ -2846,7 +2846,7 @@
             return `
             <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
                 <div style="background:linear-gradient(135deg,#C8102E,#9B0C23);padding:32px 24px;border-radius:8px 8px 0 0;">
-                    <h1 style="color:white;margin:0;font-size:20px;font-weight:700;">Marketing Digital Avanzado</h1>
+                    <h1 style="color:white;margin:0;font-size:20px;font-weight:700;">E-Commerce</h1>
                     <p style="color:rgba(255,255,255,0.8);margin:8px 0 0;font-size:14px;">Universidad Autonoma de Occidente</p>
                 </div>
                 <div style="padding:32px 24px;background:#ffffff;">
@@ -2856,7 +2856,7 @@
                     <p style="color:#4b5563;font-size:15px;line-height:1.6;margin:0;">Saludos!</p>
                 </div>
                 <div style="padding:20px 24px;background:#f9fafb;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;">
-                    <p style="color:#9ca3af;font-size:12px;margin:0;">Este correo fue enviado desde la plataforma del curso Marketing Digital Avanzado - UAO.</p>
+                    <p style="color:#9ca3af;font-size:12px;margin:0;">Este correo fue enviado desde la plataforma del curso E-Commerce - UAO.</p>
                 </div>
             </div>`;
         }
@@ -2899,18 +2899,18 @@
             }
 
             if (otros.length === 0 && !activo) {
-                list.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:14px;text-align:center;padding:16px 0">No hay quizzes creados. Agregalos en la hoja Quizzes.</p>';
+                list.innerHTML = '<p style="color:rgba(15,23,42,0.45);font-size:14px;text-align:center;padding:16px 0">No hay quizzes creados. Agregalos en la hoja Quizzes.</p>';
                 return;
             }
 
             var html = '';
             for (var j = 0; j < otros.length; j++) {
                 var q = otros[j];
-                var color = q.Estado === 'cerrado' ? 'color:#fca5a5' : 'color:rgba(255,255,255,0.5)';
+                var color = q.Estado === 'cerrado' ? 'color:#dc2626' : 'color:rgba(15,23,42,0.6)';
                 var btn = q.Estado === 'borrador'
                     ? '<button onclick="activarQuizAdmin(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(251,191,36,0.15);color:#fcd34d;font-size:12px;border:none;cursor:pointer">Activar</button>'
                     : '<button onclick="mostrarResultadosQuizId(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(99,102,241,0.15);color:#a5b4fc;font-size:12px;border:none;cursor:pointer">Resultados</button>';
-                html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border-radius:12px;padding:12px;margin-bottom:8px">';
+                html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(15,23,42,0.03);border-radius:12px;padding:12px;margin-bottom:8px">';
                 html += '<div><p style="color:#fff;font-size:14px;font-weight:500">' + q.Titulo + '</p>';
                 html += '<span style="font-size:10px;font-weight:500;' + color + '">' + q.Estado + '</span></div>';
                 html += btn + '</div>';
@@ -2971,9 +2971,9 @@
                 var html = '';
                 for (var j = 0; j < resultados.length; j++) {
                     var r = resultados[j];
-                    var bg = j < 3 ? podiumBg[j] : 'rgba(255,255,255,0.1)';
-                    var txtColor = j < 3 ? '#fff' : 'rgba(255,255,255,0.4)';
-                    html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,' + (j < 3 ? '0.05' : '0.03') + ');border-radius:12px;padding:12px;margin-bottom:8px">';
+                    var bg = j < 3 ? podiumBg[j] : 'rgba(15,23,42,0.08)';
+                    var txtColor = j < 3 ? '#fff' : 'rgba(15,23,42,0.5)';
+                    html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(15,23,42,' + (j < 3 ? '0.05' : '0.03') + ');border-radius:12px;padding:12px;margin-bottom:8px">';
                     html += '<div style="display:flex;align-items:center;gap:12px">';
                     html += '<div style="width:32px;height:32px;border-radius:8px;background:' + bg + ';display:flex;align-items:center;justify-content:center">';
                     html += '<span style="color:' + txtColor + ';font-size:12px;font-weight:700">' + (j + 1) + '</span></div>';

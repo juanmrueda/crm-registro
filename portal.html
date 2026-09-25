@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Portal | Marketing Digital Avanzado - UAO</title>
+    <title>Mi Portal | E-Commerce - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -17,11 +17,12 @@
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: #0a0608; color: #e2e8f0; min-height: 100vh; }
+        html { background: #ffffff; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: linear-gradient(180deg, #ffffff 0%, #fff5f6 100%); color: #0f172a; min-height: 100vh; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(200,16,46,0.3); border-radius: 3px; }
-        .glass { background: rgba(20,10,12,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
+        .glass { background: #ffffff; backdrop-filter: blur(20px); border: 1px solid rgba(200,16,46,0.14); border-radius: 20px; box-shadow: 0 4px 20px rgba(200,16,46,0.07); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -39,24 +40,24 @@
         <div id="loginView" class="fade-in">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C8102E] to-[#9B0C23] flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                 </div>
-                <h1 class="text-white text-2xl font-bold">Mi Portal</h1>
-                <p class="text-white/40 text-sm mt-1">Marketing Digital Avanzado - UAO</p>
+                <h1 class="text-slate-900 text-2xl font-bold">Mi Portal</h1>
+                <p class="text-slate-500 text-sm mt-1">E-Commerce - UAO</p>
             </div>
 
             <div class="glass p-6">
-                <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2 block">Tu email</label>
+                <label class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2 block">Tu email</label>
                 <input type="email" id="loginEmail" placeholder="tu@email.com"
-                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all mb-4"
+                    class="w-full px-4 py-3 rounded-xl bg-slate-900/[0.03] border border-slate-900/10 text-slate-900 text-sm focus:outline-none focus:border-[#C8102E]/70 transition-all mb-4"
                     onkeydown="if(event.key==='Enter')loginPortal()">
                 <button onclick="loginPortal()"
-                    class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    class="w-full py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity">
                     Entrar
                 </button>
-                <p id="loginError" class="text-red-400/80 text-xs text-center mt-3 hidden">Email no registrado</p>
+                <p id="loginError" class="text-red-700 text-xs text-center mt-3 hidden">Email no registrado</p>
             </div>
         </div>
 
@@ -67,11 +68,11 @@
                 <div class="flex items-center gap-3">
                     <div id="portalAvatarWrap"></div>
                     <div>
-                        <p class="text-white/40 text-xs">Hola,</p>
-                        <h1 class="text-white text-xl font-bold" id="portalNombre">--</h1>
+                        <p class="text-slate-500 text-xs">Hola,</p>
+                        <h1 class="text-slate-900 text-xl font-bold" id="portalNombre">--</h1>
                     </div>
                 </div>
-                <button onclick="logoutPortal()" class="p-2 rounded-lg hover:bg-white/5 text-white/30 hover:text-white/60 transition-colors" title="Salir">
+                <button onclick="logoutPortal()" class="p-2 rounded-lg hover:bg-slate-900/[0.03] text-slate-500 hover:text-slate-500 transition-colors" title="Salir">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 </button>
             </div>
@@ -80,47 +81,47 @@
             <div class="glass p-6 mb-4 fade-in" style="animation-delay:0.05s;">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-white/40 text-xs font-medium uppercase tracking-wider">Mis Puntos</p>
-                        <p class="text-white text-4xl font-black mt-1" id="portalPuntos">0</p>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Mis Puntos</p>
+                        <p class="text-slate-900 text-4xl font-black mt-1" id="portalPuntos">0</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-white/40 text-xs">Ranking</p>
-                        <p class="text-[#ef4356] text-2xl font-bold" id="portalRank">#--</p>
-                        <p class="text-white/30 text-xs" id="portalTotalEst">de 0</p>
+                        <p class="text-slate-500 text-xs">Ranking</p>
+                        <p class="text-[#C8102E] text-2xl font-bold" id="portalRank">#--</p>
+                        <p class="text-slate-500 text-xs" id="portalTotalEst">de 0</p>
                     </div>
                 </div>
                 <!-- Progress bar -->
-                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden mb-2">
+                <div class="w-full h-2 bg-slate-900/[0.03] rounded-full overflow-hidden mb-2">
                     <div class="h-full bg-gradient-to-r from-[#C8102E] to-[#9B0C23] rounded-full transition-all duration-700" id="portalProgress" style="width:0%"></div>
                 </div>
-                <p class="text-white/30 text-xs text-right" id="portalAsistLabel">0% asistencia</p>
+                <p class="text-slate-500 text-xs text-right" id="portalAsistLabel">0% asistencia</p>
             </div>
 
             <!-- Desglose -->
             <div class="grid grid-cols-3 gap-3 mb-4 fade-in" style="animation-delay:0.1s;">
                 <div class="glass p-4 text-center">
-                    <p class="text-emerald-400 text-xl font-bold" id="portalPtsAsist">0</p>
-                    <p class="text-white/30 text-[10px] uppercase tracking-wider mt-1">Asistencia</p>
+                    <p class="text-emerald-700 text-xl font-bold" id="portalPtsAsist">0</p>
+                    <p class="text-slate-500 text-[10px] uppercase tracking-wider mt-1">Asistencia</p>
                 </div>
                 <div class="glass p-4 text-center">
-                    <p class="text-cyan-400 text-xl font-bold" id="portalPtsPunt">0</p>
-                    <p class="text-white/30 text-[10px] uppercase tracking-wider mt-1">Puntualidad</p>
+                    <p class="text-cyan-600 text-xl font-bold" id="portalPtsPunt">0</p>
+                    <p class="text-slate-500 text-[10px] uppercase tracking-wider mt-1">Puntualidad</p>
                 </div>
                 <div class="glass p-4 text-center">
-                    <p class="text-[#ef4356] text-xl font-bold" id="portalPtsEmail">0</p>
-                    <p class="text-white/30 text-[10px] uppercase tracking-wider mt-1">Engagement</p>
+                    <p class="text-[#C8102E] text-xl font-bold" id="portalPtsEmail">0</p>
+                    <p class="text-slate-500 text-[10px] uppercase tracking-wider mt-1">Engagement</p>
                 </div>
             </div>
 
             <!-- Check-in -->
             <div class="glass p-6 mb-4 fade-in" style="animation-delay:0.15s;">
-                <h3 class="text-white/80 text-sm font-semibold mb-3">Registrar Asistencia</h3>
+                <h3 class="text-slate-700 text-sm font-semibold mb-3">Registrar Asistencia</h3>
                 <div class="flex gap-2">
                     <input type="text" id="checkinCode" placeholder="CODIGO" maxlength="6"
-                        class="code-input flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-lg font-bold uppercase focus:outline-none focus:border-emerald-500/50 transition-all"
+                        class="code-input flex-1 px-4 py-3 rounded-xl bg-slate-900/[0.03] border border-slate-900/10 text-slate-900 text-center text-lg font-bold uppercase focus:outline-none focus:border-emerald-500/50 transition-all"
                         oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')hacerCheckin()">
                     <button onclick="hacerCheckin()" id="checkinBtn"
-                        class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity flex-shrink-0">
+                        class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity flex-shrink-0">
                         Asistir
                     </button>
                 </div>
@@ -132,63 +133,63 @@
                 <div id="quizAvailable" class="glass p-6">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                         </div>
                         <div>
-                            <h3 class="text-white text-sm font-semibold" id="quizTitulo">Quiz Disponible</h3>
-                            <p class="text-white/40 text-xs">10 preguntas · 1:30 min c/u · 2 pts c/u</p>
+                            <h3 class="text-slate-900 text-sm font-semibold" id="quizTitulo">Quiz Disponible</h3>
+                            <p class="text-slate-500 text-xs">10 preguntas · 1:30 min c/u · 2 pts c/u</p>
                         </div>
                     </div>
-                    <button onclick="iniciarQuiz()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    <button onclick="iniciarQuiz()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900 font-semibold text-sm hover:opacity-90 transition-opacity">
                         Comenzar Quiz
                     </button>
                 </div>
                 <div id="quizYaRespondido" class="hidden glass p-6 text-center">
-                    <p class="text-emerald-400 text-sm font-semibold">Quiz enviado</p>
-                    <p class="text-white/40 text-xs mt-1">Ya respondiste este quiz</p>
+                    <p class="text-emerald-700 text-sm font-semibold">Quiz enviado</p>
+                    <p class="text-slate-500 text-xs mt-1">Ya respondiste este quiz</p>
                 </div>
             </div>
 
             <!-- Quiz Fullscreen -->
-            <div id="quizFullscreen" class="hidden fixed inset-0 bg-[#0a0e1a] z-50 flex flex-col">
+            <div id="quizFullscreen" class="hidden fixed inset-0 bg-white z-50 flex flex-col">
                 <!-- Header -->
-                <div class="p-4 flex items-center justify-between border-b border-white/5">
+                <div class="p-4 flex items-center justify-between border-b border-slate-900/10">
                     <div class="flex items-center gap-3">
-                        <span class="text-white/40 text-xs font-mono" id="quizProgress">1 / 10</span>
-                        <div class="w-32 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <span class="text-slate-500 text-xs font-mono" id="quizProgress">1 / 10</span>
+                        <div class="w-32 h-1.5 bg-slate-900/[0.03] rounded-full overflow-hidden">
                             <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-300" id="quizProgressBar" style="width:10%"></div>
                         </div>
                     </div>
-                    <div id="quizTimerDisplay" class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5">
-                        <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span class="text-white font-mono text-sm font-bold" id="quizTimer">1:30</span>
+                    <div id="quizTimerDisplay" class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900/[0.03]">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-slate-900 font-mono text-sm font-bold" id="quizTimer">1:30</span>
                     </div>
                 </div>
                 <!-- Question -->
                 <div class="flex-1 flex flex-col justify-center p-6 max-w-lg mx-auto w-full">
-                    <p class="text-white text-lg font-semibold mb-6 text-center leading-relaxed" id="quizPregunta">--</p>
+                    <p class="text-slate-900 text-lg font-semibold mb-6 text-center leading-relaxed" id="quizPregunta">--</p>
                     <div class="space-y-3" id="quizOpciones"></div>
                 </div>
             </div>
 
             <!-- Top Ranking -->
             <div class="glass p-6 mb-4 fade-in" style="animation-delay:0.18s;">
-                <h3 class="text-white/80 text-sm font-semibold mb-3">Top Ranking</h3>
+                <h3 class="text-slate-700 text-sm font-semibold mb-3">Top Ranking</h3>
                 <div class="space-y-2" id="topRankingList">
-                    <p class="text-white/30 text-sm text-center py-4">Cargando...</p>
+                    <p class="text-slate-500 text-sm text-center py-4">Cargando...</p>
                 </div>
             </div>
 
             <!-- Historial -->
             <div class="glass p-6 fade-in" style="animation-delay:0.2s;">
-                <h3 class="text-white/80 text-sm font-semibold mb-3">Historial de Clases</h3>
+                <h3 class="text-slate-700 text-sm font-semibold mb-3">Historial de Clases</h3>
                 <div class="space-y-2" id="portalHistorial">
-                    <p class="text-white/30 text-sm text-center py-4">Sin historial aun</p>
+                    <p class="text-slate-500 text-sm text-center py-4">Sin historial aun</p>
                 </div>
             </div>
 
             <!-- Footer -->
-            <p class="text-white/15 text-[10px] text-center mt-6">UAO - Marketing Digital Avanzado v3.0</p>
+            <p class="text-slate-500 text-[10px] text-center mt-6">UAO - E-Commerce v3.0</p>
         </div>
     </div>
 
@@ -363,19 +364,19 @@
             const top = portalData.topRanking || [];
             const rankList = document.getElementById('topRankingList');
             if (top.length === 0) {
-                rankList.innerHTML = '<p class="text-white/30 text-sm text-center py-4">Sin ranking aun</p>';
+                rankList.innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Sin ranking aun</p>';
             } else {
                 rankList.innerHTML = top.map((r, i) => {
-                    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `<span class="text-white/30 text-sm font-mono">${i+1}.</span>`;
+                    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `<span class="text-slate-500 text-sm font-mono">${i+1}.</span>`;
                     const esTu = r.email === portalEmail;
                     return `
-                    <div class="flex items-center gap-3 ${esTu ? 'bg-[#C8102E]/15 border border-[#C8102E]/30' : 'bg-white/3'} rounded-xl p-2.5">
+                    <div class="flex items-center gap-3 ${esTu ? 'bg-[#C8102E]/15 border border-[#C8102E]/30' : 'bg-slate-900/[0.03]'} rounded-xl p-2.5">
                         <div class="w-6 text-center">${medal}</div>
                         ${avatarHTML(r.fotoUrl, r.nombre, 'avatar avatar-sm')}
                         <div class="flex-1 min-w-0">
-                            <p class="text-white text-sm font-medium truncate">${r.nombre || r.email}${esTu ? ' <span class="text-[#ef4356] text-xs">(tu)</span>' : ''}</p>
+                            <p class="text-slate-900 text-sm font-medium truncate">${r.nombre || r.email}${esTu ? ' <span class="text-[#C8102E] text-xs">(tu)</span>' : ''}</p>
                         </div>
-                        <span class="text-white text-sm font-bold">${r.total}</span>
+                        <span class="text-slate-900 text-sm font-bold">${r.total}</span>
                     </div>`;
                 }).join('');
             }
@@ -396,7 +397,7 @@
             const asistencias = portalData.asistencias || [];
 
             if (clases.length === 0) {
-                histContainer.innerHTML = '<p class="text-white/30 text-sm text-center py-4">Sin historial aun</p>';
+                histContainer.innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Sin historial aun</p>';
                 return;
             }
 
@@ -407,33 +408,33 @@
                 if (asist) {
                     const mins = asist.minutosAntes;
                     const puntualLabel = mins > 0 ? `${mins} min temprano` : mins < 0 ? `${Math.abs(mins)} min tarde` : 'A tiempo';
-                    const puntualColor = mins > 0 ? 'text-emerald-400' : mins < 0 ? 'text-amber-400' : 'text-white/50';
+                    const puntualColor = mins > 0 ? 'text-emerald-700' : mins < 0 ? 'text-amber-600' : 'text-slate-500';
                     return `
-                    <div class="flex items-center justify-between bg-white/3 rounded-xl p-3">
+                    <div class="flex items-center justify-between bg-slate-900/[0.03] rounded-xl p-3">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
                             <div>
-                                <p class="text-white text-sm font-medium">Clase ${c.numero}: ${c.titulo}</p>
+                                <p class="text-slate-900 text-sm font-medium">Clase ${c.numero}: ${c.titulo}</p>
                                 <p class="${puntualColor} text-xs">${fecha} · ${puntualLabel}</p>
                             </div>
                         </div>
-                        <span class="text-[#ef4356] text-sm font-bold">${asist.puntosPuntualidad} pts</span>
+                        <span class="text-[#C8102E] text-sm font-bold">${asist.puntosPuntualidad} pts</span>
                     </div>`;
                 } else {
                     return `
-                    <div class="flex items-center justify-between bg-white/3 rounded-xl p-3 opacity-50">
+                    <div class="flex items-center justify-between bg-slate-900/[0.03] rounded-xl p-3 opacity-50">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </div>
                             <div>
-                                <p class="text-white text-sm font-medium">Clase ${c.numero}: ${c.titulo}</p>
-                                <p class="text-red-400/60 text-xs">${fecha} · Ausente</p>
+                                <p class="text-slate-900 text-sm font-medium">Clase ${c.numero}: ${c.titulo}</p>
+                                <p class="text-red-600/60 text-xs">${fecha} · Ausente</p>
                             </div>
                         </div>
-                        <span class="text-white/20 text-sm">0 pts</span>
+                        <span class="text-slate-500 text-sm">0 pts</span>
                     </div>`;
                 }
             }).join('');
@@ -542,8 +543,8 @@
 
             document.getElementById('quizOpciones').innerHTML = p.opciones.map((op, i) => `
                 <button onclick="seleccionarOpcion(${i})" class="w-full text-left p-4 rounded-xl bg-gradient-to-r ${colors[i]} border transition-all active:scale-[0.98]">
-                    <span class="text-white/40 text-xs font-bold mr-2">${labels[i]}.</span>
-                    <span class="text-white text-sm">${op}</span>
+                    <span class="text-slate-500 text-xs font-bold mr-2">${labels[i]}.</span>
+                    <span class="text-slate-900 text-sm">${op}</span>
                 </button>
             `).join('');
 
@@ -569,13 +570,13 @@
             const timerBox = document.getElementById('quizTimerDisplay');
             if (quizTiempoRestante <= 10) {
                 timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-500/20';
-                display.className = 'text-red-400 font-mono text-sm font-bold';
+                display.className = 'text-red-600 font-mono text-sm font-bold';
             } else if (quizTiempoRestante <= 30) {
                 timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/15';
-                display.className = 'text-amber-400 font-mono text-sm font-bold';
+                display.className = 'text-amber-600 font-mono text-sm font-bold';
             } else {
-                timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5';
-                display.className = 'text-white font-mono text-sm font-bold';
+                timerBox.className = 'flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900/[0.03]';
+                display.className = 'text-slate-900 font-mono text-sm font-bold';
             }
         }
 
@@ -586,7 +587,7 @@
             btns.forEach((b, i) => {
                 b.disabled = true;
                 if (i === opcion) {
-                    b.classList.add('ring-2', 'ring-white/30', 'scale-[1.02]');
+                    b.classList.add('ring-2', 'ring-[#C8102E]/50', 'scale-[1.02]');
                 } else {
                     b.style.opacity = '0.4';
                 }
@@ -607,7 +608,7 @@
             clearInterval(quizTimerInterval);
             // Show sending state
             document.getElementById('quizPregunta').textContent = 'Enviando quiz...';
-            document.getElementById('quizOpciones').innerHTML = '<div class="flex justify-center"><svg class="animate-spin h-8 w-8 text-amber-400" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>';
+            document.getElementById('quizOpciones').innerHTML = '<div class="flex justify-center"><svg class="animate-spin h-8 w-8 text-amber-600" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>';
             document.getElementById('quizProgress').textContent = '';
             document.getElementById('quizTimer').textContent = '';
 
@@ -623,8 +624,8 @@
                 if (!json || json.status !== 'ok') {
                     document.getElementById('quizPregunta').textContent = 'No se pudo enviar';
                     document.getElementById('quizOpciones').innerHTML =
-                        `<p class="text-red-400 text-sm text-center">${(json && json.message) || 'Intenta de nuevo'}</p>` +
-                        '<button onclick="cerrarQuiz()" class="w-full mt-4 py-3 rounded-xl bg-white/10 text-white font-semibold text-sm">Volver al Portal</button>';
+                        `<p class="text-red-600 text-sm text-center">${(json && json.message) || 'Intenta de nuevo'}</p>` +
+                        '<button onclick="cerrarQuiz()" class="w-full mt-4 py-3 rounded-xl bg-slate-900/5 text-slate-900 font-semibold text-sm">Volver al Portal</button>';
                     return;
                 }
 
@@ -633,16 +634,16 @@
                 document.getElementById('quizOpciones').innerHTML = `
                     <div class="text-center">
                         <div class="w-16 h-16 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-8 h-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         </div>
-                        <p class="text-white/40 text-sm">Tus respuestas han sido registradas</p>
-                        <button onclick="cerrarQuiz()" class="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-white font-semibold text-sm">
+                        <p class="text-slate-500 text-sm">Tus respuestas han sido registradas</p>
+                        <button onclick="cerrarQuiz()" class="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-[#C8102E] to-[#9B0C23] text-slate-900 font-semibold text-sm">
                             Volver al Portal
                         </button>
                     </div>`;
             } catch (e) {
                 document.getElementById('quizPregunta').textContent = 'Error al enviar';
-                document.getElementById('quizOpciones').innerHTML = '<p class="text-red-400 text-sm text-center">Intenta de nuevo</p><button onclick="enviarQuiz()" class="w-full mt-4 py-3 rounded-xl bg-amber-500 text-white font-semibold text-sm">Reintentar</button>';
+                document.getElementById('quizOpciones').innerHTML = '<p class="text-red-600 text-sm text-center">Intenta de nuevo</p><button onclick="enviarQuiz()" class="w-full mt-4 py-3 rounded-xl bg-amber-500 text-slate-900 font-semibold text-sm">Reintentar</button>';
             }
         }
 
