@@ -780,20 +780,20 @@
                     <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-radius:16px;padding:20px">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
                             <div>
-                                <p style="color:#fbbf24;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Quiz Activo</p>
-                                <p style="color:#fff;font-size:18px;font-weight:700;margin-top:4px" id="quizActivoTitulo">--</p>
+                                <p style="color:#b45309;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Quiz Activo</p>
+                                <p style="color:#334155;font-size:18px;font-weight:700;margin-top:4px" id="quizActivoTitulo">--</p>
                             </div>
                             <div style="display:flex;gap:8px">
-                                <button onclick="mostrarResultadosQuiz()" style="padding:8px 16px;border-radius:8px;background:rgba(99,102,241,0.15);color:#a5b4fc;font-size:12px;font-weight:500;border:none;cursor:pointer">Resultados</button>
-                                <button onclick="cerrarQuizAdmin()" style="padding:8px 16px;border-radius:8px;background:rgba(239,68,68,0.15);color:#fca5a5;font-size:12px;font-weight:500;border:none;cursor:pointer">Cerrar Quiz</button>
+                                <button onclick="mostrarResultadosQuiz()" style="padding:8px 16px;border-radius:8px;background:rgba(99,102,241,0.15);color:#4338ca;font-size:12px;font-weight:500;border:none;cursor:pointer">Resultados</button>
+                                <button onclick="cerrarQuizAdmin()" style="padding:8px 16px;border-radius:8px;background:rgba(239,68,68,0.15);color:#b91c1c;font-size:12px;font-weight:500;border:none;cursor:pointer">Cerrar Quiz</button>
                             </div>
                         </div>
                         <div style="display:flex;align-items:center;gap:16px">
                             <div style="display:flex;align-items:center;gap:8px">
                                 <div style="width:8px;height:8px;border-radius:50%;background:#fbbf24;animation:pulse 2s infinite"></div>
-                                <span style="color:rgba(251,191,36,0.8);font-size:14px;font-weight:500" id="quizRespondidos">0 respondidos</span>
+                                <span style="color:#b45309;font-size:14px;font-weight:500" id="quizRespondidos">0 respondidos</span>
                             </div>
-                            <span style="color:rgba(15,23,42,0.45);font-size:12px" id="quizTotalEst">de 0 registrados</span>
+                            <span style="color:#475569;font-size:12px" id="quizTotalEst">de 0 registrados</span>
                         </div>
                     </div>
                 </div>
@@ -815,24 +815,24 @@
                         <svg style="width:24px;height:24px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     </div>
                     <div>
-                        <h3 style="color:#fff;font-size:18px;font-weight:700">Resultados del Quiz</h3>
-                        <p style="color:rgba(15,23,42,0.5);font-size:12px" id="quizResultadosSub">--</p>
+                        <h3 style="color:#334155;font-size:18px;font-weight:700">Resultados del Quiz</h3>
+                        <p style="color:#64748b;font-size:12px" id="quizResultadosSub">--</p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('quizResultadosModal').style.display='none'" style="color:rgba(15,23,42,0.45);background:none;border:none;cursor:pointer;font-size:24px">&times;</button>
+                <button onclick="document.getElementById('quizResultadosModal').style.display='none'" style="color:#64748b;background:none;border:none;cursor:pointer;font-size:24px">&times;</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
                 <div style="background:rgba(15,23,42,0.04);border-radius:12px;padding:12px;text-align:center">
-                    <p style="color:#fbbf24;font-size:24px;font-weight:700" id="qrPromedio">0</p>
-                    <p style="color:rgba(15,23,42,0.5);font-size:10px">Promedio</p>
+                    <p style="color:#b45309;font-size:24px;font-weight:700" id="qrPromedio">0</p>
+                    <p style="color:#475569;font-size:10px">Promedio</p>
                 </div>
                 <div style="background:rgba(15,23,42,0.04);border-radius:12px;padding:12px;text-align:center">
-                    <p style="color:#34d399;font-size:24px;font-weight:700" id="qrMejor">0</p>
-                    <p style="color:rgba(15,23,42,0.5);font-size:10px">Mejor Nota</p>
+                    <p style="color:#047857;font-size:24px;font-weight:700" id="qrMejor">0</p>
+                    <p style="color:#475569;font-size:10px">Mejor Nota</p>
                 </div>
                 <div style="background:rgba(15,23,42,0.04);border-radius:12px;padding:12px;text-align:center">
                     <p style="color:rgba(15,23,42,0.7);font-size:24px;font-weight:700" id="qrRespondieron">0/0</p>
-                    <p style="color:rgba(15,23,42,0.5);font-size:10px">Respondieron</p>
+                    <p style="color:#475569;font-size:10px">Respondieron</p>
                 </div>
             </div>
             <div style="max-height:384px;overflow-y:auto" id="quizLeaderboard"></div>
@@ -2906,12 +2906,12 @@
             var html = '';
             for (var j = 0; j < otros.length; j++) {
                 var q = otros[j];
-                var color = q.Estado === 'cerrado' ? 'color:#dc2626' : 'color:rgba(15,23,42,0.6)';
+                var color = q.Estado === 'cerrado' ? 'color:#b91c1c' : 'color:#475569';
                 var btn = q.Estado === 'borrador'
-                    ? '<button onclick="activarQuizAdmin(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(251,191,36,0.15);color:#fcd34d;font-size:12px;border:none;cursor:pointer">Activar</button>'
-                    : '<button onclick="mostrarResultadosQuizId(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(99,102,241,0.15);color:#a5b4fc;font-size:12px;border:none;cursor:pointer">Resultados</button>';
+                    ? '<button onclick="activarQuizAdmin(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(251,191,36,0.15);color:#92400e;font-size:12px;border:none;cursor:pointer">Activar</button>'
+                    : '<button onclick="mostrarResultadosQuizId(\'' + q.QuizId + '\')" style="padding:6px 12px;border-radius:8px;background:rgba(99,102,241,0.15);color:#4338ca;font-size:12px;border:none;cursor:pointer">Resultados</button>';
                 html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(15,23,42,0.03);border-radius:12px;padding:12px;margin-bottom:8px">';
-                html += '<div><p style="color:#fff;font-size:14px;font-weight:500">' + q.Titulo + '</p>';
+                html += '<div><p style="color:#334155;font-size:14px;font-weight:500">' + q.Titulo + '</p>';
                 html += '<span style="font-size:10px;font-weight:500;' + color + '">' + q.Estado + '</span></div>';
                 html += btn + '</div>';
             }
@@ -2967,18 +2967,19 @@
                     document.getElementById('qrMejor').textContent = '0';
                 }
 
-                var podiumBg = ['linear-gradient(135deg,#fbbf24,#eab308)', 'linear-gradient(135deg,#d1d5db,#9ca3af)', 'linear-gradient(135deg,#d97706,#b45309)'];
+                var podiumTxt = ['#78350f', '#1e293b', '#451a03'];
+                var podiumBg = ['linear-gradient(135deg,#fbbf24,#eab308)', 'linear-gradient(135deg,#d1d5db,#9ca3af)', 'linear-gradient(135deg,#f59e0b,#d97706)'];
                 var html = '';
                 for (var j = 0; j < resultados.length; j++) {
                     var r = resultados[j];
                     var bg = j < 3 ? podiumBg[j] : 'rgba(15,23,42,0.08)';
-                    var txtColor = j < 3 ? '#fff' : 'rgba(15,23,42,0.5)';
+                    var txtColor = j < 3 ? podiumTxt[j] : '#475569';
                     html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(15,23,42,' + (j < 3 ? '0.05' : '0.03') + ');border-radius:12px;padding:12px;margin-bottom:8px">';
                     html += '<div style="display:flex;align-items:center;gap:12px">';
                     html += '<div style="width:32px;height:32px;border-radius:8px;background:' + bg + ';display:flex;align-items:center;justify-content:center">';
                     html += '<span style="color:' + txtColor + ';font-size:12px;font-weight:700">' + (j + 1) + '</span></div>';
-                    html += '<p style="color:#fff;font-size:14px;font-weight:500">' + r.nombre + '</p></div>';
-                    html += '<span style="color:#fcd34d;font-size:14px;font-weight:700">' + r.puntos + '/20</span></div>';
+                    html += '<p style="color:#334155;font-size:14px;font-weight:500">' + r.nombre + '</p></div>';
+                    html += '<span style="color:#b45309;font-size:14px;font-weight:700">' + r.puntos + '/20</span></div>';
                 }
                 document.getElementById('quizLeaderboard').innerHTML = html;
                 document.getElementById('quizResultadosModal').style.display = 'flex';
