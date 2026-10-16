@@ -1,8 +1,8 @@
-# E-Commerce — Guia de Configuracion
+# Análisis de Datos — Guia de Configuracion
 
 ## Que es esto?
 
-Sistema de gestion academica para el curso **E-Commerce** de la
+Sistema de gestion academica para el curso **Análisis de Datos** de la
 UAO, con cinco componentes principales:
 
 | Archivo | Descripcion | URL |

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registro | E-Commerce - UAO</title>
+    <title>Registro | Análisis de Datos - UAO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-                    colors: { uao: { DEFAULT: '#C8102E', dark: '#9B0C23', darker: '#7a0919' } }
+                    colors: { uao: { DEFAULT: '#0E7038', dark: '#0A5429', darker: '#073f1f' } }
                 }
             }
         }
@@ -26,7 +26,7 @@
             font-family: 'Inter', system-ui, sans-serif;
             min-height: 100vh;
             min-height: 100dvh;
-            background: linear-gradient(135deg, #ffffff 0%, #fff5f6 25%, #fbdde2 50%, #fff5f6 75%, #ffffff 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #f4fbf6 25%, #d4edda 50%, #f4fbf6 75%, #ffffff 100%);
             color: #0f172a;
             background-size: 400% 400%;
             animation: gradientShift 18s ease infinite;
@@ -47,9 +47,9 @@
             pointer-events: none;
             z-index: 0;
         }
-        .orb-1 { width: 300px; height: 300px; background: #C8102E; top: -100px; left: -100px; animation: float1 8s ease-in-out infinite; }
-        .orb-2 { width: 400px; height: 400px; background: #9B0C23; bottom: -150px; right: -150px; animation: float2 10s ease-in-out infinite; }
-        .orb-3 { width: 250px; height: 250px; background: #C8102E; top: 50%; left: 50%; animation: float3 12s ease-in-out infinite; }
+        .orb-1 { width: 300px; height: 300px; background: #0E7038; top: -100px; left: -100px; animation: float1 8s ease-in-out infinite; }
+        .orb-2 { width: 400px; height: 400px; background: #0A5429; bottom: -150px; right: -150px; animation: float2 10s ease-in-out infinite; }
+        .orb-3 { width: 250px; height: 250px; background: #0E7038; top: 50%; left: 50%; animation: float3 12s ease-in-out infinite; }
 
         @keyframes float1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(50px, 50px); } }
         @keyframes float2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-60px, -40px); } }
@@ -59,9 +59,9 @@
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(200, 16, 46, 0.14);
+            border: 1px solid rgba(14, 112, 56, 0.14);
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(200, 16, 46, 0.10);
+            box-shadow: 0 8px 32px rgba(14, 112, 56, 0.10);
         }
 
         .glass-input {
@@ -76,9 +76,9 @@
 
         .glass-input:focus {
             background: #ffffff;
-            border-color: rgba(200, 16, 46, 0.7);
+            border-color: rgba(14, 112, 56, 0.7);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.2);
+            box-shadow: 0 0 0 3px rgba(14, 112, 56, 0.2);
         }
 
         .glass-input::placeholder { color: rgba(15,23,42,0.38); }
@@ -103,7 +103,7 @@
             border: 1px solid rgba(15, 23, 42, 0.14);
             flex-shrink: 0;
         }
-        .toggle-switch.active { background: rgba(200, 16, 46, 0.85); }
+        .toggle-switch.active { background: rgba(14, 112, 56, 0.85); }
         .toggle-switch::after {
             content: '';
             width: 22px; height: 22px;
@@ -129,8 +129,8 @@
             flex-shrink: 0;
         }
         .custom-checkbox.checked {
-            background: rgba(200, 16, 46, 0.85);
-            border-color: rgba(200, 16, 46, 1);
+            background: rgba(14, 112, 56, 0.85);
+            border-color: rgba(14, 112, 56, 1);
         }
         .custom-checkbox.checked::after {
             content: '';
@@ -159,12 +159,12 @@
             transition: all 0.4s ease;
         }
         .progress-dot.active {
-            background: #C8102E;
-            box-shadow: 0 0 12px rgba(200, 16, 46, 0.45);
+            background: #0E7038;
+            box-shadow: 0 0 12px rgba(14, 112, 56, 0.45);
             transform: scale(1.2);
         }
         .progress-dot.completed {
-            background: rgba(200, 16, 46, 0.45);
+            background: rgba(14, 112, 56, 0.45);
         }
         .progress-line {
             height: 2px;
@@ -174,14 +174,14 @@
         }
         .progress-line .fill {
             height: 100%;
-            background: rgba(200, 16, 46, 0.8);
+            background: rgba(14, 112, 56, 0.8);
             transition: width 0.5s ease;
             width: 0;
         }
         .progress-line.completed .fill { width: 100%; }
 
         .btn-primary {
-            background: linear-gradient(135deg, #C8102E, #9B0C23);
+            background: linear-gradient(135deg, #0E7038, #0A5429);
             color: white;
             border: none;
             border-radius: 14px;
@@ -190,11 +190,11 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.45);
+            box-shadow: 0 4px 15px rgba(14, 112, 56, 0.45);
         }
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.6);
+            box-shadow: 0 6px 20px rgba(14, 112, 56, 0.6);
         }
         .btn-primary:active { transform: translateY(0); }
         .btn-primary:disabled {
@@ -288,13 +288,13 @@
             transition: all 0.3s ease;
             background: rgba(15, 23, 42, 0.02);
         }
-        .photo-drop:hover { border-color: rgba(200, 16, 46, 0.7); background: rgba(200, 16, 46, 0.06); }
+        .photo-drop:hover { border-color: rgba(14, 112, 56, 0.7); background: rgba(14, 112, 56, 0.06); }
         .photo-preview {
             width: 96px; height: 96px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(200, 16, 46, 0.6);
-            box-shadow: 0 4px 20px rgba(200, 16, 46, 0.3);
+            border: 2px solid rgba(14, 112, 56, 0.6);
+            box-shadow: 0 4px 20px rgba(14, 112, 56, 0.3);
         }
 
         /* Range slider */
@@ -311,15 +311,15 @@
             appearance: none;
             width: 22px; height: 22px;
             border-radius: 50%;
-            background: #C8102E;
+            background: #0E7038;
             cursor: pointer;
             border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(200, 16, 46, 0.5);
+            box-shadow: 0 2px 8px rgba(14, 112, 56, 0.5);
         }
         input[type="range"].madurez-slider::-moz-range-thumb {
             width: 22px; height: 22px;
             border-radius: 50%;
-            background: #C8102E;
+            background: #0E7038;
             cursor: pointer;
             border: 3px solid white;
         }
@@ -341,8 +341,8 @@
             <div class="inline-flex items-center gap-2 bg-slate-900/5 backdrop-blur-sm rounded-full px-4 py-1.5 mb-3">
                 <span class="text-slate-700 text-xs font-medium tracking-wider uppercase">UAO &middot; Especializacion</span>
             </div>
-            <h1 class="text-slate-900 text-xl font-bold mb-1">E-Commerce</h1>
-            <p class="text-slate-500 text-sm">Completa tu registro para el curso</p>
+            <h1 class="text-slate-900 text-xl font-bold mb-1">Análisis de Datos</h1>
+            <p class="text-slate-600 text-sm">Completa tu registro para el curso</p>
         </div>
 
         <!-- Progress bar -->
@@ -357,7 +357,7 @@
         </div>
 
         <div class="text-center mb-4">
-            <span class="text-slate-500 text-xs font-medium" id="stepLabel">Paso 1 de 4 &mdash; Datos Personales</span>
+            <span class="text-slate-600 text-xs font-medium" id="stepLabel">Paso 1 de 4 &mdash; Datos Personales</span>
         </div>
 
         <!-- Card -->
@@ -497,9 +497,9 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Tu estado en E-Commerce -->
+            <!-- STEP 3: Tu estado en Análisis de Datos -->
             <div class="step-container" data-step="3">
-                <h2 class="text-slate-900 text-lg font-semibold mb-1">Tu estado en E-Commerce</h2>
+                <h2 class="text-slate-900 text-lg font-semibold mb-1">Tu estado en Análisis de Datos</h2>
                 <p class="text-slate-500 text-sm mb-6">Que haces hoy con tus datos</p>
 
                 <div class="space-y-4">
@@ -682,7 +682,7 @@
                     </div>
 
                     <div class="field-group" data-field="expectativas">
-                        <label class="field-label">Que esperas aprender en E-Commerce? *</label>
+                        <label class="field-label">Que esperas aprender en Análisis de Datos? *</label>
                         <textarea class="glass-input w-full px-4 py-3 text-sm" placeholder="Que habilidades, herramientas o resultados quieres lograr..." id="expectativas" rows="3"></textarea>
                         <p class="error-msg">Cuentanos tus expectativas</p>
                     </div>
@@ -691,7 +691,7 @@
                         <label class="flex items-start gap-3 cursor-pointer" onclick="toggleCheckbox(document.getElementById('aceptaDatosCheck'))">
                             <div class="custom-checkbox mt-0.5" id="aceptaDatosCheck"></div>
                             <span class="text-slate-600 text-xs leading-relaxed">
-                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de E-Commerce de la Universidad Autonoma de Occidente. *
+                                Autorizo el tratamiento de mis datos personales con fines academicos para el curso de Análisis de Datos de la Universidad Autonoma de Occidente. *
                             </span>
                         </label>
                         <p class="error-msg">Debes aceptar el tratamiento de datos</p>
@@ -702,13 +702,13 @@
             <!-- SUCCESS Screen -->
             <div class="step-container" data-step="success" style="display:none;">
                 <div class="text-center py-6">
-                    <div class="w-20 h-20 rounded-full bg-uao/20 flex items-center justify-center mx-auto mb-4" style="background:rgba(200,16,46,0.2);">
-                        <svg class="w-10 h-10 text-[#C8102E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-20 h-20 rounded-full bg-uao/20 flex items-center justify-center mx-auto mb-4" style="background:rgba(14,112,56,0.2);">
+                        <svg class="w-10 h-10 text-[#0E7038]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                         </svg>
                     </div>
                     <h2 class="text-slate-900 text-xl font-bold mb-2">Registro Exitoso!</h2>
-                    <p class="text-slate-500 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de E-Commerce. Nos vemos en clase!</p>
+                    <p class="text-slate-500 text-sm mb-6" id="welcomeMsg">Bienvenido/a al curso de Análisis de Datos. Nos vemos en clase!</p>
                     <div class="glass p-4 rounded-2xl text-left">
                         <p class="text-slate-500 text-xs uppercase tracking-wider mb-2 font-medium">Tu resumen</p>
                         <p class="text-slate-900 text-sm font-medium" id="summaryName"></p>
@@ -736,7 +736,7 @@
         </div>
 
         <!-- Footer -->
-        <p class="text-center text-slate-500 text-xs mt-6">
+        <p class="text-center text-slate-600 text-xs mt-6">
             UAO &middot; Especializacion en Gerencia de Negocios Digitales &middot; 2026
         </p>
     </div>
@@ -758,7 +758,7 @@
         const stepLabels = {
             1: 'Datos Personales',
             2: 'Tu Empresa',
-            3: 'E-Commerce',
+            3: 'Análisis de Datos',
             4: 'Madurez y Expectativas'
         };
 
@@ -976,7 +976,7 @@
                 tamano: document.getElementById('tamano')?.value || '',
                 web: document.getElementById('web')?.value || '',
                 empresaPropia: document.getElementById('empresaPropia')?.dataset.value || 'no',
-                // E-Commerce nuevo
+                // Análisis de Datos nuevo
                 herramientasAnalitica: collectChecks('herramientasContainer'),
                 datosClientes: collectChecks('datosContainer'),
                 kpis: collectChecks('kpisContainer'),
@@ -1123,7 +1123,7 @@
             successEl.classList.add('active');
 
             const bienvenida = data.genero === 'Femenino' ? 'Bienvenida' : 'Bienvenido';
-            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de E-Commerce. Nos vemos en clase!`;
+            document.getElementById('welcomeMsg').textContent = `${bienvenida} al curso de Análisis de Datos. Nos vemos en clase!`;
 
             document.getElementById('summaryName').textContent = data.nombre;
             document.getElementById('summaryEmail').textContent = data.email;
@@ -1136,7 +1136,7 @@
         // CONFETTI
         // ========================================
         function launchConfetti() {
-            const colors = ['#C8102E', '#9B0C23', '#ffffff', '#1a1a1a', '#7a0919', '#f59e0b'];
+            const colors = ['#0E7038', '#0A5429', '#ffffff', '#1a1a1a', '#073f1f', '#f59e0b'];
             for (let i = 0; i < 60; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
