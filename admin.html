@@ -440,7 +440,7 @@
                     </div>
                     <div class="hidden sm:flex items-center gap-2 bg-slate-900/[0.04] rounded-lg px-3 py-1.5">
                         <span class="text-slate-900 font-bold text-sm" id="totalBadge">0</span>
-                        <span class="text-slate-500 text-xs">registros</span>
+                        <span class="text-slate-600 text-xs">registros</span>
                     </div>
                     <button onclick="refreshData()" class="p-2 rounded-lg hover:bg-slate-900/5 transition-colors" title="Actualizar">
                         <svg class="w-4 h-4 text-slate-500" id="refreshIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -700,38 +700,38 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="puntosConfigGrid">
                         <div class="bg-emerald-500/10 rounded-xl p-3 text-center">
                             <p class="text-emerald-700 text-xl font-bold" id="cfgAsistencia">10</p>
-                            <p class="text-slate-500 text-[10px] mt-1">pts por asistencia</p>
+                            <p class="text-slate-600 text-[10px] mt-1">pts por asistencia</p>
                         </div>
                         <div class="bg-blue-500/10 rounded-xl p-3 text-center">
                             <p class="text-blue-600 text-xl font-bold" id="cfgPuntualidad">5</p>
-                            <p class="text-slate-500 text-[10px] mt-1">pts puntualidad max</p>
+                            <p class="text-slate-600 text-[10px] mt-1">pts puntualidad max</p>
                         </div>
                         <div class="bg-purple-500/10 rounded-xl p-3 text-center">
                             <p class="text-purple-600 text-xl font-bold" id="cfgEmailOpen">3</p>
-                            <p class="text-slate-500 text-[10px] mt-1">pts abrir email</p>
+                            <p class="text-slate-600 text-[10px] mt-1">pts abrir email</p>
                         </div>
                         <div class="bg-amber-500/10 rounded-xl p-3 text-center">
-                            <p class="text-amber-600 text-xl font-bold" id="cfgVentana">15</p>
-                            <p class="text-slate-500 text-[10px] mt-1">min ventana puntual</p>
+                            <p class="text-amber-700 text-xl font-bold" id="cfgVentana">15</p>
+                            <p class="text-slate-600 text-[10px] mt-1">min ventana puntual</p>
                         </div>
                         <div class="bg-red-500/10 rounded-xl p-3 text-center">
                             <p class="text-red-600 text-xl font-bold" id="cfgTolerancia">15</p>
-                            <p class="text-slate-500 text-[10px] mt-1">min tolerancia tarde</p>
+                            <p class="text-slate-600 text-[10px] mt-1">min tolerancia tarde</p>
                         </div>
                         <div class="bg-[#0E7038]/10 rounded-xl p-3 text-center">
                             <p class="text-[#0E7038] text-xl font-bold" id="cfgCodigo">30</p>
-                            <p class="text-slate-500 text-[10px] mt-1">min vigencia codigo</p>
+                            <p class="text-slate-600 text-[10px] mt-1">min vigencia codigo</p>
                         </div>
                     </div>
                     <div class="mt-3 bg-slate-900/[0.03] rounded-xl p-3">
-                        <p class="text-slate-500 text-[11px] leading-relaxed">
-                            <span class="text-slate-500 font-medium">Maximo por clase:</span>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            <span class="text-slate-600 font-medium">Maximo por clase:</span>
                             <span id="cfgMaxClase">15</span> pts (asistencia + puntualidad) &nbsp;|&nbsp;
-                            <span class="text-slate-500 font-medium">Puntualidad:</span>
+                            <span class="text-slate-600 font-medium">Puntualidad:</span>
                             llegar <span id="cfgVentana2">15</span>+ min antes = max puntos, proporcional si llega antes pero dentro de la ventana, 0 si llega tarde &nbsp;|&nbsp;
-                            <span class="text-slate-500 font-medium">Email:</span>
+                            <span class="text-slate-600 font-medium">Email:</span>
                             se otorga 1 vez por clase al abrir el correo &nbsp;|&nbsp;
-                            <span class="text-slate-500 font-medium">Manual:</span>
+                            <span class="text-slate-600 font-medium">Manual:</span>
                             sin limite, asignados desde "Dar Puntos"
                         </p>
                     </div>
@@ -745,7 +745,7 @@
                             <button onclick="abrirDarPuntos()" class="px-3 py-1.5 rounded-lg bg-[#0E7038]/15 text-[#0E7038] text-xs font-medium hover:bg-[#0E7038]/25 transition-colors">
                                 + Dar Puntos
                             </button>
-                            <button id="recalcularBtn" onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-slate-900/[0.04] text-slate-500 text-xs hover:bg-slate-900/[0.07] transition-colors">
+                            <button id="recalcularBtn" onclick="recalcularPuntos()" class="px-3 py-1.5 rounded-lg bg-slate-900/[0.04] text-slate-600 text-xs hover:bg-slate-900/[0.07] transition-colors">
                                 Recalcular
                             </button>
                         </div>
@@ -798,8 +798,8 @@
                     </div>
                 </div>
                 <div class="card">
-                    <h3 style="color:#fff;font-size:18px;font-weight:700;margin-bottom:16px">Quizzes</h3>
-                    <div id="quizzesList"><p style="color:rgba(15,23,42,0.45);font-size:14px;text-align:center;padding:16px 0">Cargando...</p></div>
+                    <h3 style="color:#334155;font-size:18px;font-weight:700;margin-bottom:16px">Quizzes</h3>
+                    <div id="quizzesList"><p style="color:#64748b;font-size:14px;text-align:center;padding:16px 0">Cargando...</p></div>
                 </div>
             </div>
 
@@ -2899,7 +2899,7 @@
             }
 
             if (otros.length === 0 && !activo) {
-                list.innerHTML = '<p style="color:rgba(15,23,42,0.45);font-size:14px;text-align:center;padding:16px 0">No hay quizzes creados. Agregalos en la hoja Quizzes.</p>';
+                list.innerHTML = '<p style="color:#64748b;font-size:14px;text-align:center;padding:16px 0">No hay quizzes creados. Agregalos en la hoja Quizzes.</p>';
                 return;
             }
 
